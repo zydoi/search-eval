@@ -1,0 +1,24 @@
+1	dresses
+2	sunglasses
+3	sex toys
+4	lingerie
+5	wallpaper
+6	jumpsuit
+7	nike shoes
+8	jumpsuit
+9	iphone 6
+10	white dresses
+11	sun glasses
+12	ballroom dance shoes
+13	eyeshadow palette
+14	summer dresses
+15	adult sex toys
+16	camera
+17	urban decay
+18	swimming suit
+19	mac makeup
+20	makeup storage
+21	nike air max
+22	lipstick
+23	bikini swimwear
+24	sandals women
