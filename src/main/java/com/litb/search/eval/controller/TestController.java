@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.litb.search.eval.dto.SearchResultDTO;
+import com.litb.search.eval.service.LitbSearchService;
 import com.litb.search.eval.service.SolrSearchService;
 
 @RestController
@@ -17,11 +18,19 @@ import com.litb.search.eval.service.SolrSearchService;
 public class TestController {
 
 	@Autowired
-	private SolrSearchService solrSearchService;
+	private LitbSearchService litbService;
+	
+	@Autowired
+	private SolrSearchService solrService;
 	
 	@RequestMapping(value="search", method=RequestMethod.GET, produces="application/json")
 	public List<String> search(@RequestParam String keywords) {
-		SearchResultDTO result = solrSearchService.search(keywords);
+		SearchResultDTO result = litbService.search(keywords);
 		return result.getInfo().getItems();
+	}
+	
+	@RequestMapping(value="solr", method=RequestMethod.GET, produces="application/json")
+	public String solrSearch(@RequestParam String id) {
+		return solrService.query(id);
 	}
 }

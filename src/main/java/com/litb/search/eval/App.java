@@ -9,8 +9,13 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class App {
 
-	@Bean
-	public RestTemplate getRestTemplate() {
+	@Bean(name="LitbTemplate")
+	public RestTemplate getLitbTemplate() {
+		return new RestTemplate();
+	}
+	
+	@Bean(name="SolrTemplate")
+	public RestTemplate getSolrTemplate() {
 		return new RestTemplate();
 	}
 	
