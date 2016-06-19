@@ -1,11 +1,14 @@
 package com.litb.search.eval.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.litb.search.eval.dto.SearchResultDTO;
 import com.litb.search.eval.dto.SolrCore;
 import com.litb.search.eval.dto.SolrItemDTO;
 import com.litb.search.eval.service.LitbSearchService;
@@ -26,10 +29,12 @@ public class IndexController {
 
 	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
 	public String indexQuery(@RequestParam String query) {
-		// SearchResultDTO id = litbService.search(query);
-		// String response = solrService.query(query, SolrCore.prod);
+		 SearchResultDTO result = litbService.search(query);
+		 List<String> ids = result.getInfo().getItems();
+		 List<SolrItemDTO> items = searchService.getItems(ids);
+		 indexService.addItems(items);
 
-		return null;
+		return searchService.query(ids, SolrCore.eval);
 	}
 
 	@RequestMapping(value = "indexAll", method = RequestMethod.GET, produces = "application/json")

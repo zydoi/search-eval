@@ -1,8 +1,8 @@
 package com.litb.search.eval.service;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -42,15 +42,19 @@ public class SolrSearchService {
 		URI uri = builder.build().encode().toUri();
 		return restTemplate.getForObject(uri, String.class);
 	}
+	
+	public String query(Collection<String> ids, SolrCore core) {
+		String url = "solr." + core + ".url";
+		String solrAPI = environment.getProperty(url) + "select";
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI).
+				queryParam("q", concatenateIDs(ids));
+		URI uri = builder.build().encode().toUri();
+		return restTemplate.getForObject(uri, String.class);
+	}
 
-	public List<SolrItemDTO> getItems(Set<String> ids) {
+	public List<SolrItemDTO> getItems(Collection<String> ids) {
 		SolrQuery query = new SolrQuery();
-		StringBuilder q = new StringBuilder("id:(");
-		for (String id : ids) {
-			q.append(id).append(" ");
-		}
-		q.append(")");
-		query.setQuery(q.toString());
+		query.setQuery(concatenateIDs(ids));
 		try {
 			QueryResponse rsp = solrServer.query(query);
 			return rsp.getBeans(SolrItemDTO.class);
@@ -70,5 +74,14 @@ public class SolrSearchService {
 			LOGGER.error("Faild to search by id.", e);
 		}
 		return null;
+	}
+	
+	private String concatenateIDs(Collection<String> ids) {
+		StringBuilder q = new StringBuilder("id:(");
+		for (String id : ids) {
+			q.append(id).append(" ");
+		}
+		q.append(")");
+		return q.toString();
 	}
 }
