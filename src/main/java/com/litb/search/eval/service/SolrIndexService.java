@@ -35,7 +35,15 @@ public class SolrIndexService {
 			solrServer.addBeans(items);
 			solrServer.commit();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Failed to add new documents.", e);
+			LOGGER.error("Failed to add new item.", e);
+		}
+	}
+	
+	public void deleteItem(String id) {
+		try {
+			solrServer.deleteById(id);
+		} catch (SolrServerException | IOException e) {
+			LOGGER.error("Failed to delete item: " + id , e);
 		}
 	}
 }

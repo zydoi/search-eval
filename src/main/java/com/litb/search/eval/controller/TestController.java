@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.litb.search.eval.dto.SearchResultDTO;
+import com.litb.search.eval.dto.SolrCore;
 import com.litb.search.eval.dto.SolrItemDTO;
 import com.litb.search.eval.service.LitbSearchService;
 import com.litb.search.eval.service.SolrIndexService;
@@ -43,6 +44,6 @@ public class TestController {
 	public String index(@RequestParam String id) {
 		SolrItemDTO item = searchService.getItem(id);
 		indexService.addItem(item);
-		return null;
+		return searchService.query(id, SolrCore.EVAL);
 	}
 }

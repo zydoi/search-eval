@@ -20,7 +20,7 @@ public class ResponseConverterTest {
 	
 	@Test
 	public void test() {
-		String response = searchService.query("GB18030TEST", SolrCore.prod);
+		String response = searchService.query("GB18030TEST", SolrCore.PROD);
 		System.out.println(response);
 		
 //		String response = "<doc>123</doc>";

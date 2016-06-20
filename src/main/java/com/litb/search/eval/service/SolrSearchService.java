@@ -36,7 +36,7 @@ public class SolrSearchService {
 	private Environment environment;
 
 	public String query(String id, SolrCore core) {
-		String url = "solr." + core + ".url";
+		String url = "solr." + core.name().toLowerCase()  + ".url";
 		String solrAPI = environment.getProperty(url) + "select";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI).queryParam("q", "id:" + id);
 		URI uri = builder.build().encode().toUri();
@@ -44,17 +44,17 @@ public class SolrSearchService {
 	}
 	
 	public String query(Collection<String> ids, SolrCore core) {
-		String url = "solr." + core + ".url";
+		String url = "solr." + core.name().toLowerCase() + ".url";
 		String solrAPI = environment.getProperty(url) + "select";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI).
-				queryParam("q", concatenateIDs(ids));
+				queryParam("q", concatIDs(ids));
 		URI uri = builder.build().encode().toUri();
 		return restTemplate.getForObject(uri, String.class);
 	}
 
 	public List<SolrItemDTO> getItems(Collection<String> ids) {
 		SolrQuery query = new SolrQuery();
-		query.setQuery(concatenateIDs(ids));
+		query.setQuery(concatIDs(ids));
 		try {
 			QueryResponse rsp = solrServer.query(query);
 			return rsp.getBeans(SolrItemDTO.class);
@@ -76,7 +76,7 @@ public class SolrSearchService {
 		return null;
 	}
 	
-	private String concatenateIDs(Collection<String> ids) {
+	private String concatIDs(Collection<String> ids) {
 		StringBuilder q = new StringBuilder("id:(");
 		for (String id : ids) {
 			q.append(id).append(" ");

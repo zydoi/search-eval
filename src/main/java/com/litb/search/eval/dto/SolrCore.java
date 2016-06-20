@@ -2,8 +2,8 @@ package com.litb.search.eval.dto;
 
 public enum SolrCore {
 	
-	prod("Production Solr Core"),
-	eval("Evaluation Solr Core");
+	PROD("Production Solr Core"),
+	EVAL("Evaluation Solr Core");
 	
 	private String desc;
 	
