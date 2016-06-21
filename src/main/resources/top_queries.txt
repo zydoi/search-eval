@@ -10,7 +10,7 @@
 10	sun glasses
 11	ballroom dance shoes
 12	eyeshadow palette
-13	adult sex toys
+13	sandals women
 14	camera
 15	urban decay
 16	swimming suit
@@ -19,4 +19,3 @@
 19	nike air max
 20	lipstick
 21	bikini swimwear
-22	sandals women
