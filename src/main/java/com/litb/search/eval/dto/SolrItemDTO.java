@@ -64,7 +64,6 @@ public class SolrItemDTO {
 	@Field("sku_attributes")
 	private List<String> skuAttributes;
 
-	
 	public String getName() {
 		return name;
 	}

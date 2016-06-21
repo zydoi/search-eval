@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -36,31 +37,37 @@ public class SolrSearchService {
 	private Environment environment;
 
 	public String query(String id, SolrCore core) {
-		String url = "solr." + core.name().toLowerCase()  + ".url";
+		String url = "solr." + core.name().toLowerCase() + ".url";
 		String solrAPI = environment.getProperty(url) + "select";
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI).queryParam("q", "id:" + id);
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI)
+				.queryParam("q", "id:" + id);
 		URI uri = builder.build().encode().toUri();
 		return restTemplate.getForObject(uri, String.class);
 	}
-	
+
 	public String query(Collection<String> ids, SolrCore core) {
 		String url = "solr." + core.name().toLowerCase() + ".url";
 		String solrAPI = environment.getProperty(url) + "select";
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI).
-				queryParam("q", concatIDs(ids));
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI)
+				.queryParam("q", concatIDs(ids));
 		URI uri = builder.build().encode().toUri();
 		return restTemplate.getForObject(uri, String.class);
 	}
 
 	public List<SolrItemDTO> getItems(Collection<String> ids) {
+		LOGGER.info("Start to indexing products: " + StringUtils.collectionToCommaDelimitedString(ids));
+
 		SolrQuery query = new SolrQuery();
 		query.setQuery(concatIDs(ids));
+		query.setRows(Integer.valueOf(environment.getProperty("search.size", "100")));
 		try {
 			QueryResponse rsp = solrServer.query(query);
+			LOGGER.info("Finished indexing " + ids.size() + " items.");
 			return rsp.getBeans(SolrItemDTO.class);
 		} catch (SolrServerException e) {
 			LOGGER.error("Faild to search by id.", e);
 		}
+
 		return null;
 	}
 
@@ -75,7 +82,7 @@ public class SolrSearchService {
 		}
 		return null;
 	}
-	
+
 	private String concatIDs(Collection<String> ids) {
 		StringBuilder q = new StringBuilder("id:(");
 		for (String id : ids) {

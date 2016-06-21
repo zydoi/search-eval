@@ -46,4 +46,5 @@ public class TestController {
 		indexService.addItem(item);
 		return searchService.query(id, SolrCore.EVAL);
 	}
+	
 }

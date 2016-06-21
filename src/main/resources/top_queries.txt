@@ -7,18 +7,16 @@
 7	nike shoes
 8	jumpsuit
 9	iphone 6
-10	white dresses
-11	sun glasses
-12	ballroom dance shoes
-13	eyeshadow palette
-14	summer dresses
-15	adult sex toys
-16	camera
-17	urban decay
-18	swimming suit
-19	mac makeup
-20	makeup storage
-21	nike air max
-22	lipstick
-23	bikini swimwear
-24	sandals women
+10	sun glasses
+11	ballroom dance shoes
+12	eyeshadow palette
+13	adult sex toys
+14	camera
+15	urban decay
+16	swimming suit
+17	swim wear
+18	makeup storage
+19	nike air max
+20	lipstick
+21	bikini swimwear
+22	sandals women

@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,29 +22,45 @@ public class SolrIndexService {
 	@Qualifier("SolrEvalServer")
 	private SolrServer solrServer;
 
-	public void addItem(SolrItemDTO item) {
+	public UpdateResponse addItem(SolrItemDTO item) {
 		try {
 			solrServer.addBean(item);
 			solrServer.commit();
 		} catch (IOException | SolrServerException e) {
 			LOGGER.error("Failed to add the new document.", e);
 		}
+		return null;
 	}
 
-	public void addItems(Collection<SolrItemDTO> items) {
+	public UpdateResponse addItems(Collection<SolrItemDTO> items) {
 		try {
 			solrServer.addBeans(items);
-			solrServer.commit();
+			return solrServer.commit();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Failed to add new item.", e);
 		}
+		return null;
 	}
 	
-	public void deleteItem(String id) {
+	public UpdateResponse deleteItem(String id) {
 		try {
 			solrServer.deleteById(id);
+			return solrServer.commit();
+
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Failed to delete item: " + id , e);
 		}
+		return null;
+	}
+	
+	public UpdateResponse deleteAll() {
+		try {
+			solrServer.deleteByQuery("*:*");
+			return solrServer.commit();
+
+		} catch (SolrServerException | IOException e) {
+			LOGGER.error("Failed to delete all items", e);
+		}
+		return null;
 	}
 }

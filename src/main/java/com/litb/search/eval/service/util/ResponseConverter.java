@@ -1,6 +1,5 @@
 package com.litb.search.eval.service.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -17,7 +16,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -39,7 +37,6 @@ public final class ResponseConverter {
 			NodeList docs = responseDoc.getElementsByTagName("doc");
 
 			Document indexDoc = builder.newDocument();
-			Element rootDocument = indexDoc.createElement("add");
 			for (int i = 0; i < docs.getLength(); i++) {
 				indexDoc.importNode(docs.item(i), true);
 				System.out.println("###" + docs.item(i).getFirstChild().getNodeName());
