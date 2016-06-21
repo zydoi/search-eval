@@ -2,6 +2,7 @@ package com.litb.search.eval.service;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServer;
@@ -61,6 +62,12 @@ public class SolrIndexService {
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Failed to delete all items", e);
 		}
+		return null;
+	}
+	
+	public String annotate(String queryId, Set<String> ids) {
+		
+		
 		return null;
 	}
 }

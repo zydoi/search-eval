@@ -50,7 +50,7 @@ public class IndexController {
 		LOGGER.info("Start indexing items for the evaluation model.");
 		long start = System.currentTimeMillis();
 		int num = 0;
-		Map<Integer, String> queries = keywordService.loadAllQueries();
+		Map<Integer, String> queries = keywordService.getAllQueries();
 		for (String query : queries.values()) {
 			LOGGER.info("Start indexing query: " + query);
 			SearchResultDTO result = litbService.search(query);
