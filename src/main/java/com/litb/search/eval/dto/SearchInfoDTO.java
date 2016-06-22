@@ -5,11 +5,11 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InfoDTO {
+public class SearchInfoDTO {
 	
 	private List<String> items;
 	
-	public InfoDTO() {
+	public SearchInfoDTO() {
 	}
 
 	public List<String> getItems() {

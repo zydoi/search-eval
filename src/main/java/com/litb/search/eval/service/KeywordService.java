@@ -21,4 +21,8 @@ public class KeywordService {
 	public Map<Integer, String> getAllQueries() {
 		return queries;
 	}
+	
+	public String getQueryByID(String id) {
+		return queries.get(Integer.valueOf(id));
+	}
 }

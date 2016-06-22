@@ -1,13 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="US-ASCII">
+<meta charset="US-ASCII" />
 <title>items annotator</title>
 </head>
 <body>
-	<table>
-		<tr><td>1</td></tr>
+	<h2 th:text="'Hello,' + ${name} + '!'" />
+	<div class="query" th:if="${query == null}">
+		<form action="#" th:action="@{/items}" th:object="${query}" method="get">
 		
-	</table>
+			<select name="test" th:field="*{query}">
+				<option th:each="query : ${queries}" 
+						th:value="*{query}"
+						th:text="${query}" />
+			</select>
+
+		</form>
+	</div>
+	
+	<div class="itemlist" th:unless="${query != null}">
+		<label th:text="${query}"></label>
+	</div>
 </body>
 </html>

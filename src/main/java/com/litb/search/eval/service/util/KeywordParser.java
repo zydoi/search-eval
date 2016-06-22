@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
@@ -24,7 +25,7 @@ public class KeywordParser {
 	}
 
 	public static Map<Integer, String> parseAll() {
-		Map<Integer, String> queries = new HashMap<>();
+		Map<Integer, String> queries = new TreeMap<>();
 		queries.putAll(parse(QueryType.TOP.fileName));
 		queries.putAll(parse(QueryType.BAD.fileName));
 //		queries.putAll(parse(QueryType.MISSPELL.fileName));
@@ -35,7 +36,7 @@ public class KeywordParser {
 
 	public static Map<Integer, String> parse(String fileName) {
 		File file = new File(KeywordParser.class.getClassLoader().getResource(fileName).getFile());
-		Map<Integer, String> queries = new HashMap<>();
+		Map<Integer, String> queries = new TreeMap<>();
 		if (file.exists()) {
 			try (Scanner scanner = new Scanner(file)) {
 				while (scanner.hasNextLine()) {

@@ -5,10 +5,14 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.litb.search.eval.dto.ItemsResultDTO;
 import com.litb.search.eval.dto.SearchResultDTO;
 
 @Service
@@ -23,16 +27,52 @@ public class LitbSearchService {
 
 	public SearchResultDTO search(String keywords) {
 
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(environment.getProperty("litb.api"))
-				.queryParam("app_key", "FIQ79MXR").queryParam("app_secret", "606caa95b19bc709syqx9cpl72kmmnzy")
-				.queryParam("cid", "0").queryParam("client", "vela_pc").queryParam("country", "US")
-				.queryParam("currency", "USD").queryParam("cv", "ZUES_CV").queryParam("is_contain_rating", "1")
-				.queryParam("language", "en").queryParam("page_no", "1").queryParam("sid", "eval_123")
-				.queryParam("sort_by", "2d").queryParam("page_size", environment.getProperty("search.size"))
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(environment.getProperty("litb.api") + "keywordSearch")
+				.queryParam("app_key", "FIQ79MXR")
+				.queryParam("app_secret", "606caa95b19bc709syqx9cpl72kmmnzy")
+				.queryParam("cid", "0")
+				.queryParam("client", "vela_pc")
+				.queryParam("country", "US")
+				.queryParam("currency", "USD")
+				.queryParam("cv", "ZUES_CV")
+				.queryParam("is_contain_rating", "1")
+				.queryParam("language", "en")
+				.queryParam("page_no", "1")
+				.queryParam("sid", "eval_123")
+				.queryParam("sort_by", "2d")
+				.queryParam("page_size", environment.getProperty("search.size"))
 				.queryParam("query", keywords);
 
 		URI uri = builder.build().encode().toUri();
 
 		return restTemplate.getForObject(uri, SearchResultDTO.class);
+	}
+
+	public ItemsResultDTO getItems(String keywords) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(environment.getProperty("litb.vela.api"))
+				.queryParam("client", "vela")
+				.queryParam("format", "json")
+				.queryParam("method", "vela.items.get")
+				.queryParam("app_key", "V06GF3A2")
+				.queryParam("app_secret", "f838905ddd031399ffdm8n3mymrrzomk")
+				.queryParam("v", "1.1")
+				.queryParam("language", "en")
+				.queryParam("currency", "USD")
+				.queryParam("sid", "eval_123")
+				.queryParam("sort_by", "2d")
+				.queryParam("page_no", "1")
+				.queryParam("page_size", environment.getProperty("search.size"))
+				.queryParam("is_hd", "false")
+				.queryParam("country", "USA")
+				.queryParam("timestamp", "2016-06-12+00:00:00")
+				.queryParam("sign_method", "md5")
+				.queryParam("sign", "123")
+				.queryParam("query", keywords);
+		
+		URI uri = builder.build().encode().toUri();
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Cookie", "hack=123");
+		HttpEntity<?> requestEntity = new HttpEntity<>(null, headers);
+		return restTemplate.exchange(uri,  HttpMethod.GET,requestEntity, ItemsResultDTO.class).getBody();
 	}
 }
