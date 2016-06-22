@@ -1,0 +1,86 @@
+@CHARSET "UTF-8";
+
+input[type=checkbox] {
+	/* Double-sized Checkboxes */
+	-ms-transform: scale(1.5); /* IE */
+	-moz-transform: scale(1.5); /* FF */
+	-webkit-transform: scale(1.5); /* Safari and Chrome */
+	-o-transform: scale(1.5); /* Opera */
+	padding: 10px;
+}
+
+label {
+	color: red;
+	font-size: 16px;
+}
+
+.thumbnail {
+	width: 182px;
+	height: 390px;
+	display: inline;
+	float: left;
+	overflow: hidden;
+	padding: 5px;
+	margin-bottom: 5px;
+}
+
+.caption {
+	width: 182px;
+	height: 40px;
+}
+
+.item-name {
+	width: 182px;
+	height: 26px;
+	font-size: 11px;
+	line-height: 13px;
+	word-wrap: break-word;
+	overflow: hidden;
+}
+
+.product-price {
+	width: 182px;
+	height: 18px;
+}
+
+.price {
+	font-size: 14px;
+	color: #333;
+	line-height: 18px;
+	height: 18px;
+	display: inline-block;
+}
+
+.reference {
+	margin-top:5px;
+	font-size: 16px;
+	width: 182px;
+	height: 14px;
+}
+
+.stars-img {
+	width: 55px;
+	height: 12px;
+}
+
+.fav-img {
+	margin-left: 5px;
+	width: 14px;
+	height: 13px;
+}
+
+.isRef {
+	margin-left: 50px;
+}
+
+#items {
+	margin-top: 10px;
+}
+
+#btn-done {
+	position: absolute;
+	width: 80px;
+	height: 30px;
+	top: 20px;
+	right: 20px;
+}

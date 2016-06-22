@@ -65,8 +65,13 @@ public class SolrIndexService {
 		return null;
 	}
 	
-	public String annotate(String queryId, Set<String> ids) {
-		
+	public String annotate(String annotator, String query, Set<Integer> ids) {
+		StringBuilder sb = new StringBuilder("Annotator: ");
+		sb.append(annotator).append(", Query: ").append(query).append(", ids: ");
+		for (int id : ids) {
+			sb.append(id).append(",");
+		}
+		LOGGER.info(sb.toString());
 		
 		return null;
 	}

@@ -1,25 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="US-ASCII" />
-<title>items annotator</title>
+	<meta charset="US-ASCII" />
+	<title>items annotator</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+
 </head>
 <body>
 	<h2 th:text="'Hello,' + ${name} + '!'" />
-	<div class="query" th:if="${query == null}">
-		<form action="#" th:action="@{/items}" th:object="${query}" method="get">
-		
-			<select name="test" th:field="*{query}">
-				<option th:each="query : ${queries}" 
-						th:value="*{query}"
-						th:text="${query}" />
+	<div class="chooseQuery">
+		<form action="#" th:action="@{/items}" method="get">
+			<select name="query" >
+				<option th:each="q : ${queries}" 
+						th:value="*{q.value}"
+						th:text="${q.value}" 
+						th:selected="${query}" />
 			</select>
-
+			<button type="submit" th:text="ok" />
 		</form>
 	</div>
 	
-	<div class="itemlist" th:unless="${query != null}">
-		<label th:text="${query}"></label>
+	<div id="items">
+		<form action="#" th:action="@{/annotate}"  th:object="${annotateDTO}" method="post">
+		
+			<div class="thumbnail" th:each="item:*{items.info.items}" >
+	        	<div class="product-image">
+	            	<a th:href="${item.mainImgURL}"><img th:src="${item.mainImgURL}" alt="" /></a>
+	            </div>
+	           	<div class="caption">
+	           		<div class="item-name"  th:text="${item.itemName}" />
+	            	<div class="item-line-wrap">
+	                	<span class="item-reviews">
+		            			<img class="stars-img" src="/images/stars.png"/>
+		            		<span class="review-count" th:text="'(' + ${item.reviewCount} + ')'" />
+		            		<img class="fav-img" src="/images/fav.ico"/>
+		            		
+	                    	<span class="product-favorite" th:text="'(' + ${item.favoriteTimes} + ')'" />
+	         			</span>
+	              	</div>
+
+	               	<div class="product-price">
+	                	<span class="price" th:text="${item.currency} + '   $' + ${item.salePrice}" />
+	                </div>
+	                
+	               	<div class="reference">
+	               		<span class="ref-txt" th:text="'Reference:'" />
+							<input class="isRef" type="checkbox" th:field="${annotateDTO.pids}" />
+	                </div>
+	          	</div>
+	      	</div>
+	      	<button id="btn-done" type="submit" th:text="Done" />
+		</form>
 	</div>
 </body>
 </html>

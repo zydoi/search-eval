@@ -9,7 +9,7 @@ public class ItemsResultDTO {
 	private String result;
 	
 	@JsonProperty("info")
-	private LitbInfoDTO infoDTO;
+	private LitbInfoDTO info;
 
 	public String getResult() {
 		return result;
@@ -19,11 +19,11 @@ public class ItemsResultDTO {
 		this.result = result;
 	}
 
-	public LitbInfoDTO getInfoDTO() {
-		return infoDTO;
+	public LitbInfoDTO getInfo() {
+		return info;
 	}
 
-	public void setInfoDTO(LitbInfoDTO infoDTO) {
-		this.infoDTO = infoDTO;
+	public void setInfo(LitbInfoDTO info) {
+		this.info = info;
 	}
 }

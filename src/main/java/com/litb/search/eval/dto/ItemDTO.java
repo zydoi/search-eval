@@ -29,6 +29,8 @@ public class ItemDTO {
 	@JsonProperty("item_name")
 	private String itemName;
 	
+	private int reviewCount;
+	
 	@JsonProperty("favorite_times")
 	private int favoriteTimes;
 
@@ -38,6 +40,14 @@ public class ItemDTO {
 
 	public void setItemId(String itemId) {
 		this.itemId = itemId;
+	}
+
+	public int getReviewCount() {
+		return reviewCount;
+	}
+
+	public void setReviewCount(int reviewCount) {
+		this.reviewCount = reviewCount;
 	}
 
 	public String getCurrency() {
