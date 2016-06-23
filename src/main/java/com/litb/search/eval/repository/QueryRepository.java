@@ -1,4 +1,4 @@
-package com.litb.search.eval.service;
+package com.litb.search.eval.repository;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.litb.search.eval.service.util.KeywordParser;
 
 @Service
-public class KeywordService {
+public class QueryRepository {
 
 	private Map<Integer, String> queries;
 	

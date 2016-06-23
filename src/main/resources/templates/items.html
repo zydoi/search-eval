@@ -7,25 +7,30 @@
 
 </head>
 <body>
-	<h2 th:text="'Hello,' + ${name} + '!'" />
+	<h2 th:text="'Hello,' + ${session.annotator} + '!'" th:if="${session.annotator != null}" />
 	<div class="chooseQuery">
 		<form action="#" th:action="@{/items}" method="get">
-			<select name="query" >
+			<div id="annotator" th:if="${session.annotator == null}">
+				<label th:text="'Please input your name: '" /> 
+				<input type="text"	th:value="${annotator}" name="annotator" />
+			</div>
+			<select id="query" name="query" >
 				<option th:each="q : ${queries}" 
-						th:value="*{q.value}"
-						th:text="${q.value}" 
-						th:selected="${query}" />
+						th:value="${q.value}"
+						th:text="${q.key} + '.  '+ ${q.value} " 
+						th:selected="(${query} == ${q.value})" />
 			</select>
 			<button type="submit" th:text="ok" />
 		</form>
 	</div>
 	
-	<div id="items">
+	<div id="items" th:if="${query != null}">
 		<form action="#" th:action="@{/annotate}"  th:object="${annotateDTO}" method="post">
-		
-			<div class="thumbnail" th:each="item:*{items.info.items}" >
+			<input class="hide" type="text" th:value="${annotateDTO.query}" th:field="*{query}" />
+			<input class="hide" type="text" th:value="${annotateDTO.annotator}" th:field="*{annotator}" />
+			<div class="thumbnail" th:each="item:${items.info.items}" >
 	        	<div class="product-image">
-	            	<a th:href="${item.mainImgURL}"><img th:src="${item.mainImgURL}" alt="" /></a>
+	            	<a th:href="${item.itemURL}"><img class="item-img" th:src="${item.cateShowImgs.grid.rectangle}" alt="" /></a>
 	            </div>
 	           	<div class="caption">
 	           		<div class="item-name"  th:text="${item.itemName}" />
@@ -42,10 +47,13 @@
 	               	<div class="product-price">
 	                	<span class="price" th:text="${item.currency} + '   $' + ${item.salePrice}" />
 	                </div>
+	               	<div class="master-category">
+	                	<span class="category" th:text="${item.masterCategoryName}"/>
+	                </div>
 	                
 	               	<div class="reference">
 	               		<span class="ref-txt" th:text="'Reference:'" />
-							<input class="isRef" type="checkbox" th:field="${annotateDTO.pids}" />
+						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{pids}" />
 	                </div>
 	          	</div>
 	      	</div>

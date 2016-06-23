@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.litb.search.eval.dto.SearchResultDTO;
 import com.litb.search.eval.dto.SolrCore;
 import com.litb.search.eval.dto.SolrItemDTO;
-import com.litb.search.eval.service.KeywordService;
+import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.LitbSearchService;
 import com.litb.search.eval.service.SolrIndexService;
 import com.litb.search.eval.service.SolrSearchService;
@@ -31,7 +31,7 @@ public class IndexController {
 	private SolrSearchService searchService;
 
 	@Autowired
-	private KeywordService keywordService;
+	private QueryRepository keywordService;
 
 	@Autowired
 	private SolrIndexService indexService;

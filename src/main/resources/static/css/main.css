@@ -16,7 +16,7 @@ label {
 
 .thumbnail {
 	width: 182px;
-	height: 390px;
+	height: 370px;
 	display: inline;
 	float: left;
 	overflow: hidden;
@@ -24,9 +24,22 @@ label {
 	margin-bottom: 5px;
 }
 
+.item-img {
+	width: 180px;
+	height: 240px;
+}
+
 .caption {
 	width: 182px;
 	height: 40px;
+}
+
+.hide {
+	display: none;
+}
+
+.item-line-wrap {
+	color: #666;
 }
 
 .item-name {
@@ -45,14 +58,20 @@ label {
 
 .price {
 	font-size: 14px;
-	color: #333;
+	color: #900;
 	line-height: 18px;
 	height: 18px;
 	display: inline-block;
 }
 
+.master-category {
+	margin-top: 5px;
+	font-size: 11px;
+	color: #666;
+}
+
 .reference {
-	margin-top:5px;
+	margin-top: 5px;
 	font-size: 16px;
 	width: 182px;
 	height: 14px;
@@ -60,7 +79,7 @@ label {
 
 .stars-img {
 	width: 55px;
-	height: 12px;
+	height: 13px;
 }
 
 .fav-img {
@@ -71,6 +90,14 @@ label {
 
 .isRef {
 	margin-left: 50px;
+}
+
+#annotator {
+	margin: 10px;
+}
+
+#query {
+	margin: 10px;
 }
 
 #items {

@@ -10,6 +10,13 @@ public class AnnotateDTO {
 	
 	private Set<Integer> pids;
 
+	public AnnotateDTO() {}
+	
+	public AnnotateDTO(String annotator, String query) {
+		this.annotator = annotator;
+		this.query = query;
+	}
+	
 	public String getAnnotator() {
 		return annotator;
 	}

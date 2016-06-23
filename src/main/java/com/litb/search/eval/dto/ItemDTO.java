@@ -6,12 +6,55 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemDTO {
 	
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	static class CateShowImgs {
+		
+		private Grid grid;
+
+		public Grid getGrid() {
+			return grid;
+		}
+
+		public void setGrid(Grid grid) {
+			this.grid = grid;
+		}
+	}
+	
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	static class Grid {
+		
+		private String rectangle;
+		
+		private String square;
+
+		public String getRectangle() {
+			return rectangle;
+		}
+
+		public void setRectangle(String rectangle) {
+			this.rectangle = rectangle;
+		}
+
+		public String getSquare() {
+			return square;
+		}
+
+		public void setSquare(String square) {
+			this.square = square;
+		}
+	}
+	
+	@JsonProperty("cate_show_imgs")
+	private CateShowImgs cateShowImgs;
+	
 	@JsonProperty("item_id")
 	private String itemId;
 	
 	private String currency;
 	
 	private String masterCategoryId;
+
+	private String masterCategoryName;
 	
 	@JsonProperty("review_rating")
 	private int reviewRating;
@@ -22,13 +65,18 @@ public class ItemDTO {
 	@JsonProperty("main_img_url")
 	private String mainImgURL;
 	
+	@JsonProperty("rectangle")
+	private String showImgURL;
+	
 	private double originalPrice;
 	
+	@JsonProperty("sale_price")
 	private double salePrice;
 	
 	@JsonProperty("item_name")
 	private String itemName;
 	
+	@JsonProperty("review_count")
 	private int reviewCount;
 	
 	@JsonProperty("favorite_times")
@@ -98,6 +146,14 @@ public class ItemDTO {
 		this.originalPrice = originalPrice;
 	}
 
+	public CateShowImgs getCateShowImgs() {
+		return cateShowImgs;
+	}
+
+	public void setCateShowImgs(CateShowImgs cateShowImgs) {
+		this.cateShowImgs = cateShowImgs;
+	}
+
 	public double getSalePrice() {
 		return salePrice;
 	}
@@ -120,5 +176,21 @@ public class ItemDTO {
 
 	public void setFavoriteTimes(int favoriteTimes) {
 		this.favoriteTimes = favoriteTimes;
+	}
+
+	public String getMasterCategoryName() {
+		return masterCategoryName;
+	}
+
+	public void setMasterCategoryName(String masterCategoryName) {
+		this.masterCategoryName = masterCategoryName;
+	}
+
+	public String getShowImgURL() {
+		return showImgURL;
+	}
+
+	public void setShowImgURL(String showImgURL) {
+		this.showImgURL = showImgURL;
 	}
 }
