@@ -55,22 +55,36 @@ public class SolrSearchService {
 	}
 
 	public List<SolrItemDTO> getItems(Collection<String> ids) {
-		LOGGER.info("Start to indexing products: " + StringUtils.collectionToCommaDelimitedString(ids));
+		LOGGER.info("Start to searching products: " + StringUtils.collectionToCommaDelimitedString(ids));
 
 		SolrQuery query = new SolrQuery();
 		query.setQuery(concatIDs(ids));
 		query.setRows(Integer.valueOf(environment.getProperty("search.size", "100")));
 		try {
 			QueryResponse rsp = solrServer.query(query);
-			LOGGER.info("Finished indexing " + ids.size() + " items.");
+			LOGGER.info("Finished searching " + ids.size() + " items.");
 			return rsp.getBeans(SolrItemDTO.class);
 		} catch (SolrServerException e) {
-			LOGGER.error("Faild to search by id.", e);
+			LOGGER.error("Failed to search items.", e);
 		}
-
 		return null;
 	}
+	
+	public List<SolrItemDTO> getItemRelevance(Collection<String> ids) {
 
+		SolrQuery query = new SolrQuery();
+		query.setQuery(concatIDs(ids));
+		query.setFields("id", "query_*");
+		query.setRows(Integer.valueOf(environment.getProperty("search.size", "100")));
+		try {
+			QueryResponse rsp = solrServer.query(query);
+			return rsp.getBeans(SolrItemDTO.class);
+		} catch (SolrServerException e) {
+			LOGGER.error("Failed to get item for evaluation.", e);
+		}
+		return null;
+	}
+	
 	public SolrItemDTO getItem(String id) {
 		SolrQuery query = new SolrQuery();
 		query.setQuery("id:" + id);
@@ -78,7 +92,7 @@ public class SolrSearchService {
 			QueryResponse rsp = solrServer.query(query);
 			return rsp.getBeans(SolrItemDTO.class).get(0);
 		} catch (SolrServerException e) {
-			LOGGER.error("Faild to search by id.", e);
+			LOGGER.error("Failed to search by id.", e);
 		}
 		return null;
 	}

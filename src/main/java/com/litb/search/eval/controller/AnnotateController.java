@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.litb.search.eval.dto.AnnotateDTO;
 import com.litb.search.eval.dto.ItemsResultDTO;
 import com.litb.search.eval.repository.QueryRepository;
-import com.litb.search.eval.service.EvaluationService;
+import com.litb.search.eval.service.AnnotateService;
 import com.litb.search.eval.service.LitbSearchService;
 
 @Controller
@@ -31,7 +31,7 @@ public class AnnotateController {
 	private LitbSearchService litbService;
 	
 	@Autowired
-	private EvaluationService evaluationService;
+	private AnnotateService annotateService;
 
 	@ModelAttribute("queries")
 	public Map<Integer, String> populateQueries() {
@@ -67,7 +67,7 @@ public class AnnotateController {
 	public String annotate(AnnotateDTO annotateDTO) {
 		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query: " + annotateDTO.getQuery());
 
-		evaluationService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQuery(), annotateDTO.getPids());
+		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQuery(), annotateDTO.getPids());
 
 		return "items";
 	}

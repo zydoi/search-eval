@@ -2,6 +2,7 @@ package com.litb.search.eval.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -63,9 +64,16 @@ public class SolrItemDTO {
 	
 	@Field("sku_attributes")
 	private List<String> skuAttributes;
+	
+	@Field("query_*")
+	private Map<String, String> queries;
 
 	public String getName() {
 		return name;
+	}
+	
+	public String getQuery(String qid) {
+		return queries.get(qid);
 	}
 	
 }

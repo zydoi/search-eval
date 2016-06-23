@@ -29,7 +29,7 @@
 		<appender-ref ref="CONSOLE" />
 	</root>
 	
-	<logger name="com.litb.search.eval.service.EvaluationService" level="info">
+	<logger name="annotate" level="info">
 		<appender-ref ref="ANNOTATION" />
 	</logger>
 </configuration>
