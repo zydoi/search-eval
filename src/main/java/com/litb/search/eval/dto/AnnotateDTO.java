@@ -6,15 +6,16 @@ public class AnnotateDTO {
 
 	private String annotator;
 	
-	private String query;
-	
+	private String queryID;
+
+
 	private Set<Integer> pids;
 
 	public AnnotateDTO() {}
 	
-	public AnnotateDTO(String annotator, String query) {
+	public AnnotateDTO(String annotator, String queryID) {
 		this.annotator = annotator;
-		this.query = query;
+		this.queryID = queryID;
 	}
 	
 	public String getAnnotator() {
@@ -25,19 +26,19 @@ public class AnnotateDTO {
 		this.annotator = annotator;
 	}
 
-	public String getQuery() {
-		return query;
-	}
-
-	public void setQuery(String query) {
-		this.query = query;
-	}
-
 	public Set<Integer> getPids() {
 		return pids;
 	}
 
 	public void setPids(Set<Integer> pids) {
 		this.pids = pids;
+	}
+	
+	public String getQueryID() {
+		return queryID;
+	}
+
+	public void setQueryID(String queryID) {
+		this.queryID = queryID;
 	}
 }

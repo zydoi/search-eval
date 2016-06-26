@@ -66,14 +66,18 @@ public class SolrItemDTO {
 	private List<String> skuAttributes;
 	
 	@Field("query_*")
-	private Map<String, String> queries;
+	private Map<String, Integer> queries;
 
 	public String getName() {
 		return name;
 	}
 	
-	public String getQuery(String qid) {
-		return queries.get(qid);
+	public int getQuery(String qid) {
+		if(queries == null) {
+			return 0;
+		}
+		int result = queries.get(qid) == null? 0: queries.get(qid);
+		return result;
 	}
 	
 }

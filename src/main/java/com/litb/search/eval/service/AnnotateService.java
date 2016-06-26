@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.litb.search.eval.repository.QueryRepository;
+import com.litb.search.eval.service.util.SolrQueryUtils;
+
 @Service
 public class AnnotateService {
 	
@@ -26,7 +29,11 @@ public class AnnotateService {
 	@Qualifier("SolrEvalServer")
 	private SolrServer solrServer;
 	
-	public void annotate(String annotator, String query, Set<Integer> ids) {
+	@Autowired
+	private QueryRepository queries;
+	
+	public void annotate(String annotator, String queryID, Set<Integer> ids) {
+		String query = queries.getQueryByID(queryID);
 		StringBuilder sb = new StringBuilder("Annotator: ");
 		sb.append(annotator).append(", Query: ").append(query).append(", ids: ");
 		
@@ -39,12 +46,13 @@ public class AnnotateService {
 
 			SolrInputDocument doc = new SolrInputDocument();
 			doc.addField("id", id);
-			doc.addField("query_" + id, queryInc);
+			doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID, queryInc);
 			docs.add(doc);
 		}
 		
 		try {
 			solrServer.add(docs);
+			solrServer.commit();
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Failed to increase annotation!", e);
 			return;

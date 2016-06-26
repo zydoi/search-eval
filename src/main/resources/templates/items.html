@@ -9,14 +9,14 @@
 <body>
 	<h2 th:text="'Hello,' + ${session.annotator} + '!'" th:if="${session.annotator != null}" />
 	<div class="chooseQuery">
-		<form action="#" th:action="@{/items}" method="get">
+		<form action="#" th:action="@{/itemlist}" method="get">
 			<div id="annotator" th:if="${session.annotator == null}">
 				<label th:text="'Please input your name: '" /> 
 				<input type="text"	th:value="${annotator}" name="annotator" />
 			</div>
-			<select id="query" name="query" >
+			<select id="query" name="queryID" >
 				<option th:each="q : ${queries}" 
-						th:value="${q.value}"
+						th:value="${q.key}"
 						th:text="${q.key} + '.  '+ ${q.value} " 
 						th:selected="(${query} == ${q.value})" />
 			</select>
@@ -26,7 +26,7 @@
 	
 	<div id="items" th:if="${query != null}">
 		<form action="#" th:action="@{/annotate}"  th:object="${annotateDTO}" method="post">
-			<input class="hide" type="text" th:value="${annotateDTO.query}" th:field="*{query}" />
+			<input class="hide" type="text" th:value="${annotateDTO.queryID}" th:field="*{queryID}" />
 			<input class="hide" type="text" th:value="${annotateDTO.annotator}" th:field="*{annotator}" />
 			<div class="thumbnail" th:each="item:${items.info.items}" >
 	        	<div class="product-image">

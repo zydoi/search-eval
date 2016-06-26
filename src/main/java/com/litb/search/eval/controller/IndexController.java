@@ -16,8 +16,8 @@ import com.litb.search.eval.dto.SolrCore;
 import com.litb.search.eval.dto.SolrItemDTO;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.LitbSearchService;
-import com.litb.search.eval.service.SolrIndexService;
-import com.litb.search.eval.service.SolrSearchService;
+import com.litb.search.eval.service.SolrEvalService;
+import com.litb.search.eval.service.SolrProdService;
 
 @RestController
 public class IndexController {
@@ -28,13 +28,13 @@ public class IndexController {
 	private LitbSearchService litbService;
 
 	@Autowired
-	private SolrSearchService searchService;
+	private SolrProdService searchService;
 
 	@Autowired
 	private QueryRepository keywordService;
 
 	@Autowired
-	private SolrIndexService indexService;
+	private SolrEvalService indexService;
 
 	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
 	public String indexQuery(@RequestParam String query) {

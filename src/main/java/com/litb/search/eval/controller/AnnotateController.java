@@ -46,28 +46,28 @@ public class AnnotateController {
 		return "items";
 	}
 
-	@RequestMapping(value = "/items", method = RequestMethod.GET)
-	public String selectQuery(@RequestParam String query, @RequestParam(required = false) String annotator, Model model, HttpSession session) {
-		LOGGER.info(annotator + " start to annotate items for query: " + query);
+	@RequestMapping(value = "/itemlist", method = RequestMethod.GET)
+	public String selectQuery(@RequestParam String queryID, @RequestParam(required = false) String annotator, Model model, HttpSession session) {
 		if (annotator != null) {
 			session.setAttribute("annotator", annotator);
 		}
-		
+		LOGGER.info(session.getAttribute("annotator") + " start to annotate items for query: " + keywordService.getQueryByID(queryID));
+		String query = keywordService.getQueryByID(queryID);
 		ItemsResultDTO items = litbService.getItems(query);
 		
 		model.addAttribute("query", query);
 		model.addAttribute("items", items);
 		model.addAttribute("name", annotator);
-		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, query));
+		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID));
 		
 		return "items";
 	}
 	
 	@RequestMapping(value = "/annotate", method = RequestMethod.POST)
 	public String annotate(AnnotateDTO annotateDTO) {
-		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query: " + annotateDTO.getQuery());
+		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query: " + keywordService.getQueryByID(annotateDTO.getQueryID()));
 
-		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQuery(), annotateDTO.getPids());
+		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids());
 
 		return "items";
 	}

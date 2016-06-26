@@ -26,7 +26,7 @@ public class TestService {
 	@Qualifier("SolrEvalServer")
 	private SolrServer solrServer;
 
-	@Test
+//	@Test
 	public void test() throws SolrServerException, IOException {
 
 		SolrInputDocument doc = new SolrInputDocument();
@@ -40,6 +40,21 @@ public class TestService {
 		
 		Set<SolrInputDocument> docs = new HashSet<>();
 		docs.add(doc2);
+		docs.add(doc);
+		solrServer.add(docs);
+		solrServer.commit();
+	}
+	
+	@Test
+	public void testIncDynamicField() throws SolrServerException, IOException {
+
+		SolrInputDocument doc = new SolrInputDocument();
+		Map<String, Object> queryInc = new HashMap<>();
+		queryInc.put("inc", 1);
+		doc.addField("id", "3823505");
+		doc.addField("query_1", queryInc);
+		
+		Set<SolrInputDocument> docs = new HashSet<>();
 		docs.add(doc);
 		solrServer.add(docs);
 		solrServer.commit();
