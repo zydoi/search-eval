@@ -1,5 +1,7 @@
 package com.litb.search.eval.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +18,9 @@ public class EvaluateController {
 	
 	@RequestMapping
 	public ModelAndView evaluateAll(ModelAndView modelAndView) {
-		modelAndView.setViewName("");
-//		double map = evalService.map();
-//		modelAndView.addObject("map", map);
-//		modelAndView.addObject("eval", map);
+		modelAndView.setViewName("statistic");
+		Map<String, Double> results = evalService.map();
+		modelAndView.addObject("map", results);
 		return modelAndView;
 	}
 }

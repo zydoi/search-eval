@@ -85,4 +85,10 @@ public class IndexController {
 	public UpdateResponse delete() {
 		return indexService.deleteAll();
 	}
+	
+	@RequestMapping(value = "clearAnnotations", method = RequestMethod.GET, produces = "application/json")
+	public String clear(@RequestParam String queryID) {
+		indexService.clearRelevance(queryID);
+		return "done";
+	}
 }
