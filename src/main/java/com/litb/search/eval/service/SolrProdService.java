@@ -40,8 +40,7 @@ public class SolrProdService {
 	public String query(String id, SolrCore core) {
 		String url = "solr." + core.name().toLowerCase() + ".url";
 		String solrAPI = environment.getProperty(url) + "select";
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI)
-				.queryParam("q", "id:" + id);
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI).queryParam("q", "id:" + id);
 		URI uri = builder.build().encode().toUri();
 		return restTemplate.getForObject(uri, String.class);
 	}
@@ -49,8 +48,8 @@ public class SolrProdService {
 	public String query(Collection<String> ids, SolrCore core) {
 		String url = "solr." + core.name().toLowerCase() + ".url";
 		String solrAPI = environment.getProperty(url) + "select";
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI)
-				.queryParam("q", SolrQueryUtils.concatIDs(ids));
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(solrAPI).queryParam("q",
+				SolrQueryUtils.concatIDs(ids));
 		URI uri = builder.build().encode().toUri();
 		return restTemplate.getForObject(uri, String.class);
 	}
@@ -70,13 +69,16 @@ public class SolrProdService {
 		}
 		return null;
 	}
-	
+
 	public SolrItemDTO getItem(String id) {
 		SolrQuery query = new SolrQuery();
 		query.setQuery("id:" + id);
 		try {
 			QueryResponse rsp = solrServer.query(query);
-			return rsp.getBeans(SolrItemDTO.class).get(0);
+			List<SolrItemDTO> items = rsp.getBeans(SolrItemDTO.class);
+			if (!items.isEmpty()) {
+				return items.get(0);
+			} 
 		} catch (SolrServerException e) {
 			LOGGER.error("Failed to search by id.", e);
 		}

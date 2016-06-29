@@ -14,7 +14,7 @@ public class QueryRepository {
 	private Map<Integer, String> queries;
 	
 	@PostConstruct
-	private void loadAllQueries() {
+	public void loadAllQueries() {
 		queries = KeywordParser.parseAll();
 	}
 	

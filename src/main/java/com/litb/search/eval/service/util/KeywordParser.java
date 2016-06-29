@@ -1,50 +1,43 @@
 package com.litb.search.eval.service.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
+import com.litb.search.eval.repository.QueryType;
+
 public class KeywordParser {
 
 	private static final Logger LOGGER = Logger.getLogger(KeywordParser.class);
-	
-	public enum QueryType {
-		TOP("top_queries.txt"), BAD("bad_queries.txt"), MISSPELL("mispell_queriex.txt"), SYNM("synm_queries.txt");
-		
-		String fileName;
-		
-		QueryType(String fileName) {
-			this.fileName = fileName;
-		}
-	}
 
 	public static Map<Integer, String> parseAll() {
 		Map<Integer, String> queries = new TreeMap<>();
-		queries.putAll(parse(QueryType.TOP.fileName));
-		queries.putAll(parse(QueryType.BAD.fileName));
-//		queries.putAll(parse(QueryType.MISSPELL.fileName));
-//		queries.putAll(parse(QueryType.SYNM.fileName));
-		
+		queries.putAll(parse(QueryType.TOP.getFileName()));
+		queries.putAll(parse(QueryType.BAD.getFileName()));
+		// queries.putAll(parse(QueryType.MISSPELL.fileName));
+		// queries.putAll(parse(QueryType.SYNM.fileName));
+
 		return queries;
 	}
 
 	public static Map<Integer, String> parse(String fileName) {
-		File file = new File(KeywordParser.class.getClassLoader().getResource(fileName).getFile());
+		LOGGER.info("Loading queries in: " + fileName);
 		Map<Integer, String> queries = new TreeMap<>();
-		if (file.exists()) {
-			try (Scanner scanner = new Scanner(file)) {
-				while (scanner.hasNextLine()) {
-					StringTokenizer st = new StringTokenizer(scanner.nextLine(), "\t");
-					queries.put(Integer.valueOf(st.nextToken()),st.nextToken());
-				}
-			} catch (FileNotFoundException e) {
-				LOGGER.error("File " + fileName + " not exist.", e);
+		String line = null;
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(KeywordParser.class.getClassLoader().getResourceAsStream(fileName)))) {
+			while ((line = br.readLine()) != null) {
+				StringTokenizer st = new StringTokenizer(line, "\t");
+				queries.put(Integer.valueOf(st.nextToken()), st.nextToken());
 			}
+		} catch (NumberFormatException | IOException e) {
+			LOGGER.error("Failed to parse file " + fileName + ".", e);
+
 		}
 		return queries;
 	}

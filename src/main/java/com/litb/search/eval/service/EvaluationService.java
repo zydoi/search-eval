@@ -3,7 +3,6 @@ package com.litb.search.eval.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.slf4j.Logger;
@@ -35,41 +34,56 @@ public class EvaluationService {
 	@Value("${search.size}")
 	private int maxSize;
 	
+	@Value("${quary.eval}")
+	private String queryIDs;
+	
 	@Autowired
 	private QueryRepository queryRepo;
 	
 	public Map<String, Double> map() {
 		Map<String, Double> scores = new HashMap<>();
 		double map = 0;
-		Map<Integer, String> queries = queryRepo.getAllQueries();
-		
-		for (Entry<Integer, String> queryEntry : queries.entrySet()) {
+		String[] qids = queryIDs.split(",");
+		for (String qid : qids) {
 			double ap = 0;
 			int n = 0; // total items 
 			double r = 0; // relevant items
-			List<String> ids = litbService.search(queryEntry.getValue()).getInfo().getItems();
-			List<SolrItemDTO> items = evalService.getItemRelevance(ids);
+			String query = queryRepo.getQueryByID(qid);
+			List<String> ids = litbService.search(query).getInfo().getItems();
+			List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, maxSize);
 			for (int i = 0; i < Math.min(maxSize, items.size()); i++) {
 				n++;
 				SolrItemDTO item = items.get(i);
-				int annotate = item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryEntry.getKey());
+				int annotate = item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + qid);
 				if (annotate > 0) {
 					r++;
 					ap += r/n;
 					// TODO break, if all relevant items are included
 				}
 			}
-			scores.put(queryEntry.getValue(), ap);
-			LOGGER.info("Average Precision for the query '" + queryEntry.getValue() + "' is: " + ap);
+			scores.put(query, ap);
+			LOGGER.info("Average Precision for the query(" + qid + ") '" + query + "' is: " + ap);
 			map += ap;
 		}
-		scores.put("map", map / queries.size());
+		map = map / qids.length;
+		scores.put("map", map);
 		
-		LOGGER.info("Solr Search Engine Mean Average Precision (MAP): " + map);
+		LOGGER.info("Search Engine Mean Average Precision (MAP): " + map);
 		return scores;
 	}
 
-	public String pn(String query) {
-		return null;
+	public double pn(String queryID, int n) {
+		String query = queryRepo.getQueryByID(queryID);
+		List<String> ids = litbService.search(query).getInfo().getItems();
+		List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, n);
+		double r = 0;
+		for (SolrItemDTO item : items) {
+			if (item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID) > 0) {
+				r++;
+			} 
+		}
+		
+		int total = Math.min(n, items.size());
+		return r / total;
 	}
 }

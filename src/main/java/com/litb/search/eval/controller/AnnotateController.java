@@ -39,7 +39,7 @@ public class AnnotateController {
 	}
 
 	@RequestMapping(value = { "/", "/select" }, method = RequestMethod.GET)
-	public String selectQuery(@RequestParam(required = false) String annotator, Model model, HttpSession session) {
+	public String selectQuery(@RequestParam(required = false) String annotator, HttpSession session) {
 		if (annotator != null) {
 			session.setAttribute("annotator", annotator);
 		}

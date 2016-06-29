@@ -17,7 +17,7 @@ public class SolrProdServiceTest {
 	
 	@Test
 	public void test() {
-		service.getItem("123");
+//		service.getItem("123");
 	}
 	
 

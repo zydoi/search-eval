@@ -5,7 +5,6 @@
 5	wallpaper
 6	jumpsuit
 7	nike shoes
-8	jumpsuit
 9	iphone 6
 10	sun glasses
 11	ballroom dance shoes

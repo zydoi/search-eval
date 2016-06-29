@@ -35,7 +35,7 @@ public class AnnotateService {
 	public void annotate(String annotator, String queryID, Set<Integer> ids) {
 		String query = queries.getQueryByID(queryID);
 		StringBuilder sb = new StringBuilder("Annotator: ");
-		sb.append(annotator).append(", Query: ").append(query).append(", ids: ");
+		sb.append(annotator).append(", Query: ").append(query).append("(").append(queryID).append("), ids: ");
 		
 		Set<SolrInputDocument> docs = new HashSet<>();
 		Map<String, Object> queryInc = new HashMap<>();
@@ -49,6 +49,7 @@ public class AnnotateService {
 			doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID, queryInc);
 			docs.add(doc);
 		}
+		sb.append("; total: ").append(ids.size());
 		
 		try {
 			solrServer.add(docs);

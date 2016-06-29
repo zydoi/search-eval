@@ -23,7 +23,7 @@ public class SolrEvalServiceTest {
 	public void test() {
 		List<String> ids = new ArrayList<>();
 		ids.add("4489703");
-		List<SolrItemDTO> items = service.getItemRelevance(ids);
+		List<SolrItemDTO> items = service.getItemWithRelevance(ids, 10);
 		System.out.println("Item name:" + items.get(0).getName());
 		System.out.println("Query relevance:" + items.get(0).getQuery("query_1"));
 	}

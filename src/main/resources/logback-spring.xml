@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
 <configuration>
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
 	<logger name="org.springframework.web" level="info" />
@@ -6,7 +7,7 @@
 
 	<appender name="ANNOTATION"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>solr-eval.log</file>
+		<file>${user.home}/solr-eval.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>
 				%d{yyyy-MM-dd HH:mm:ss} - %msg%n

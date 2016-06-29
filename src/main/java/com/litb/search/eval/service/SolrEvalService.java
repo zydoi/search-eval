@@ -77,11 +77,11 @@ public class SolrEvalService {
 		return null;
 	}
 
-	public List<SolrItemDTO> getItemRelevance(Collection<String> ids) {
+	public List<SolrItemDTO> getItemWithRelevance(Collection<String> ids, int size) {
 		SolrQuery query = new SolrQuery();
 		query.setQuery(SolrQueryUtils.concatIDs(ids));
 		query.setFields("id", "query_*");
-		query.setRows(querySize);
+		query.setRows((size > 0) ? size : querySize);
 		try {
 			QueryResponse rsp = solrServer.query(query);
 			return rsp.getBeans(SolrItemDTO.class);
