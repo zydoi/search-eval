@@ -17,7 +17,6 @@ public class EvaluationServiceTest {
 	
 	@Test
 	public void test() {
-		System.out.println("### Query P@10: " + service.pn("1", 10));
-		System.out.println("###" + service.map().get("map"));
+		System.out.println("### MAP: " + service.generateEvaluationResult());
 	}
 }
