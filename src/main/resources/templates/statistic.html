@@ -6,10 +6,25 @@
 </head>
 <body>
 	<h2>Results:</h2>
-	<div id="results">
-		<div></div>
-			
-	</div>
 	
+	<table>
+		<thead>
+			<tr>
+				<th>Query</th>
+				<th>P@10</th>
+				<th>P@48</th>
+				<th>Average Precision</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="queryResult: ${queryResults}">
+				<td th:text="${queryResult.key}" />
+				<td th:text="${queryResult.value.ap}" />
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr> <th>Mean Average Precision:</th> <th th:text="${map}" /></tr>
+		</tfoot>
+	</table>
 </body>
 </html>
