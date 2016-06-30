@@ -24,9 +24,22 @@ label {
 	margin-bottom: 5px;
 }
 
+.product-image {
+	position:absolute;
+	display: inline;
+}
+
 .item-img {
 	width: 180px;
 	height: 240px;
+}
+
+.new-img {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	top: 0px;
+	right: 0px;
 }
 
 .caption {

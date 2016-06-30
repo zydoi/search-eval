@@ -30,13 +30,16 @@
 			<input class="hide" type="text" th:value="${annotateDTO.annotator}" th:field="*{annotator}" />
 			<div class="thumbnail" th:each="item:${items.info.items}" >
 	        	<div class="product-image">
-	            	<a th:href="${item.itemURL}"><img class="item-img" th:src="${item.cateShowImgs.grid.rectangle}" alt="" /></a>
+	            	<a th:href="${item.itemURL}">
+	            		<img class="item-img" th:src="${item.cateShowImgs.grid.rectangle}" alt="" />
+	            		<img class="new-img" src="/images/new_product.gif" alt="" />
+	            	</a>
 	            </div>
 	           	<div class="caption">
 	           		<div class="item-name"  th:text="${item.itemName}" />
 	            	<div class="item-line-wrap">
 	                	<span class="item-reviews">
-		            			<img class="stars-img" src="/images/stars.png"/>
+		            		<img class="stars-img" src="/images/stars.png"/>
 		            		<span class="review-count" th:text="'(' + ${item.reviewCount} + ')'" />
 		            		<img class="fav-img" src="/images/fav.ico"/>
 		            		

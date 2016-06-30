@@ -59,7 +59,7 @@ public class EvaluationService {
 			String query = queryRepo.getQueryByID(qid);
 			queryResult.setQueryName(query);
 			
-			List<String> ids = litbService.search(query).getInfo().getItems();
+			List<String> ids = litbService.search(query, true).getInfo().getItems();
 			List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, maxSize);
 			for (int i = 0; i < Math.min(maxSize, items.size()); i++) {
 				n++;
@@ -142,7 +142,7 @@ public class EvaluationService {
 		nums.add(20);
 		nums.add(48);
 		String query = queryRepo.getQueryByID(queryID);
-		List<String> ids = litbService.search(query).getInfo().getItems();
+		List<String> ids = litbService.search(query, true).getInfo().getItems();
 		List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, 48);
 		double r = 0;
 		int i = 0;

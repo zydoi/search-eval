@@ -50,6 +50,8 @@ public class ItemDTO {
 	@JsonProperty("item_id")
 	private String itemId;
 	
+	private boolean isNew;
+	
 	private String currency;
 	
 	private String masterCategoryId;
@@ -192,5 +194,13 @@ public class ItemDTO {
 
 	public void setShowImgURL(String showImgURL) {
 		this.showImgURL = showImgURL;
+	}
+
+	public boolean isNew() {
+		return isNew;
+	}
+
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
 	}
 }
