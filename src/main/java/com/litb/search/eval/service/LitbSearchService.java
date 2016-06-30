@@ -25,6 +25,14 @@ public class LitbSearchService {
 	@Autowired
 	private Environment environment;
 
+	public SearchResultDTO search(String keywords) {
+		return search(keywords, false);
+	}
+	
+	public ItemsResultDTO getItems(String keywords) {
+		return getItems(keywords, false);
+	}
+	
 	public SearchResultDTO search(String keywords, boolean isEval) {
 		String url = isEval ? environment.getProperty("litb.eval.api") : environment.getProperty("litb.eval.api");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "keywordSearch")

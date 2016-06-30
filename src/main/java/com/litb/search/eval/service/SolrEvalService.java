@@ -1,6 +1,7 @@
 package com.litb.search.eval.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +15,8 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -109,7 +112,7 @@ public class SolrEvalService {
 
 			for (SolrItemDTO item : items) {
 				SolrInputDocument doc = new SolrInputDocument();
-				
+
 				doc.addField("id", item.getId());
 				doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID, queryReset);
 				docs.add(doc);
@@ -121,5 +124,39 @@ public class SolrEvalService {
 				LOGGER.error("Failed to clear query relevance.", e);
 			}
 		}
+	}
+
+	public List<String> getIDs(Collection<?> ids) {
+		SolrQuery query = new SolrQuery();
+		query.setQuery(SolrQueryUtils.concatIDs(ids));
+		query.setRows(ids.size());
+		query.setFields("id");
+		try {
+			QueryResponse rsp = solrServer.query(query);
+			SolrDocumentList docs = rsp.getResults();
+			List<String> results = new ArrayList<>();
+			for (SolrDocument doc : docs) {
+				results.add((String) doc.getFieldValue("id"));
+			}
+			return results;
+
+		} catch (SolrServerException e) {
+			LOGGER.error("Failed to get ids.", e);
+		}
+		return new ArrayList<>();
+	}
+
+	public List<String> getNonExsitIDs(Collection<?> ids) {
+		List<String> results = new ArrayList<>();
+		List<String> existIDs = getIDs(ids);
+		if (existIDs.size() == ids.size()) {
+			return results;
+		}
+		for (Object id : ids) {
+			if (!existIDs.contains(String.valueOf(id))) {
+				results.add(String.valueOf(id));
+			}
+		}
+		return results;
 	}
 }

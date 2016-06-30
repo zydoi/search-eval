@@ -6,9 +6,9 @@ public final class SolrQueryUtils {
 	
 	public static final String QUERY_RELEVANCE_PRIFIX = "query_";
 	
-	public static String concatIDs(Collection<String> ids) {
+	public static String concatIDs(Collection<?> ids) {
 		StringBuilder q = new StringBuilder("id:(");
-		for (String id : ids) {
+		for (Object id : ids) {
 			q.append(id).append(" ");
 		}
 		q.append(")");

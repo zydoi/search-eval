@@ -3,6 +3,7 @@ package com.litb.search.eval.service;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +33,19 @@ public class AnnotateService {
 	@Autowired
 	private QueryRepository queries;
 	
+	@Autowired
+	private SolrEvalService evalService;
+	
+	@Autowired
+	private SolrProdService prodService;
+	
 	public void annotate(String annotator, String queryID, Set<Integer> ids) {
+		// make sure all items have been indexed
+		
+		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
+		evalService.addItems(prodService.getItems(nonExsitIDs));
+		LOGGER.info("Indexed new items: " + SolrQueryUtils.concatIDs(nonExsitIDs));
+		
 		String query = queries.getQueryByID(queryID);
 		StringBuilder sb = new StringBuilder("Annotator: ");
 		sb.append(annotator).append(", Query: ").append(query).append("(").append(queryID).append("), ids: ");
