@@ -36,13 +36,13 @@ public class TestController {
 	
 	@RequestMapping(value="testSearch", method=RequestMethod.GET, produces="application/json")
 	public SearchResultDTO search(@RequestParam String keywords) {
-		SearchResultDTO result = litbService.search(keywords);
+		SearchResultDTO result = litbService.search(keywords, false);
 		return result;
 	}
 	
 	@RequestMapping(value="testItemsGet", method=RequestMethod.GET, produces="application/json")
 	public ItemsResultDTO itemsGet(@RequestParam String keywords) {
-		return litbService.getItems(keywords);
+		return litbService.getItems(keywords, false);
 	}
 	
 	@RequestMapping(value="solr", method=RequestMethod.GET, produces="application/json")

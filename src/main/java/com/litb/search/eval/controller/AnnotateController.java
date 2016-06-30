@@ -53,7 +53,7 @@ public class AnnotateController {
 		}
 		LOGGER.info(session.getAttribute("annotator") + " start to annotate items for query: " + keywordService.getQueryByID(queryID));
 		String query = keywordService.getQueryByID(queryID);
-		ItemsResultDTO items = litbService.getItems(query);
+		ItemsResultDTO items = litbService.getItems(query, true);
 		
 		model.addAttribute("query", query);
 		model.addAttribute("items", items);

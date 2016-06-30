@@ -38,7 +38,7 @@ public class IndexController {
 
 	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
 	public String indexQuery(@RequestParam String query) {
-		SearchResultDTO result = litbService.search(query);
+		SearchResultDTO result = litbService.search(query, false);
 		List<String> ids = result.getInfo().getItems();
 		List<SolrItemDTO> items = searchService.getItems(ids);
 		indexService.addItems(items);
@@ -53,7 +53,7 @@ public class IndexController {
 		Map<Integer, String> queries = keywordService.getAllQueries();
 		for (String query : queries.values()) {
 			LOGGER.info("Start indexing query: " + query);
-			SearchResultDTO result = litbService.search(query);
+			SearchResultDTO result = litbService.search(query, false);
 			List<String> ids = result.getInfo().getItems();
 			List<SolrItemDTO> items = searchService.getItems(ids);
 			indexService.addItems(items);

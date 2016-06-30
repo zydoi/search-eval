@@ -25,9 +25,9 @@ public class LitbSearchService {
 	@Autowired
 	private Environment environment;
 
-	public SearchResultDTO search(String keywords) {
-
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(environment.getProperty("litb.api") + "keywordSearch")
+	public SearchResultDTO search(String keywords, boolean isEval) {
+		String url = isEval ? environment.getProperty("litb.eval.api") : environment.getProperty("litb.eval.api");
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "keywordSearch")
 				.queryParam("app_key", "FIQ79MXR")
 				.queryParam("app_secret", "606caa95b19bc709syqx9cpl72kmmnzy")
 				.queryParam("cid", "0")
@@ -48,8 +48,9 @@ public class LitbSearchService {
 		return restTemplate.getForObject(uri, SearchResultDTO.class);
 	}
 
-	public ItemsResultDTO getItems(String keywords) {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(environment.getProperty("litb.vela.api"))
+	public ItemsResultDTO getItems(String keywords, boolean isEval) {
+		String url = isEval ? environment.getProperty("litb.vela.eval.api") : environment.getProperty("litb.vela.api");
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
 				.queryParam("client", "vela")
 				.queryParam("format", "json")
 				.queryParam("method", "vela.items.get")

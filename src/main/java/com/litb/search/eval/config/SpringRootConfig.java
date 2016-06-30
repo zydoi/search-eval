@@ -26,13 +26,11 @@ public class SpringRootConfig {
 	
 	@Bean(name="SolrProdServer")
 	public SolrServer getSolrProdServer() {
-		SolrServer solrServer = new HttpSolrServer(env.getProperty("solr.prod.url"));
-		return solrServer;
+		return new HttpSolrServer(env.getProperty("solr.prod.url"));
 	}
 
 	@Bean(name="SolrEvalServer")
 	public SolrServer getSolrEvalServer() {
-		SolrServer solrServer = new HttpSolrServer(env.getProperty("solr.eval.url"));
-		return solrServer;
+		return new HttpSolrServer(env.getProperty("solr.eval.url"));
 	}
 }
