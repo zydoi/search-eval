@@ -1,5 +1,7 @@
 package com.litb.search.eval.controller;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -14,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.litb.search.eval.dto.AnnotateDTO;
+import com.litb.search.eval.dto.ItemDTO;
 import com.litb.search.eval.dto.ItemsResultDTO;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.AnnotateService;
 import com.litb.search.eval.service.LitbSearchService;
+import com.litb.search.eval.service.SolrEvalService;
+import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Controller
 public class AnnotateController {
@@ -32,6 +37,9 @@ public class AnnotateController {
 	
 	@Autowired
 	private AnnotateService annotateService;
+	
+	@Autowired
+	private SolrEvalService evalService;
 
 	@ModelAttribute("queries")
 	public Map<Integer, String> populateQueries() {
@@ -47,7 +55,7 @@ public class AnnotateController {
 	}
 
 	@RequestMapping(value = "/itemlist", method = RequestMethod.GET)
-	public String selectQuery(@RequestParam String queryID, @RequestParam(required = false) String annotator, Model model, HttpSession session) {
+	public String selectQuery(@RequestParam String queryID, @RequestParam(defaultValue="false") boolean onlyNew, @RequestParam(required = false) String annotator, Model model, HttpSession session) {
 		if (annotator != null) {
 			session.setAttribute("annotator", annotator);
 		}
@@ -55,6 +63,22 @@ public class AnnotateController {
 		String query = keywordService.getQueryByID(queryID);
 		ItemsResultDTO items = litbService.getItems(query, true);
 		
+		List<String> ids = items.getInfo().getProductsList();
+		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
+		
+		if (!nonExsitIDs.isEmpty()) {
+			Iterator<ItemDTO> iter = items.getInfo().getItems().iterator();
+			while (iter.hasNext()) {
+				ItemDTO item = iter.next();
+				if(nonExsitIDs.contains(item.getItemId())) {
+					item.setNew(true);
+				} else if (onlyNew) {
+					iter.remove();
+				}
+			}
+			LOGGER.info("New items for query {" + query + "}: " + SolrQueryUtils.concatIDs(nonExsitIDs));
+		}
+
 		model.addAttribute("query", query);
 		model.addAttribute("items", items);
 		model.addAttribute("name", annotator);

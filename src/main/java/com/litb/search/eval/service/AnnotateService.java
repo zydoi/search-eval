@@ -35,16 +35,20 @@ public class AnnotateService {
 	
 	@Autowired
 	private SolrEvalService evalService;
-	
+
 	@Autowired
 	private SolrProdService prodService;
 	
 	public void annotate(String annotator, String queryID, Set<Integer> ids) {
+		if (ids == null || ids.isEmpty()) {
+			return;
+		}
 		// make sure all items have been indexed
-		
 		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
-		evalService.addItems(prodService.getItems(nonExsitIDs));
-		LOGGER.info("Indexed new items: " + SolrQueryUtils.concatIDs(nonExsitIDs));
+		if (!nonExsitIDs.isEmpty()) {
+			evalService.addItems(prodService.getItems(nonExsitIDs));
+			LOGGER.info("Indexed new items: " + SolrQueryUtils.concatIDs(nonExsitIDs));
+		}
 		
 		String query = queries.getQueryByID(queryID);
 		StringBuilder sb = new StringBuilder("Annotator: ");
@@ -53,6 +57,8 @@ public class AnnotateService {
 		Set<SolrInputDocument> docs = new HashSet<>();
 		Map<String, Object> queryInc = new HashMap<>();
 		queryInc.put("inc", 1);
+		Map<String, Object> setNotNew = new HashMap<>();
+		setNotNew.put("set", false);
 
 		for (int id : ids) {
 			sb.append(id).append(",");
@@ -60,6 +66,7 @@ public class AnnotateService {
 			SolrInputDocument doc = new SolrInputDocument();
 			doc.addField("id", id);
 			doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID, queryInc);
+			doc.addField("is_new", setNotNew);
 			docs.add(doc);
 		}
 		sb.append("; total: ").append(ids.size());

@@ -7,6 +7,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.litb.search.eval.App;
+import com.litb.search.eval.repository.QueryType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(App.class)
@@ -17,6 +18,6 @@ public class EvaluationServiceTest {
 	
 	@Test
 	public void test() {
-		System.out.println("### MAP: " + service.generateEvaluationResult());
+		System.out.println("### MAP: " + service.generateEvaluationResult(QueryType.BAD));
 	}
 }

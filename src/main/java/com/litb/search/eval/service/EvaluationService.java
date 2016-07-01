@@ -1,5 +1,6 @@
 package com.litb.search.eval.service;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import com.litb.search.eval.dto.EvalResultDTO;
 import com.litb.search.eval.dto.QueryEvalResultDTO;
 import com.litb.search.eval.dto.SolrItemDTO;
 import com.litb.search.eval.repository.QueryRepository;
+import com.litb.search.eval.repository.QueryType;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service
@@ -42,15 +44,21 @@ public class EvaluationService {
 	@Value("${quary.eval}")
 	private String queryIDs;
 	
+	@Value("${quary.top.eval}")
+	private String topQueryIDs;
+
+	@Value("${quary.bad.eval}")
+	private String badQueryIDs;
+	
 	@Autowired
 	private QueryRepository queryRepo;
 	
 	private List<Integer> nums = Arrays.asList(10, 20, 48);
 	
-	public EvalResultDTO generateEvaluationResult() {
+	public EvalResultDTO generateEvaluationResult(QueryType type) {
 		EvalResultDTO result = new EvalResultDTO();
 		double map = 0;
-		List<String> qids = getEvalQueryIDs();
+		List<String> qids = getEvalQueryIDs(type);
 		for (String qid : qids) {
 			QueryEvalResultDTO queryResult = new QueryEvalResultDTO(qid);
 			double ap = 0; // average precision
@@ -76,6 +84,7 @@ public class EvaluationService {
 					// TODO break, if all relevant items are included
 				}
 			}
+			ap = ap / r;
 			queryResult.setAp(ap);
 			result.addQueryResult(queryResult);
 			LOGGER.info("Average Precision for the query(" + qid + ") '" + query + "' is: " + ap);
@@ -88,10 +97,10 @@ public class EvaluationService {
 		return result;
 	}
 	
-	public Map<String, Double> map() {
+	public Map<String, Double> map(QueryType type) {
 		Map<String, Double> scores = new HashMap<>();
 		double map = 0;
-		List<String> qids = getEvalQueryIDs();
+		List<String> qids = getEvalQueryIDs(type);
 		for (String qid : qids) {
 			double ap = 0;
 			int n = 0; // total items 
@@ -110,7 +119,8 @@ public class EvaluationService {
 				}
 			}
 			scores.put(query, ap);
-			LOGGER.info("Average Precision for the query(" + qid + ") '" + query + "' is: " + ap);
+			DecimalFormat formatter = new DecimalFormat("#0.000");
+			LOGGER.info("Average Precision for the query(" + qid + ") '" + query + "' is: " +  formatter.format(ap));
 			map += ap;
 		}
 		map = map / qids.size();
@@ -159,8 +169,19 @@ public class EvaluationService {
 		return results;
 	}
 	
-	public List<String> getEvalQueryIDs() {
-		String[] qids = queryIDs.split(",");
+	public List<String> getEvalQueryIDs(QueryType type) {
+		String[] qids;
+		switch (type) {
+		case TOP:
+			qids = topQueryIDs.split(",");
+			break;
+		case BAD:
+			qids = badQueryIDs.split(",");
+			break;
+		default:
+			qids = queryIDs.split(",");
+			break;
+		} 
 		return Arrays.asList(qids);
 	}
 }

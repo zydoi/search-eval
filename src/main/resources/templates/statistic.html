@@ -1,30 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8" />
-<title>Search Engin Evaluation Report</title>
+	<meta charset="UTF-8" />
+	<title>Search Engine Evaluation Report</title>
+    <link rel="stylesheet" type="text/css" href="/css/statistic.css"/>
 </head>
 <body>
-	<h2>Results:</h2>
+	<div class="chooseQuery">
+		<form action="#" th:action="@{/eval}" method="get">
+			<label th:text="'Query Type: '"/>
+			<select id="queryType" name="queryType" >
+				<option th:each="type : ${types}" 
+						th:value="${type}"
+						th:text="${type}"/>
+			</select>
+			<button type="submit" th:text="ok" />
+		</form>
+	</div>
+
+	<h3>Results:</h3>
 	
-	<table>
+	<table id="result">
 		<thead>
 			<tr>
-				<th>Query</th>
-				<th>P@10</th>
-				<th>P@48</th>
-				<th>Average Precision</th>
+				<th id="id">ID</th>
+				<th id="name">Query</th>
+				<th id="p10">P@10</th>
+				<th id="p48">P@48</th>
+				<th id="ap">AP</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr th:each="queryResult: ${queryResults}">
 				<td th:text="${queryResult.key}" />
-				<td th:text="${queryResult.value.ap}" />
+				<td th:text="${queryResult.value.queryName}" />
+				<td class="num" th:text="${#numbers.formatDecimal(queryResult.value.precisions[10], 1, 1)}" />
+				<td class="num" th:text="${#numbers.formatDecimal(queryResult.value.precisions[48], 1, 3)}" />
+				<td class="num" th:text="${#numbers.formatDecimal(queryResult.value.ap, 1, 3)}" />
 			</tr>
 		</tbody>
 		<tfoot>
-			<tr> <th>Mean Average Precision:</th> <th th:text="${map}" /></tr>
+			<tr><th colspan="5" th:text="'Mean Average Precision:' + ${#numbers.formatDecimal(map, 1, 4)}" /></tr>
 		</tfoot>
 	</table>
+	
+	<div id="explain">
+		*TOP: choosen from the top keywords of LITB website. <br/>
+		*BAD: choosen from the online keywords which have a pool CTR.
+	</div>
 </body>
 </html>
