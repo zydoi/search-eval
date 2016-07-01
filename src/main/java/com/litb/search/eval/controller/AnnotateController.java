@@ -82,16 +82,15 @@ public class AnnotateController {
 		model.addAttribute("query", query);
 		model.addAttribute("items", items);
 		model.addAttribute("name", annotator);
-		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID));
+		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID, ids));
 		
 		return "items";
 	}
 	
 	@RequestMapping(value = "/annotate", method = RequestMethod.POST)
 	public String annotate(AnnotateDTO annotateDTO) {
+		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids(), annotateDTO.getRelevantPids());
 		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query: " + keywordService.getQueryByID(annotateDTO.getQueryID()));
-
-		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids());
 
 		return "items";
 	}

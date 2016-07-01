@@ -1,6 +1,8 @@
 package com.litb.search.eval.dto;
 
+import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class AnnotateDTO {
 
@@ -8,14 +10,17 @@ public class AnnotateDTO {
 	
 	private String queryID;
 
-
-	private Set<Integer> pids;
+	private Set<String> relevantPids;
+	
+	private Set<String> pids;
 
 	public AnnotateDTO() {}
 	
-	public AnnotateDTO(String annotator, String queryID) {
+	public AnnotateDTO(String annotator, String queryID, Collection<String> pids) {
 		this.annotator = annotator;
 		this.queryID = queryID;
+		this.pids = new TreeSet<>();
+		this.pids.addAll(pids);
 	}
 	
 	public String getAnnotator() {
@@ -26,11 +31,11 @@ public class AnnotateDTO {
 		this.annotator = annotator;
 	}
 
-	public Set<Integer> getPids() {
+	public Set<String> getPids() {
 		return pids;
 	}
 
-	public void setPids(Set<Integer> pids) {
+	public void setPids(Set<String> pids) {
 		this.pids = pids;
 	}
 	
@@ -40,5 +45,13 @@ public class AnnotateDTO {
 
 	public void setQueryID(String queryID) {
 		this.queryID = queryID;
+	}
+
+	public Set<String> getRelevantPids() {
+		return relevantPids;
+	}
+
+	public void setRelevantPids(Set<String> relevantPids) {
+		this.relevantPids = relevantPids;
 	}
 }

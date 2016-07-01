@@ -39,15 +39,16 @@ public class AnnotateService {
 	@Autowired
 	private SolrProdService prodService;
 	
-	public void annotate(String annotator, String queryID, Set<Integer> ids) {
-		if (ids == null || ids.isEmpty()) {
-			return;
-		}
+	public void annotate(String annotator, String queryID, Set<String> ids, Set<String> relevantIDs) {
 		// make sure all items have been indexed
 		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
 		if (!nonExsitIDs.isEmpty()) {
 			evalService.addItems(prodService.getItems(nonExsitIDs));
 			LOGGER.info("Indexed new items: " + SolrQueryUtils.concatIDs(nonExsitIDs));
+		}
+		
+		if (relevantIDs == null || relevantIDs.isEmpty()) {
+			return;
 		}
 		
 		String query = queries.getQueryByID(queryID);
@@ -60,7 +61,7 @@ public class AnnotateService {
 		Map<String, Object> setNotNew = new HashMap<>();
 		setNotNew.put("set", false);
 
-		for (int id : ids) {
+		for (String id : relevantIDs) {
 			sb.append(id).append(",");
 
 			SolrInputDocument doc = new SolrInputDocument();
@@ -69,7 +70,7 @@ public class AnnotateService {
 			doc.addField("is_new", setNotNew);
 			docs.add(doc);
 		}
-		sb.append("; total: ").append(ids.size());
+		sb.append("; total: ").append(relevantIDs.size());
 		
 		try {
 			solrServer.add(docs);

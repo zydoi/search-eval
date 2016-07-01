@@ -33,6 +33,7 @@ public class EvaluateController {
 		
 		modelAndView.addObject("queryResults", result.getQueryEvalResults());
 		modelAndView.addObject("types", types);
+		modelAndView.addObject("queryType", queryType);
 		modelAndView.addObject("map", result.getMap());
 		
 		return modelAndView;

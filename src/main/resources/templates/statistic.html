@@ -12,7 +12,8 @@
 			<select id="queryType" name="queryType" >
 				<option th:each="type : ${types}" 
 						th:value="${type}"
-						th:text="${type}"/>
+						th:text="${type}"
+						th:selected="(${type} == ${queryType})"/>
 			</select>
 			<button type="submit" th:text="ok" />
 		</form>

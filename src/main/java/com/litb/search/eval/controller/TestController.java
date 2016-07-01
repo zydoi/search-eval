@@ -36,13 +36,13 @@ public class TestController {
 	
 	@RequestMapping(value="testSearch", method=RequestMethod.GET, produces="application/json")
 	public SearchResultDTO search(@RequestParam String keywords) {
-		SearchResultDTO result = litbService.search(keywords, false);
+		SearchResultDTO result = litbService.search(keywords, 100);
 		return result;
 	}
 	
 	@RequestMapping(value="testItemsGet", method=RequestMethod.GET, produces="application/json")
 	public ItemsResultDTO itemsGet(@RequestParam String keywords) {
-		return litbService.getItems(keywords, false);
+		return litbService.getItems(keywords);
 	}
 	
 	@RequestMapping(value="solr", method=RequestMethod.GET, produces="application/json")
@@ -59,9 +59,9 @@ public class TestController {
 	
 	@RequestMapping(value="testAnnotate", method=RequestMethod.GET)
 	public String annotate(@RequestParam String id) {
-		Set<Integer> ids = new HashSet<>();
-		ids.add(Integer.valueOf(id));
-		annotateService.annotate("me", "dresses", ids);
+		Set<String> ids = new HashSet<>();
+		ids.add(id);
+		annotateService.annotate("me", "dresses", ids, ids);
 		return "done";
 	}
 }

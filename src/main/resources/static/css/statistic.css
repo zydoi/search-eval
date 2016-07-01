@@ -33,6 +33,7 @@ tfoot th {
 #explain {
 	position:relative;
 	top:50px;
+	left:5px;
 	color: red;
 	font-size: 11px;
 }

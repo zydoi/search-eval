@@ -37,7 +37,7 @@ public class EvaluationService {
 	
 	@Autowired
 	private LitbSearchService litbService;
-	
+
 	@Value("${search.size}")
 	private int maxSize;
 	
@@ -62,26 +62,25 @@ public class EvaluationService {
 		for (String qid : qids) {
 			QueryEvalResultDTO queryResult = new QueryEvalResultDTO(qid);
 			double ap = 0; // average precision
-			int n = 0; // total items 
 			double r = 0; // relevant items
 			String query = queryRepo.getQueryByID(qid);
 			queryResult.setQueryName(query);
 			
-			List<String> ids = litbService.search(query, true).getInfo().getItems();
+			List<String> ids = litbService.search(query, maxSize, true).getInfo().getItems();
 			List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, maxSize);
-			for (int i = 0; i < Math.min(maxSize, items.size()); i++) {
-				n++;
-				if(nums.contains(n)) {
-					double p = r/n;
-					queryResult.addPrecision(n, p);
-				}
-				
+			int size =  Math.min(maxSize, items.size());
+			for (int i = 0; i < size; i++) {
+				int n = i + 1;
 				SolrItemDTO item = items.get(i);
 				int relevance = item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + qid);
 				if (relevance > 0) {
 					r++;
 					ap += r/n;
 					// TODO break, if all relevant items are included
+				}
+				if(nums.contains(n)) {
+					double p = r/n;
+					queryResult.addPrecision(n, p);
 				}
 			}
 			ap = ap / r;
@@ -106,7 +105,7 @@ public class EvaluationService {
 			int n = 0; // total items 
 			double r = 0; // relevant items
 			String query = queryRepo.getQueryByID(qid);
-			List<String> ids = litbService.search(query, true).getInfo().getItems();
+			List<String> ids = litbService.search(query, maxSize, true).getInfo().getItems();
 			List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, maxSize);
 			for (int i = 0; i < Math.min(maxSize, items.size()); i++) {
 				n++;
@@ -132,7 +131,7 @@ public class EvaluationService {
 
 	public double pn(String queryID, int n) {
 		String query = queryRepo.getQueryByID(queryID);
-		List<String> ids = litbService.search(query, true).getInfo().getItems();
+		List<String> ids = litbService.search(query, maxSize, true).getInfo().getItems();
 		List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, n);
 		double r = 0;
 		for (SolrItemDTO item : items) {
@@ -152,7 +151,7 @@ public class EvaluationService {
 		nums.add(20);
 		nums.add(48);
 		String query = queryRepo.getQueryByID(queryID);
-		List<String> ids = litbService.search(query, true).getInfo().getItems();
+		List<String> ids = litbService.search(query, maxSize, true).getInfo().getItems();
 		List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, 48);
 		double r = 0;
 		int i = 0;

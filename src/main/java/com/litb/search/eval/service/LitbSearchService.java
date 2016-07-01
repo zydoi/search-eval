@@ -25,15 +25,15 @@ public class LitbSearchService {
 	@Autowired
 	private Environment environment;
 
-	public SearchResultDTO search(String keywords) {
-		return search(keywords, false);
+	public SearchResultDTO search(String keywords, int size) {
+		return search(keywords, size, false);
 	}
 	
 	public ItemsResultDTO getItems(String keywords) {
 		return getItems(keywords, false);
 	}
 	
-	public SearchResultDTO search(String keywords, boolean isEval) {
+	public SearchResultDTO search(String keywords, int size, boolean isEval) {
 		String url = isEval ? environment.getProperty("litb.eval.api") : environment.getProperty("litb.eval.api");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "keywordSearch")
 				.queryParam("app_key", "FIQ79MXR")
@@ -48,7 +48,7 @@ public class LitbSearchService {
 				.queryParam("page_no", "1")
 				.queryParam("sid", "eval_123")
 				.queryParam("sort_by", "2d")
-				.queryParam("page_size", environment.getProperty("search.size"))
+				.queryParam("page_size", size)
 				.queryParam("query", keywords);
 
 		URI uri = builder.build().encode().toUri();

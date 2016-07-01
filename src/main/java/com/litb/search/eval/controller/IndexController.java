@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,10 +36,13 @@ public class IndexController {
 
 	@Autowired
 	private SolrEvalService indexService;
+	
+	@Value("${search.size}")
+	private int querySize;	
 
 	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
 	public String indexQuery(@RequestParam String query) {
-		SearchResultDTO result = litbService.search(query, false);
+		SearchResultDTO result = litbService.search(query, querySize);
 		List<String> ids = result.getInfo().getItems();
 		List<SolrItemDTO> items = searchService.getItems(ids);
 		indexService.addItems(items);
@@ -53,7 +57,7 @@ public class IndexController {
 		Map<Integer, String> queries = keywordService.getAllQueries();
 		for (String query : queries.values()) {
 			LOGGER.info("Start indexing query: " + query);
-			SearchResultDTO result = litbService.search(query, false);
+			SearchResultDTO result = litbService.search(query, querySize, false);
 			List<String> ids = result.getInfo().getItems();
 			List<SolrItemDTO> items = searchService.getItems(ids);
 			indexService.addItems(items);

@@ -30,6 +30,7 @@
 		<form action="#" th:action="@{/annotate}"  th:object="${annotateDTO}" method="post">
 			<input class="hide" type="text" th:value="${annotateDTO.queryID}" th:field="*{queryID}" />
 			<input class="hide" type="text" th:value="${annotateDTO.annotator}" th:field="*{annotator}" />
+			<input class="hide" type="text" th:value="${annotateDTO.pids}" th:field="*{pids}" />
 			<div class="thumbnail" th:each="item:${items.info.items}" >
 	        	<div class="product-image">
 	            	<a th:href="${item.itemURL}">
@@ -58,7 +59,7 @@
 	                
 	               	<div class="reference">
 	               		<span class="ref-txt" th:text="'Relevant:'" />
-						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{pids}"/>
+						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{relevantPids}"/>
 	                </div>
 	          	</div>
 	      	</div>
