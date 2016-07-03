@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.litb.search.eval.dto.ItemsResultDTO;
-import com.litb.search.eval.dto.SearchResultDTO;
+import com.litb.search.eval.dto.litb.ItemsResultDTO;
+import com.litb.search.eval.dto.litb.SearchResultDTO;
 
 @Service
 public class LitbSearchService {

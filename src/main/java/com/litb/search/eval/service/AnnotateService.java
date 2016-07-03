@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
@@ -31,7 +32,7 @@ public class AnnotateService {
 	private SolrServer solrServer;
 	
 	@Autowired
-	private QueryRepository queries;
+	private QueryRepository queryRepo;
 	
 	@Autowired
 	private SolrEvalService evalService;
@@ -39,7 +40,7 @@ public class AnnotateService {
 	@Autowired
 	private SolrProdService prodService;
 	
-	public void annotate(String annotator, String queryID, Set<String> ids, Set<String> relevantIDs) {
+	public void annotate(String annotator, int queryID, Set<String> ids, Set<String> relevantIDs) {
 		// make sure all items have been indexed
 		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
 		if (!nonExsitIDs.isEmpty()) {
@@ -51,7 +52,7 @@ public class AnnotateService {
 			return;
 		}
 		
-		String query = queries.getQueryByID(queryID);
+		EvalQuery query = queryRepo.findOne(queryID);
 		StringBuilder sb = new StringBuilder("Annotator: ");
 		sb.append(annotator).append(", Query: ").append(query).append("(").append(queryID).append("), ids: ");
 		

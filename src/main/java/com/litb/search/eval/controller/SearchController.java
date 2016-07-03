@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.litb.search.eval.dto.ItemsResultDTO;
+import com.litb.search.eval.dto.litb.ItemsResultDTO;
 import com.litb.search.eval.service.LitbSearchService;
 
 @Controller

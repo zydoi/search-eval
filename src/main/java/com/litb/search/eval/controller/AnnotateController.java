@@ -2,7 +2,6 @@ package com.litb.search.eval.controller;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -16,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.litb.search.eval.dto.AnnotateDTO;
-import com.litb.search.eval.dto.ItemDTO;
-import com.litb.search.eval.dto.ItemsResultDTO;
+import com.litb.search.eval.dto.litb.ItemDTO;
+import com.litb.search.eval.dto.litb.ItemsResultDTO;
+import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.AnnotateService;
 import com.litb.search.eval.service.LitbSearchService;
@@ -30,7 +30,7 @@ public class AnnotateController {
 	private static final Logger LOGGER = Logger.getLogger(AnnotateController.class);
 
 	@Autowired
-	private QueryRepository keywordService;
+	private QueryRepository queryRepo;
 
 	@Autowired
 	private LitbSearchService litbService;
@@ -42,8 +42,8 @@ public class AnnotateController {
 	private SolrEvalService evalService;
 
 	@ModelAttribute("queries")
-	public Map<Integer, String> populateQueries() {
-		return keywordService.getAllQueries();
+	public List<EvalQuery> populateQueries() {
+		return queryRepo.findByEffectiveTrue();
 	}
 
 	@RequestMapping(value = { "/", "/select" }, method = RequestMethod.GET)
@@ -55,13 +55,13 @@ public class AnnotateController {
 	}
 
 	@RequestMapping(value = "/itemlist", method = RequestMethod.GET)
-	public String selectQuery(@RequestParam String queryID, @RequestParam(defaultValue="false") boolean onlyNew, @RequestParam(required = false) String annotator, Model model, HttpSession session) {
+	public String selectQuery(@RequestParam int queryID, @RequestParam(defaultValue="false") boolean onlyNew, @RequestParam(required = false) String annotator, Model model, HttpSession session) {
 		if (annotator != null) {
 			session.setAttribute("annotator", annotator);
 		}
-		LOGGER.info(session.getAttribute("annotator") + " start to annotate items for query: " + keywordService.getQueryByID(queryID));
-		String query = keywordService.getQueryByID(queryID);
-		ItemsResultDTO items = litbService.getItems(query, true);
+		EvalQuery query = queryRepo.findOne(queryID);
+		LOGGER.info(session.getAttribute("annotator") + " start to annotate items for query: " + query);
+		ItemsResultDTO items = litbService.getItems(query.getName());
 		
 		List<String> ids = items.getInfo().getProductsList();
 		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
@@ -76,10 +76,12 @@ public class AnnotateController {
 					iter.remove();
 				}
 			}
-			LOGGER.info("New items for query {" + query + "}: " + SolrQueryUtils.concatIDs(nonExsitIDs));
+			if (!nonExsitIDs.isEmpty()) {
+				LOGGER.info("New items for query {" + query + "}: " + SolrQueryUtils.concatIDs(nonExsitIDs));
+			}
 		}
 
-		model.addAttribute("query", query);
+		model.addAttribute("query", query.getName());
 		model.addAttribute("items", items);
 		model.addAttribute("name", annotator);
 		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID, ids));
@@ -90,7 +92,7 @@ public class AnnotateController {
 	@RequestMapping(value = "/annotate", method = RequestMethod.POST)
 	public String annotate(AnnotateDTO annotateDTO) {
 		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids(), annotateDTO.getRelevantPids());
-		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query: " + keywordService.getQueryByID(annotateDTO.getQueryID()));
+		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query " +  annotateDTO.getQueryID());
 
 		return "items";
 	}

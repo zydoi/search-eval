@@ -16,9 +16,9 @@
 			</div>
 			<select id="query" name="queryID" >
 				<option th:each="q : ${queries}" 
-						th:value="${q.key}"
-						th:text="${q.key} + '.  '+ ${q.value} " 
-						th:selected="(${query} == ${q.value})" />
+						th:value="${q.id}"
+						th:text="${q.id} + '.  '+ ${q.name} " 
+						th:selected="(${query} == ${q.name})" />
 			</select>
 			Only annotate new items:
 			<input type="checkbox" name="onlyNew" th:value="'true'" />

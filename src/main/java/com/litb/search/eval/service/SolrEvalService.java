@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.litb.search.eval.dto.SolrItemDTO;
+import com.litb.search.eval.dto.solr.SolrItemDTO;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service
@@ -38,6 +38,32 @@ public class SolrEvalService {
 	@Value("${search.size}")
 	private int querySize;
 
+	public List<SolrItemDTO> getAllItems() {
+		
+		SolrQuery query = new SolrQuery("*:*");
+		query.setFields("id", "name", "query_*");
+		
+		try {
+			return solrServer.query(query).getBeans(SolrItemDTO.class);
+		} catch (SolrServerException e) {
+			LOGGER.error("Failed to get items by the query id.", e);
+		}
+		return new ArrayList<>();
+	}
+	
+	public List<SolrItemDTO> getItemsByQuery(int queryId) {
+		
+		SolrQuery query = new SolrQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryId + ":*");
+		query.setFields("id");
+		query.setFields("name");
+		try {
+			return solrServer.query(query).getBeans(SolrItemDTO.class);
+		} catch (SolrServerException e) {
+			LOGGER.error("Failed to get items by the query id.", e);
+		}
+		return new ArrayList<>();
+	}
+	
 	public UpdateResponse addItem(SolrItemDTO item) {
 		try {
 			solrServer.addBean(item);
@@ -94,9 +120,9 @@ public class SolrEvalService {
 		return null;
 	}
 
-	public void clearRelevance(String queryID) {
+	public void clearRelevance(String queryId) {
 		SolrQuery query = new SolrQuery();
-		query.setQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID + ":*");
+		query.setQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryId + ":*");
 		query.setFields("id");
 		List<SolrItemDTO> items = null;
 		try {
@@ -114,7 +140,7 @@ public class SolrEvalService {
 				SolrInputDocument doc = new SolrInputDocument();
 
 				doc.addField("id", item.getId());
-				doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID, queryReset);
+				doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryId, queryReset);
 				docs.add(doc);
 			}
 			try {

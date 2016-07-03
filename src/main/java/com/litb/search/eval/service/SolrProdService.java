@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.litb.search.eval.dto.SolrCore;
-import com.litb.search.eval.dto.SolrItemDTO;
+import com.litb.search.eval.dto.solr.SolrItemDTO;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service

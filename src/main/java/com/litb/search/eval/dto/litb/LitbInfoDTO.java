@@ -1,4 +1,4 @@
-package com.litb.search.eval.dto;
+package com.litb.search.eval.dto.litb;
 
 import java.util.List;
 
