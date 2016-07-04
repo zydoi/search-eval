@@ -174,7 +174,7 @@ public class SolrEvalService {
 		}
 	}
 
-	public List<String> getIDs(Collection<?> ids) {
+	public List<String> getIDsFromSolr(Collection<?> ids) {
 		SolrQuery query = new SolrQuery();
 		query.setQuery(SolrQueryUtils.concatIDs(ids));
 		query.setRows(ids.size());
@@ -191,6 +191,12 @@ public class SolrEvalService {
 		} catch (SolrServerException e) {
 			LOGGER.error("Failed to get ids.", e);
 		}
+		return new ArrayList<>();
+	}
+	
+	public List<String> getIDs(Collection<?> ids) {
+		
+		
 		return new ArrayList<>();
 	}
 

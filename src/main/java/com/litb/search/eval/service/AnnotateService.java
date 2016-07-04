@@ -16,8 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.litb.search.eval.dto.litb.ItemDTO;
+import com.litb.search.eval.dto.solr.SolrItemDTO;
+import com.litb.search.eval.entity.EvalItem;
+import com.litb.search.eval.entity.EvalItemAnnotation;
 import com.litb.search.eval.entity.EvalQuery;
+import com.litb.search.eval.repository.AnnotationRepository;
+import com.litb.search.eval.repository.ItemRepository;
 import com.litb.search.eval.repository.QueryRepository;
+import com.litb.search.eval.service.util.DtoConverter;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service
@@ -35,16 +42,31 @@ public class AnnotateService {
 	private QueryRepository queryRepo;
 	
 	@Autowired
+	private ItemRepository itemRepo;
+	
+	@Autowired
+	private AnnotationRepository annotationRepo;
+	
+	@Autowired
 	private SolrEvalService evalService;
 
 	@Autowired
 	private SolrProdService prodService;
 	
-	public void annotate(String annotator, int queryID, Set<String> ids, Set<String> relevantIDs) {
+	public void annotate(String annotator, int queryID, Set<String> ids, Set<String> relevantIDs, List<ItemDTO> items) {
 		// make sure all items have been indexed
 		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
 		if (!nonExsitIDs.isEmpty()) {
-			evalService.addItems(prodService.getItems(nonExsitIDs));
+			List<SolrItemDTO> dtos = prodService.getItems(nonExsitIDs);
+			evalService.addItems(dtos);
+			
+			for (ItemDTO dto : items) {
+				if (nonExsitIDs.contains(dto.getItemId())) {
+					EvalItem item = DtoConverter.convertItemDTO(dto);
+					itemRepo.save(item);
+				}
+			}
+			
 			LOGGER.info("Indexed new items: " + SolrQueryUtils.concatIDs(nonExsitIDs));
 		}
 		
@@ -70,6 +92,8 @@ public class AnnotateService {
 			doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID, queryInc);
 			doc.addField("is_new", setNotNew);
 			docs.add(doc);
+			
+			annotateItem(query.getId(), id);
 		}
 		sb.append("; total: ").append(relevantIDs.size());
 		
@@ -81,5 +105,18 @@ public class AnnotateService {
 			return;
 		}
 		ANNOTATE_LOGGER.info(sb.toString());
+	}
+	
+	public void annotateItem(int queryId, String itemId) {
+		EvalItemAnnotation annotation = annotationRepo.findByQueryIdAndItemId(queryId, itemId);
+		if(annotation != null) {
+			annotation.incrementAnnotatedTimes();
+		} else {
+			annotation = new EvalItemAnnotation();
+			annotation.setAnnotatedTimes(1);
+			annotation.setItem(itemRepo.findOne(itemId));
+			annotation.setQuery(queryRepo.findOne(queryId));
+		}
+		annotationRepo.save(annotation);
 	}
 }

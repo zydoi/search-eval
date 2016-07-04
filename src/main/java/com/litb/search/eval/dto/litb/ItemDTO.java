@@ -68,9 +68,6 @@ public class ItemDTO {
 	@JsonProperty("main_img_url")
 	private String mainImgURL;
 	
-	@JsonProperty("rectangle")
-	private String showImgURL;
-	
 	private double originalPrice;
 	
 	@JsonProperty("sale_price")
@@ -205,11 +202,10 @@ public class ItemDTO {
 	}
 
 	public String getShowImgURL() {
-		return showImgURL;
-	}
-
-	public void setShowImgURL(String showImgURL) {
-		this.showImgURL = showImgURL;
+		if (cateShowImgs != null && cateShowImgs.getGrid() != null) {
+			return cateShowImgs.getGrid().getRectangle();
+		}
+		return null;
 	}
 
 	public boolean getIsNew() {

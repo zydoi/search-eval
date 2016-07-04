@@ -1,8 +1,11 @@
 package com.litb.search.eval.dto;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import com.litb.search.eval.dto.litb.ItemDTO;
 
 public class AnnotateDTO {
 
@@ -13,6 +16,8 @@ public class AnnotateDTO {
 	private Set<String> relevantPids;
 	
 	private Set<String> pids;
+	
+	private List<ItemDTO> items;
 
 	public AnnotateDTO() {}
 	
@@ -53,5 +58,13 @@ public class AnnotateDTO {
 
 	public void setRelevantPids(Set<String> relevantPids) {
 		this.relevantPids = relevantPids;
+	}
+
+	public List<ItemDTO> getItems() {
+		return items;
+	}
+
+	public void setItems(List<ItemDTO> items) {
+		this.items = items;
 	}
 }

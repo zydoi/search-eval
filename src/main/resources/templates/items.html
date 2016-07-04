@@ -31,7 +31,9 @@
 			<input class="hide" type="text" th:value="${annotateDTO.queryID}" th:field="*{queryID}" />
 			<input class="hide" type="text" th:value="${annotateDTO.annotator}" th:field="*{annotator}" />
 			<input class="hide" type="text" th:value="${annotateDTO.pids}" th:field="*{pids}" />
-			<div class="thumbnail" th:each="item:${items.info.items}" >
+			<input class="hide" type="text" th:value="${annotateDTO.items}" th:field="*{items}" />
+			
+			<div class="thumbnail" th:each="item:${items}" >
 	        	<div class="product-image">
 	            	<a th:href="${item.itemURL}">
 	            		<img class="item-img" th:src="${item.cateShowImgs.grid.rectangle}" alt="" />

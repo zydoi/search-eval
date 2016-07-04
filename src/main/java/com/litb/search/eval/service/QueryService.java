@@ -1,25 +1,30 @@
-package com.litb.search.eval.repository;
+package com.litb.search.eval.service;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import com.litb.search.eval.entity.EvalQuery;
+import com.litb.search.eval.repository.QueryRepository;
+import com.litb.search.eval.repository.QueryType;
 import com.litb.search.eval.service.util.KeywordParser;
 
-@Repository
-public class QueryLoader {
+@Service
+public class QueryService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(QueryLoader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(QueryService.class);
 	
 	@Autowired
 	private QueryRepository repo;
+	
+	private Map<Integer, String> queryMap = new TreeMap<>();
 	
 	@PostConstruct
 	public void loadAllQueries() {
@@ -49,5 +54,9 @@ public class QueryLoader {
 			evalQuery.setEffective(false);
 		}
 		repo.save(queries);
+	}
+	
+	public String getQueryById(int id) {
+		return queryMap.get(id);
 	}
 }

@@ -6,8 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
+@Table(uniqueConstraints={@UniqueConstraint(columnNames = {"query_id", "item_id"})})
 public class EvalItemAnnotation {
 	
 	@Id
@@ -50,5 +53,17 @@ public class EvalItemAnnotation {
 
 	public void setAnnotatedTimes(int annotatedTimes) {
 		this.annotatedTimes = annotatedTimes;
+	}
+	
+	public void incrementAnnotatedTimes() {
+		this.annotatedTimes += 1;
+	}
+
+	public boolean isRelevant() {
+		return relevant;
+	}
+
+	public void setRelevant(boolean relevant) {
+		this.relevant = relevant;
 	}
 }

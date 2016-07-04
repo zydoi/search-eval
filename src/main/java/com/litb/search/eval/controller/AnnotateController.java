@@ -1,6 +1,5 @@
 package com.litb.search.eval.controller;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -73,9 +72,8 @@ public class AnnotateController {
 		List<String> ids = items.getInfo().getProductsList();
 		
 		if(isEval) { // enrich item details
-			List<String> idsNeedEnrich = new ArrayList<>(ids);
 			items.getInfo().getItems().clear();
-			for (String id : idsNeedEnrich) {
+			for (String id : ids) {
 				ItemDTO dto = new ItemDTO(itemRepo.findOne(id));
 				items.getInfo().getItems().add(dto);
 			}
@@ -99,7 +97,7 @@ public class AnnotateController {
 		}
 
 		model.addAttribute("query", query.getName());
-		model.addAttribute("items", items);
+		model.addAttribute("items", items.getInfo().getItems());
 		model.addAttribute("name", annotator);
 		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID, ids));
 		
@@ -108,7 +106,7 @@ public class AnnotateController {
 	
 	@RequestMapping(value = "/annotate", method = RequestMethod.POST)
 	public String annotate(AnnotateDTO annotateDTO) {
-		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids(), annotateDTO.getRelevantPids());
+		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids(), annotateDTO.getRelevantPids(), annotateDTO.getItems());
 		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query " +  annotateDTO.getQueryID());
 
 		return "items";
