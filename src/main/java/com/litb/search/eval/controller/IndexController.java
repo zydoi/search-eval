@@ -3,8 +3,9 @@ package com.litb.search.eval.controller;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,7 @@ import com.litb.search.eval.service.SolrProdService;
 @RestController
 public class IndexController {
 
-	private static final Logger LOGGER = Logger.getLogger(IndexController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IndexController.class);
 
 	@Autowired
 	private LitbSearchService litbService;

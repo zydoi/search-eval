@@ -30,7 +30,11 @@ public class LitbSearchService {
 	}
 	
 	public ItemsResultDTO getItems(String keywords) {
-		return getItems(keywords, false);
+		return getItems(keywords, Integer.valueOf(environment.getProperty("search.size")), false);
+	}
+	
+	public ItemsResultDTO getItems(String keywords, boolean isEval) {
+		return getItems(keywords, Integer.valueOf(environment.getProperty("search.size")), isEval);
 	}
 	
 	public SearchResultDTO search(String keywords, int size, boolean isEval) {
@@ -56,7 +60,7 @@ public class LitbSearchService {
 		return restTemplate.getForObject(uri, SearchResultDTO.class);
 	}
 
-	public ItemsResultDTO getItems(String keywords, boolean isEval) {
+	public ItemsResultDTO getItems(String keywords, int size, boolean isEval) {
 		String url = isEval ? environment.getProperty("litb.vela.eval.api") : environment.getProperty("litb.vela.api");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
 				.queryParam("client", "vela")
@@ -70,7 +74,7 @@ public class LitbSearchService {
 				.queryParam("sid", "eval_123")
 				.queryParam("sort_by", "2d")
 				.queryParam("page_no", "1")
-				.queryParam("page_size", environment.getProperty("search.size"))
+				.queryParam("page_size", size)
 				.queryParam("is_hd", "false")
 				.queryParam("country", "USA")
 				.queryParam("timestamp", "2016-06-12+00:00:00")

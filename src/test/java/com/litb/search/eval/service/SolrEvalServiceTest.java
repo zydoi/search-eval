@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ public class SolrEvalServiceTest {
 	private SolrEvalService service;
 	
 	@Test
-	@Ignore
 	public void test() {
 		List<String> ids = new ArrayList<>();
 		ids.add("4489703");
@@ -41,4 +39,5 @@ public class SolrEvalServiceTest {
 		List<SolrItemDTO> items = service.getAllItems();
 		System.out.println("### Total " + items.size() + " items.");
 	}
+	
 }

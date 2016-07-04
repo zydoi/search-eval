@@ -2,12 +2,13 @@ package com.litb.search.eval.dto.litb;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.litb.search.eval.entity.EvalItem;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemDTO {
 	
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	static class CateShowImgs {
+	public static class CateShowImgs {
 		
 		private Grid grid;
 
@@ -21,7 +22,7 @@ public class ItemDTO {
 	}
 	
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	static class Grid {
+	public static class Grid {
 		
 		private String rectangle;
 		
@@ -83,6 +84,21 @@ public class ItemDTO {
 	
 	@JsonProperty("favorite_times")
 	private int favoriteTimes;
+	
+	public ItemDTO() {
+	}
+	
+	public ItemDTO(EvalItem item) {
+		this.itemId = item.getId();
+		this.itemName = item.getName();
+		this.itemURL = item.getItemURL();
+		this.masterCategoryName = item.getLastCategory();
+		this.salePrice = item.getPrice();
+		this.favoriteTimes = item.getFavNum();
+		this.cateShowImgs = new CateShowImgs();
+		this.cateShowImgs.grid = new Grid();
+		this.cateShowImgs.grid.rectangle = item.getImageURL();
+	}
 
 	public String getItemId() {
 		return itemId;

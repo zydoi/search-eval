@@ -64,7 +64,6 @@ public class EvaluationService {
 			QueryEvalResultDTO queryResult = new QueryEvalResultDTO(qid);
 			double ap = 0; // average precision
 			double r = 0; // relevant items
-			int n = 0; // total items
 			EvalQuery query = queryRepo.findOne(Integer.valueOf(qid));
 			queryResult.setQueryName(query.getName());
 			
@@ -72,7 +71,7 @@ public class EvaluationService {
 			List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, maxSize);
 			int size =  Math.min(maxSize, items.size());
 			for (int i = 0; i < size; i++) {
-				n = i + 1;
+				int n = i + 1;
 				SolrItemDTO item = items.get(i);
 				int relevance = item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + qid);
 				if (relevance > 0) {
@@ -85,7 +84,8 @@ public class EvaluationService {
 					queryResult.addPrecision(n, p);
 				}
 			}
-			ap = ap / r;
+			
+			ap = (r == 0) ? 0 : ap / r;
 			queryResult.setAp(ap);
 			result.addQueryResult(queryResult);
 			LOGGER.info("Average Precision for the query" + query + "' is: " + ap);

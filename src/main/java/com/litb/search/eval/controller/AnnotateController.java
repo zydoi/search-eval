@@ -1,11 +1,13 @@
 package com.litb.search.eval.controller;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import com.litb.search.eval.dto.AnnotateDTO;
 import com.litb.search.eval.dto.litb.ItemDTO;
 import com.litb.search.eval.dto.litb.ItemsResultDTO;
 import com.litb.search.eval.entity.EvalQuery;
+import com.litb.search.eval.repository.ItemRepository;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.AnnotateService;
 import com.litb.search.eval.service.LitbSearchService;
@@ -27,7 +30,7 @@ import com.litb.search.eval.service.util.SolrQueryUtils;
 @Controller
 public class AnnotateController {
 
-	private static final Logger LOGGER = Logger.getLogger(AnnotateController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotateController.class);
 
 	@Autowired
 	private QueryRepository queryRepo;
@@ -40,6 +43,9 @@ public class AnnotateController {
 	
 	@Autowired
 	private SolrEvalService evalService;
+	
+	@Autowired
+	private ItemRepository itemRepo;
 
 	@ModelAttribute("queries")
 	public List<EvalQuery> populateQueries() {
@@ -55,15 +61,26 @@ public class AnnotateController {
 	}
 
 	@RequestMapping(value = "/itemlist", method = RequestMethod.GET)
-	public String selectQuery(@RequestParam int queryID, @RequestParam(defaultValue="false") boolean onlyNew, @RequestParam(required = false) String annotator, Model model, HttpSession session) {
+	public String selectQuery(@RequestParam int queryID, @RequestParam(defaultValue="false") boolean onlyNew, @RequestParam(required = false) String annotator, 
+			@RequestParam(required = false) boolean isEval, Model model, HttpSession session) {
 		if (annotator != null) {
 			session.setAttribute("annotator", annotator);
 		}
 		EvalQuery query = queryRepo.findOne(queryID);
 		LOGGER.info(session.getAttribute("annotator") + " start to annotate items for query: " + query);
-		ItemsResultDTO items = litbService.getItems(query.getName());
+		ItemsResultDTO items = litbService.getItems(query.getName(), isEval);
 		
 		List<String> ids = items.getInfo().getProductsList();
+		
+		if(isEval) { // enrich item details
+			List<String> idsNeedEnrich = new ArrayList<>(ids);
+			items.getInfo().getItems().clear();
+			for (String id : idsNeedEnrich) {
+				ItemDTO dto = new ItemDTO(itemRepo.findOne(id));
+				items.getInfo().getItems().add(dto);
+			}
+		}
+		
 		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
 		
 		if (!nonExsitIDs.isEmpty()) {

@@ -1,16 +1,19 @@
 package com.litb.search.eval.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -18,6 +21,8 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,11 +34,15 @@ import com.litb.search.eval.service.util.SolrQueryUtils;
 @Service
 public class SolrEvalService {
 
-	private static final Logger LOGGER = Logger.getLogger(SolrEvalService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SolrEvalService.class);
 
 	@Autowired
 	@Qualifier("SolrEvalServer")
 	private SolrServer solrServer;
+	
+	@Autowired
+	@Qualifier("SolrProdServer")
+	private SolrServer prodServer;
 
 	@Value("${search.size}")
 	private int querySize;
@@ -41,7 +50,8 @@ public class SolrEvalService {
 	public List<SolrItemDTO> getAllItems() {
 		
 		SolrQuery query = new SolrQuery("*:*");
-		query.setFields("id", "name", "query_*");
+		query.setRows(10000);
+		query.setFields("id", "name_en", "query_*", "fav_num", "last_category_en", "price");
 		
 		try {
 			return solrServer.query(query).getBeans(SolrItemDTO.class);
@@ -87,10 +97,22 @@ public class SolrEvalService {
 	public UpdateResponse deleteItem(String id) {
 		try {
 			solrServer.deleteById(id);
+			LOGGER.info("Deleted item: " + id);
 			return solrServer.commit();
 
 		} catch (SolrServerException | IOException e) {
 			LOGGER.error("Failed to delete item: " + id, e);
+		}
+		return null;
+	}
+	
+	public UpdateResponse deleteItems(List<String> ids) {
+		try {
+			solrServer.deleteById(ids);
+			return solrServer.commit();
+
+		} catch (SolrServerException | IOException e) {
+			LOGGER.error("Failed to delete items");
 		}
 		return null;
 	}
@@ -184,5 +206,80 @@ public class SolrEvalService {
 			}
 		}
 		return results;
+	}
+	
+	public void setItemNames() {
+		List<SolrItemDTO> items = new ArrayList<>();
+		int pageSize = 100;
+		try {
+			SolrQuery query = new SolrQuery("*:*");
+			query.setFields("id");
+			query.setRows(5000);
+			QueryResponse rsp = solrServer.query(query);
+			SolrDocumentList ids = rsp.getResults();
+			List<String> results = new ArrayList<>();
+
+			Iterator<SolrDocument> iterator = ids.iterator();
+
+			while (iterator.hasNext()) {
+				results.add((String) iterator.next().getFieldValue("id"));
+				if (results.size() == pageSize) {
+					query = new SolrQuery(SolrQueryUtils.concatIDs(results));
+					query.setRows(results.size());
+					query.setFields("id", "name_en");
+					items.addAll(prodServer.query(query, SolrRequest.METHOD.POST).getBeans(SolrItemDTO.class));
+					results.clear();
+				}
+			}
+			
+			if (!results.isEmpty()) {
+				query = new SolrQuery(SolrQueryUtils.concatIDs(results));
+				query.setRows(results.size());
+				query.setFields("id", "name_en");
+				items.addAll(prodServer.query(query, SolrRequest.METHOD.POST).getBeans(SolrItemDTO.class));
+			}
+
+			Set<SolrInputDocument> docs = new HashSet<>();
+
+			for (SolrItemDTO item : items) {
+				Map<String, Object> queryUpdate = new HashMap<>();
+				queryUpdate.put("set", item.getName());
+
+				SolrInputDocument doc = new SolrInputDocument();
+
+				doc.addField("id", item.getId());
+				doc.addField("name_en", queryUpdate);
+				docs.add(doc);
+				LOGGER.info("Set name for item {}: {}", item.getId(), item.getName());
+			}
+			solrServer.add(docs);
+			solrServer.commit();
+		} catch (SolrServerException | IOException e) {
+			LOGGER.error("Failed to clear query relevance.", e);
+		}
+	}
+	
+	public void clear() {
+		List<String> ids = new ArrayList<>();
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("log.txt").getFile());
+
+		try (Scanner scanner = new Scanner(file)) {
+
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				System.out.println(line);
+				String id = line.substring(118);
+				id = id.split(":")[0];
+				ids.add(id);
+			}
+
+			scanner.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		deleteItems(ids);
 	}
 }

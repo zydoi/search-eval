@@ -4,11 +4,12 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -24,7 +25,7 @@ import com.litb.search.eval.service.util.SolrQueryUtils;
 @Service
 public class SolrProdService {
 
-	private static final Logger LOGGER = Logger.getLogger(SolrProdService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SolrProdService.class);
 
 	@Autowired
 	@Qualifier("SolrTemplate")

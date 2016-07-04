@@ -25,7 +25,7 @@ public class SolrItemDTO {
 	
 	@Field
 	private double price;
-	
+
 	@Field
 	private List<String> category;
 	
@@ -92,4 +92,35 @@ public class SolrItemDTO {
 		this.id = id;
 	}
 	
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public List<String> getCategory() {
+		return category;
+	}
+
+	public void setCategory(List<String> category) {
+		this.category = category;
+	}
+
+	public int getFavNum() {
+		return favNum;
+	}
+
+	public void setFavNum(int favNum) {
+		this.favNum = favNum;
+	}
+
+	public String getLastCategory() {
+		return lastCategory;
+	}
+
+	public void setLastCategory(String lastCategory) {
+		this.lastCategory = lastCategory;
+	}
 }

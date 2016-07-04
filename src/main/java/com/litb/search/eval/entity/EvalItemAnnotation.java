@@ -26,7 +26,7 @@ public class EvalItemAnnotation {
 	private int annotatedTimes;
 	
 	@Column
-	private boolean certain;
+	private boolean relevant;
 	
 	public EvalQuery getQuery() {
 		return query;
