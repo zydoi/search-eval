@@ -25,6 +25,9 @@ public class ItemRepositoryTest {
 		Set<String> ids = new HashSet<>();
 		ids.add("4351385");
 		ids.add("123");
-		assertEquals(1, repo.findIdById(ids).size());
+//		assertEquals(1, repo.findIdById(ids).size());
+		
+		System.out.println(repo.findByItemURLIsNull().size());
 	}
+	
 }

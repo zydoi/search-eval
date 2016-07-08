@@ -1,6 +1,7 @@
 package com.litb.search.eval.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -21,6 +22,7 @@ import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.AnnotationRepository;
 import com.litb.search.eval.repository.ItemRepository;
 import com.litb.search.eval.repository.QueryRepository;
+import com.litb.search.eval.service.util.DtoConverter;
 
 @Service
 public class ItemService {
@@ -67,6 +69,20 @@ public class ItemService {
 	}
 	
 	@Transactional
+	public List<EvalItem> addNewItems(int queryId, List<ItemDTO> itemDTOs) {
+		List<EvalItem> items = new ArrayList<>();
+		EvalQuery query = queryRepo.findOne(queryId);
+		for (ItemDTO dto : itemDTOs) {
+			EvalItem item = DtoConverter.convertItemDTO(dto);
+//			EvalItemAnnotation annotation = new EvalItemAnnotation(query, item);
+//			item.getItemAnnotations().add(annotation);
+			itemRepo.save(item);
+			items.add(item);
+		}
+		return items;
+	}
+	
+	@Transactional
 	public void addItemDetails() {
 		List<SolrItemDTO> itemDTOs = solrService.getAllItems();
 		List<String> pids = new ArrayList<>();
@@ -92,5 +108,42 @@ public class ItemService {
 				}
 			}
 		}
+	}
+	
+	public Set<String> getNonExistIds(Collection<String> ids) {
+		Set<String> nonExistIds = new HashSet<>(ids);
+		Iterable<EvalItem> items = itemRepo.findAll(nonExistIds);
+		for (EvalItem item : items) {
+			nonExistIds.remove(item.getId());
+		}
+		return nonExistIds;
+	}
+	
+	public void clearSolrAndDB() {
+		List<EvalItem> items = itemRepo.findByItemURLIsNull();
+		List<String> ids = new ArrayList<>();
+		for (EvalItem item : items) {
+			ids.add(item.getId());
+		}
+		
+		solrService.deleteItems(ids);
+		for (String id : ids) {
+			itemRepo.delete(id);
+		}
+	}
+	
+	public List<String> getNotAnnotatedIds(int queryId, List<String> ids) {
+		List<String> notAnnotatedIds = new ArrayList<>(ids);
+		List<EvalItemAnnotation> annotations = annotationRepo.findByQueryId(queryId);
+		for (EvalItemAnnotation annotation : annotations) {
+			notAnnotatedIds.remove(annotation.getItem().getId());
+		}
+		return notAnnotatedIds;
+	}
+	
+	@Transactional
+	public void clearAnnotation(int queryId) {
+		List<EvalItemAnnotation> annotations = annotationRepo.findByQueryId(queryId);
+		annotationRepo.delete(annotations);
 	}
 }

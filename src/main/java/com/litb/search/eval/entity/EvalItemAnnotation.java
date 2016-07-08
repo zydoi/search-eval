@@ -31,6 +31,14 @@ public class EvalItemAnnotation {
 	@Column
 	private boolean relevant;
 	
+	public EvalItemAnnotation() {
+	}
+
+	public EvalItemAnnotation(EvalQuery query, EvalItem item) {
+		this.query = query;
+		this.item = item;
+	}
+	
 	public EvalQuery getQuery() {
 		return query;
 	}

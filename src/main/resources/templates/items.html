@@ -21,7 +21,9 @@
 						th:selected="(${query} == ${q.name})" />
 			</select>
 			Only annotate new items:
-			<input type="checkbox" name="onlyNew" th:value="'true'" />
+			<input id="onlyNew" type="checkbox" name="onlyNew" th:value="'true'" />
+			Annotate online items:
+			<input type="checkbox" name="isOnline" th:value="'true'" />
 			<button type="submit" th:text="ok" />
 		</form>
 	</div>
@@ -31,7 +33,6 @@
 			<input class="hide" type="text" th:value="${annotateDTO.queryID}" th:field="*{queryID}" />
 			<input class="hide" type="text" th:value="${annotateDTO.annotator}" th:field="*{annotator}" />
 			<input class="hide" type="text" th:value="${annotateDTO.pids}" th:field="*{pids}" />
-			<input class="hide" type="text" th:value="${annotateDTO.items}" th:field="*{items}" />
 			
 			<div class="thumbnail" th:each="item:${items}" >
 	        	<div class="product-image">
@@ -53,7 +54,8 @@
 	              	</div>
 
 	               	<div class="product-price">
-	                	<span class="price" th:text="${item.currency} + '   $' + ${item.salePrice}" />
+	                	<span class="price" th:text="'USD' + '   $' + ${item.salePrice}" />
+	                	<img class="relevant-img" src="/images/tick.png" th:if="${item.isRelevant}"/>
 	                </div>
 	               	<div class="master-category">
 	                	<span class="category" th:text="${item.masterCategoryName}"/>

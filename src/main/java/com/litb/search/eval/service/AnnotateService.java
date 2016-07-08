@@ -1,6 +1,7 @@
 package com.litb.search.eval.service;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,55 +30,61 @@ import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service
 public class AnnotateService {
-	
-	private static final Logger ANNOTATE_LOGGER = LoggerFactory.getLogger("annotate"); 
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotateService.class); 
+	private static final Logger ANNOTATE_LOGGER = LoggerFactory.getLogger("annotate");
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotateService.class);
 
 	@Autowired
 	@Qualifier("SolrEvalServer")
 	private SolrServer solrServer;
-	
+
 	@Autowired
 	private QueryRepository queryRepo;
-	
+
 	@Autowired
 	private ItemRepository itemRepo;
-	
+
 	@Autowired
 	private AnnotationRepository annotationRepo;
-	
+
 	@Autowired
 	private SolrEvalService evalService;
 
 	@Autowired
 	private SolrProdService prodService;
-	
+
+	@Autowired
+	private ItemService itemService;
+
 	public void annotate(String annotator, int queryID, Set<String> ids, Set<String> relevantIDs, List<ItemDTO> items) {
 		// make sure all items have been indexed
-		List<String> nonExsitIDs = evalService.getNonExsitIDs(ids);
+		Set<String> nonExsitIDs = itemService.getNonExistIds(ids);
 		if (!nonExsitIDs.isEmpty()) {
 			List<SolrItemDTO> dtos = prodService.getItems(nonExsitIDs);
 			evalService.addItems(dtos);
-			
+
 			for (ItemDTO dto : items) {
 				if (nonExsitIDs.contains(dto.getItemId())) {
 					EvalItem item = DtoConverter.convertItemDTO(dto);
 					itemRepo.save(item);
 				}
 			}
-			
+
 			LOGGER.info("Indexed new items: " + SolrQueryUtils.concatIDs(nonExsitIDs));
 		}
 		
+		// Add annotations
+		annotateItems(queryID, ids, false);
+
 		if (relevantIDs == null || relevantIDs.isEmpty()) {
 			return;
 		}
-		
+
 		EvalQuery query = queryRepo.findOne(queryID);
 		StringBuilder sb = new StringBuilder("Annotator: ");
 		sb.append(annotator).append(", Query: ").append(query).append("(").append(queryID).append("), ids: ");
-		
+
 		Set<SolrInputDocument> docs = new HashSet<>();
 		Map<String, Object> queryInc = new HashMap<>();
 		queryInc.put("inc", 1);
@@ -92,11 +99,11 @@ public class AnnotateService {
 			doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID, queryInc);
 			doc.addField("is_new", setNotNew);
 			docs.add(doc);
-			
-			annotateItem(query.getId(), id);
+
+			annotateItem(query.getId(), id, true);
 		}
 		sb.append("; total: ").append(relevantIDs.size());
-		
+
 		try {
 			solrServer.add(docs);
 			solrServer.commit();
@@ -107,16 +114,44 @@ public class AnnotateService {
 		ANNOTATE_LOGGER.info(sb.toString());
 	}
 	
-	public void annotateItem(int queryId, String itemId) {
+	public void unannotate() {
+		//TODO
+	}
+
+	public EvalItemAnnotation annotateItem(int queryId, String itemId, boolean relevant) {
 		EvalItemAnnotation annotation = annotationRepo.findByQueryIdAndItemId(queryId, itemId);
-		if(annotation != null) {
-			annotation.incrementAnnotatedTimes();
+		if (annotation != null) {
+			if (relevant) {
+				annotation.incrementAnnotatedTimes();
+			}
 		} else {
 			annotation = new EvalItemAnnotation();
-			annotation.setAnnotatedTimes(1);
 			annotation.setItem(itemRepo.findOne(itemId));
 			annotation.setQuery(queryRepo.findOne(queryId));
+			if (relevant) {
+				annotation.setAnnotatedTimes(1);
+			}
 		}
-		annotationRepo.save(annotation);
+		return annotationRepo.save(annotation);
+	}
+	
+	public void annotateItems(int queryId, Collection<String> itemIds, boolean relevant) {
+		EvalQuery query = queryRepo.findOne(queryId);
+		for (String itemId : itemIds) {
+			EvalItemAnnotation annotation = annotationRepo.findByQueryIdAndItemId(queryId, itemId);
+			if (annotation != null) {
+				if (relevant) {
+					annotation.incrementAnnotatedTimes();
+				}
+			} else {
+				annotation = new EvalItemAnnotation();
+				annotation.setItem(itemRepo.findOne(itemId));
+				annotation.setQuery(query);
+				if (relevant) {
+					annotation.setAnnotatedTimes(1);
+				}
+			}
+			annotationRepo.save(annotation);
+		}
 	}
 }

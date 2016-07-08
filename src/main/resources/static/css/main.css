@@ -100,9 +100,16 @@ label {
 }
 
 .fav-img {
-	margin-left: 5px;
+	right: 30px;
 	width: 14px;
 	height: 13px;
+}
+
+
+.relevant-img {
+	margin-left: 55px;
+	width: 14px;
+	height: 14px;
 }
 
 .isRef {
@@ -127,4 +134,8 @@ label {
 	height: 30px;
 	top: 20px;
 	right: 20px;
+}
+
+#onlyNew {
+	margin-right: 50px;
 }

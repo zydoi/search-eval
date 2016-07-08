@@ -34,8 +34,9 @@ public class QueryService {
 	}
 	
 	private void loadQueries(QueryType type) {
-		Map<Integer, String> top = KeywordParser.parse(type.getFileName());
-		for (Entry<Integer, String> e: top.entrySet()) {
+		Map<Integer, String> queries = KeywordParser.parse(type.getFileName());
+		queryMap.putAll(queries);
+		for (Entry<Integer, String> e: queries.entrySet()) {
 			EvalQuery query = repo.findOne(e.getKey());
 			
 			if (query == null) {

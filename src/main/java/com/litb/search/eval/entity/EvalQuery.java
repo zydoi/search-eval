@@ -3,6 +3,7 @@ package com.litb.search.eval.entity;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,7 +36,7 @@ public class EvalQuery {
 	@Column(nullable = false)
 	private Date lastModified = new Date();
 	
-	@OneToMany(mappedBy = "query")
+	@OneToMany(mappedBy = "query", cascade = CascadeType.ALL)
 	private Set<EvalItemAnnotation> itemAnnotation;
 	
 	public EvalQuery() {

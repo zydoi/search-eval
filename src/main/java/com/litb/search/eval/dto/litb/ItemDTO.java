@@ -51,7 +51,9 @@ public class ItemDTO {
 	@JsonProperty("item_id")
 	private String itemId;
 	
-	private boolean isNew = false;
+	private boolean isNew;
+
+	private boolean isRelevant;
 	
 	private String currency;
 	
@@ -159,6 +161,14 @@ public class ItemDTO {
 
 	public void setOriginalPrice(double originalPrice) {
 		this.originalPrice = originalPrice;
+	}
+
+	public boolean getIsRelevant() {
+		return isRelevant;
+	}
+
+	public void setRelevant(boolean isRelevant) {
+		this.isRelevant = isRelevant;
 	}
 
 	public CateShowImgs getCateShowImgs() {

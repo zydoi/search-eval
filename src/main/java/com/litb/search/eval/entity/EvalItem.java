@@ -1,8 +1,10 @@
 package com.litb.search.eval.entity;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,8 +37,8 @@ public class EvalItem {
 	@Column
 	private double price;
 	
-	@OneToMany(mappedBy = "item")
-	private Set<EvalItemAnnotation> itemAnnotations;
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private Set<EvalItemAnnotation> itemAnnotations = new HashSet<>();
 	
 	public EvalItem() {
 	}
@@ -109,6 +111,14 @@ public class EvalItem {
 
 	public void setImageURL(String imageURL) {
 		this.imageURL = imageURL;
+	}
+
+	public Set<EvalItemAnnotation> getItemAnnotations() {
+		return itemAnnotations;
+	}
+
+	public void setItemAnnotations(Set<EvalItemAnnotation> itemAnnotations) {
+		this.itemAnnotations = itemAnnotations;
 	}
 	
 }

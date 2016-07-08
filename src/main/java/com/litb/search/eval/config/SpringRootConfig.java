@@ -40,6 +40,7 @@ public class SpringRootConfig {
 	public ServletRegistrationBean h2servletRegistration() {
 	    ServletRegistrationBean registration = new ServletRegistrationBean(new WebServlet());
 	    registration.addUrlMappings("/h2/console/*");
+	    registration.addInitParameter("-webAllowOthers", "true");
 	    return registration;
 	}
 }

@@ -11,4 +11,5 @@ public interface QueryRepository extends CrudRepository<EvalQuery, Integer> {
 	List<EvalQuery> findByQueryType(QueryType queryType);
 	
 	List<EvalQuery> findByEffectiveTrue();
+	
 }

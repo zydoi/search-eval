@@ -1,5 +1,6 @@
 package com.litb.search.eval.controller;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -7,13 +8,14 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.litb.search.eval.dto.SolrCore;
+import com.litb.search.eval.dto.litb.ItemDTO;
+import com.litb.search.eval.dto.litb.ItemsResultDTO;
 import com.litb.search.eval.dto.litb.SearchResultDTO;
 import com.litb.search.eval.dto.solr.SolrItemDTO;
 import com.litb.search.eval.entity.EvalItem;
@@ -21,6 +23,7 @@ import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.ItemService;
 import com.litb.search.eval.service.LitbSearchService;
+import com.litb.search.eval.service.QueryService;
 import com.litb.search.eval.service.SolrEvalService;
 import com.litb.search.eval.service.SolrProdService;
 
@@ -37,22 +40,40 @@ public class IndexController {
 
 	@Autowired
 	private QueryRepository queryRepo;
-
+	
+	@Autowired
+	private QueryService queryService;
+	
 	@Autowired
 	private SolrEvalService indexService;
 	
 	@Autowired
 	private ItemService itemService;
 	
-	@Value("${search.size}")
-	private int querySize;	
-
 	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
-	public String indexQuery(@RequestParam String query) {
-		SearchResultDTO result = litbService.search(query, querySize);
-		List<String> ids = result.getInfo().getItems();
-		List<SolrItemDTO> items = searchService.getItems(ids);
+	public String indexQuery(@RequestParam int queryId) {
+		ItemsResultDTO result = litbService.getItems(queryService.getQueryById(queryId), false);
+		LOGGER.info("Start indexing items for query: " + queryService.getQueryById(queryId));
+
+		List<String> ids = result.getInfo().getProductsList();
+		Set<String> newIds = itemService.getNonExistIds(ids);
+		
+		List<SolrItemDTO> items = searchService.getItems(newIds);
+		
 		indexService.addItems(items);
+		
+		Iterator<ItemDTO> iterator = result.getInfo().getItems().iterator();
+		while (iterator.hasNext()) {
+			ItemDTO dto = iterator.next();
+			if (!newIds.contains(dto.getItemId())) {
+				iterator.remove();
+			}
+		}
+		
+		itemService.addNewItems(queryId, result.getInfo().getItems());
+		LOGGER.info("Added {} new items.", newIds.size());
+
+		
 		return searchService.query(ids, SolrCore.EVAL);
 	}
 
@@ -64,7 +85,7 @@ public class IndexController {
 		List<EvalQuery> queries = queryRepo.findByEffectiveTrue();
 		for (EvalQuery query : queries) {
 			LOGGER.info("Start indexing query: " + query);
-			SearchResultDTO result = litbService.search(query.getName(), querySize, false);
+			SearchResultDTO result = litbService.search(query.getName(), false);
 			List<String> ids = result.getInfo().getItems();
 			List<SolrItemDTO> items = searchService.getItems(ids);
 			indexService.addItems(items);
@@ -100,6 +121,7 @@ public class IndexController {
 	@RequestMapping(value = "clearAnnotations", method = RequestMethod.GET, produces = "application/json")
 	public String clear(@RequestParam String queryID) {
 		indexService.clearRelevance(queryID);
+		itemService.clearAnnotation(Integer.valueOf(queryID));
 		return "done";
 	}
 	

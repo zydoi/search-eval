@@ -1,6 +1,7 @@
 package com.litb.search.eval.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,8 +20,16 @@ public class AnnotationRepositoryTest {
 	private AnnotationRepository repo;
 	
 	@Test
-	public void test() {
-		EvalItemAnnotation annotation = repo.findByQueryIdAndItemId(21, "4775008");
-		assertEquals(1,annotation.getAnnotatedTimes());
+	public void testFindByQueryIdAndItemId() {
+		EvalItemAnnotation annotation = repo.findByQueryIdAndItemId(1, "4489703");
+		assertEquals(2,annotation.getAnnotatedTimes());
+	}
+	
+	@Test
+	public void testFindByQueryId() {
+		assertEquals(1, repo.findByQueryId(1).get(0).getQuery().getId());
+//		assertEquals(84, repo.findAnnotatedItemIds(1).size());
+		assertTrue(repo.findRelevantItemIds(1).contains("4489703"));
+		
 	}
 }

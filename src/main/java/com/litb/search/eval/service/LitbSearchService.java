@@ -28,6 +28,10 @@ public class LitbSearchService {
 	public SearchResultDTO search(String keywords, int size) {
 		return search(keywords, size, false);
 	}
+
+	public SearchResultDTO search(String keywords, boolean isEval) {
+		return search(keywords, Integer.valueOf(environment.getProperty("search.size")), isEval);
+	}
 	
 	public ItemsResultDTO getItems(String keywords) {
 		return getItems(keywords, Integer.valueOf(environment.getProperty("search.size")), false);
@@ -38,7 +42,7 @@ public class LitbSearchService {
 	}
 	
 	public SearchResultDTO search(String keywords, int size, boolean isEval) {
-		String url = isEval ? environment.getProperty("litb.eval.api") : environment.getProperty("litb.eval.api");
+		String url = isEval ? environment.getProperty("litb.eval.api") : environment.getProperty("litb.api");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "keywordSearch")
 				.queryParam("app_key", "FIQ79MXR")
 				.queryParam("app_secret", "606caa95b19bc709syqx9cpl72kmmnzy")

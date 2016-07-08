@@ -9,5 +9,8 @@ import com.litb.search.eval.entity.EvalItem;
 
 public interface ItemRepository extends CrudRepository<EvalItem, String>{
 
-	public List<String> findIdById(Collection<String> ids);
+	List<String> findIdById(Collection<String> ids);
+	
+	List<EvalItem> findByItemURLIsNull();
+	
 }

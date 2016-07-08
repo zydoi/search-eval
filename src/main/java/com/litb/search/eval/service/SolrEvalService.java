@@ -146,6 +146,7 @@ public class SolrEvalService {
 		SolrQuery query = new SolrQuery();
 		query.setQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryId + ":*");
 		query.setFields("id");
+		query.setRows(1000);
 		List<SolrItemDTO> items = null;
 		try {
 			items = solrServer.query(query).getBeans(SolrItemDTO.class);
@@ -194,15 +195,9 @@ public class SolrEvalService {
 		return new ArrayList<>();
 	}
 	
-	public List<String> getIDs(Collection<?> ids) {
-		
-		
-		return new ArrayList<>();
-	}
-
-	public List<String> getNonExsitIDs(Collection<?> ids) {
+	public List<String> getNonExistIDs(Collection<?> ids) {
 		List<String> results = new ArrayList<>();
-		List<String> existIDs = getIDs(ids);
+		List<String> existIDs = getIDsFromSolr(ids);
 		if (existIDs.size() == ids.size()) {
 			return results;
 		}

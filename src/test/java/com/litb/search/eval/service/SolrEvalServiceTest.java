@@ -27,8 +27,8 @@ public class SolrEvalServiceTest {
 		ids.add("4489703");
 		ids.add("123");
 		
-		assertEquals("4489703", service.getIDs(ids).get(0));
-		assertEquals("123", service.getNonExsitIDs(ids).get(0));
+		assertEquals("4489703", service.getIDsFromSolr(ids).get(0));
+		assertEquals("123", service.getNonExistIDs(ids).get(0));
 		List<SolrItemDTO> items = service.getItemWithRelevance(ids, 10);
 		System.out.println("Item name:" + items.get(0).getName());
 		System.out.println("Query relevance:" + items.get(0).getQuery("query_1"));
