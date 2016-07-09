@@ -1,5 +1,7 @@
 package com.litb.search.eval.repository;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,6 @@ public class QueryRepositoryTest {
 	
 	@Test
 	public void test() {
-		System.out.println("### Total Top Query: " + repo.findByQueryType(QueryType.TOP).size());
+		assertEquals("dresses", repo.findByQueryType(QueryType.TOP).get(0).getName());
 	}
 }

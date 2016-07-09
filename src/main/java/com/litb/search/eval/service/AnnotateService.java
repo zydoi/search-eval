@@ -1,20 +1,12 @@
 package com.litb.search.eval.service;
 
-import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.litb.search.eval.dto.litb.ItemDTO;
@@ -36,10 +28,6 @@ public class AnnotateService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotateService.class);
 
 	@Autowired
-	@Qualifier("SolrEvalServer")
-	private SolrServer solrServer;
-
-	@Autowired
 	private QueryRepository queryRepo;
 
 	@Autowired
@@ -57,8 +45,9 @@ public class AnnotateService {
 	@Autowired
 	private ItemService itemService;
 
-	public void annotate(String annotator, int queryID, Set<String> ids, Set<String> relevantIDs, List<ItemDTO> items) {
-		// make sure all items have been indexed
+	public void annotate(String annotator, int queryID, Set<String> ids, Set<String> relevantIDs,
+			Set<String> irrelevantIDs, List<ItemDTO> items) {
+		// make sure all items have been added to the DB.
 		Set<String> nonExsitIDs = itemService.getNonExistIds(ids);
 		if (!nonExsitIDs.isEmpty()) {
 			List<SolrItemDTO> dtos = prodService.getItems(nonExsitIDs);
@@ -73,49 +62,26 @@ public class AnnotateService {
 
 			LOGGER.info("Indexed new items: " + SolrQueryUtils.concatIDs(nonExsitIDs));
 		}
-		
-		// Add annotations
+
+		// init annotations in the DB
 		annotateItems(queryID, ids, false);
-
-		if (relevantIDs == null || relevantIDs.isEmpty()) {
-			return;
-		}
-
 		EvalQuery query = queryRepo.findOne(queryID);
-		StringBuilder sb = new StringBuilder("Annotator: ");
-		sb.append(annotator).append(", Query: ").append(query).append("(").append(queryID).append("), ids: ");
-
-		Set<SolrInputDocument> docs = new HashSet<>();
-		Map<String, Object> queryInc = new HashMap<>();
-		queryInc.put("inc", 1);
-		Map<String, Object> setNotNew = new HashMap<>();
-		setNotNew.put("set", false);
-
-		for (String id : relevantIDs) {
-			sb.append(id).append(",");
-
-			SolrInputDocument doc = new SolrInputDocument();
-			doc.addField("id", id);
-			doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID, queryInc);
-			doc.addField("is_new", setNotNew);
-			docs.add(doc);
-
-			annotateItem(query.getId(), id, true);
+		
+		// add annotations for the relevant items
+		if (relevantIDs != null && !relevantIDs.isEmpty()) {
+			evalService.annotateItems(queryID, relevantIDs);
+			StringBuilder sb = new StringBuilder("Annotator: ");
+			sb.append(annotator).append("add annotations of Query: ").append(query).append(", ids: ").append(SolrQueryUtils.concatIDs(relevantIDs));
+			ANNOTATE_LOGGER.info(sb.toString());
 		}
-		sb.append("; total: ").append(relevantIDs.size());
-
-		try {
-			solrServer.add(docs);
-			solrServer.commit();
-		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Failed to increase annotation!", e);
-			return;
+		
+		// remove annotations for irrelevant items
+		if (irrelevantIDs != null && !irrelevantIDs.isEmpty()) {
+			evalService.unannotateItems(queryID, irrelevantIDs);
+			StringBuilder sb = new StringBuilder("Annotator: ");
+			sb.append(annotator).append("remove annotations of Query: ").append(query).append(", ids: ").append(SolrQueryUtils.concatIDs(relevantIDs));
+			ANNOTATE_LOGGER.info(sb.toString());
 		}
-		ANNOTATE_LOGGER.info(sb.toString());
-	}
-	
-	public void unannotate() {
-		//TODO
 	}
 
 	public EvalItemAnnotation annotateItem(int queryId, String itemId, boolean relevant) {
@@ -134,7 +100,7 @@ public class AnnotateService {
 		}
 		return annotationRepo.save(annotation);
 	}
-	
+
 	public void annotateItems(int queryId, Collection<String> itemIds, boolean relevant) {
 		EvalQuery query = queryRepo.findOne(queryId);
 		for (String itemId : itemIds) {
@@ -152,6 +118,13 @@ public class AnnotateService {
 				}
 			}
 			annotationRepo.save(annotation);
+		}
+	}
+
+	public void unannotateItems(int queryId, Collection<String> itemIds) {
+		Set<EvalItemAnnotation> annotations = annotationRepo.findByQueryIdAndItemIdIn(queryId, itemIds);
+		for (EvalItemAnnotation evalItemAnnotation : annotations) {
+			evalItemAnnotation.resetAnnotationTimes();
 		}
 	}
 }

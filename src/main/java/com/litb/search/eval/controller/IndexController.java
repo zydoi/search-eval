@@ -70,7 +70,7 @@ public class IndexController {
 			}
 		}
 		
-		itemService.addNewItems(queryId, result.getInfo().getItems());
+		itemService.addNewItems(result.getInfo().getItems());
 		LOGGER.info("Added {} new items.", newIds.size());
 
 		

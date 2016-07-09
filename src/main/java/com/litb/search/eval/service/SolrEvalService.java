@@ -283,4 +283,49 @@ public class SolrEvalService {
 		
 		deleteItems(ids);
 	}
+	
+	
+	public void annotateItems(int queryId, Set<String> ids) {
+		Set<SolrInputDocument> docs = new HashSet<>();
+		Map<String, Object> queryInc = new HashMap<>();
+		queryInc.put("inc", 1);
+		Map<String, Object> setNotNew = new HashMap<>();
+		setNotNew.put("set", false);
+
+		for (String id : ids) {
+			SolrInputDocument doc = new SolrInputDocument();
+			doc.addField("id", id);
+			doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryId, queryInc);
+			doc.addField("is_new", setNotNew);
+			docs.add(doc);
+		}
+		
+		try {
+			solrServer.add(docs);
+			solrServer.commit();
+		} catch (SolrServerException | IOException e) {
+			LOGGER.error("Failed to increase annotation!", e);
+			return;
+		}
+	}
+	
+	public void unannotateItems(int queryId, Set<String> ids) {
+		Set<SolrInputDocument> docs = new HashSet<>();
+		Map<String, Object> queryReset = new HashMap<>();
+		queryReset.put("set", 0);
+		for (String id : ids) {
+			SolrInputDocument doc = new SolrInputDocument();
+			doc.addField("id", id);
+			doc.addField(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryId, queryReset);
+			docs.add(doc);
+		}
+		
+		try {
+			solrServer.add(docs);
+			solrServer.commit();
+		} catch (SolrServerException | IOException e) {
+			LOGGER.error("Failed to increase annotation!", e);
+			return;
+		}
+	}
 }

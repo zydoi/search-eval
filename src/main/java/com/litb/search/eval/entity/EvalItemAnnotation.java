@@ -66,6 +66,10 @@ public class EvalItemAnnotation {
 	public void incrementAnnotatedTimes() {
 		this.annotatedTimes += 1;
 	}
+	
+	public void resetAnnotationTimes() {
+		this.annotatedTimes = 0;
+	}
 
 	public boolean isRelevant() {
 		return relevant;

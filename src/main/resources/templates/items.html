@@ -7,7 +7,7 @@
 
 </head>
 <body>
-	<h2 th:text="'Hello,' + ${session.annotator} + '!'" th:if="${session.annotator != null}" />
+	<h2 th:text="'Hello,' + ${annotator} + '!'" th:if="${annotator != null}" />
 	<div class="chooseQuery">
 		<form action="#" th:action="@{/itemlist}" method="get">
 			<div id="annotator" th:if="${session.annotator == null}">
@@ -64,6 +64,10 @@
 	               	<div class="reference">
 	               		<span class="ref-txt" th:text="'Relevant:'" />
 						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{relevantPids}"/>
+	                </div>
+	               	<div class="reference" th:if="${item.isRelevant}">
+	               		<span class="ref-txt" th:text="'Irrelvant:'" />
+						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{irrelevantPids}"/>
 	                </div>
 	          	</div>
 	      	</div>

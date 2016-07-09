@@ -69,13 +69,10 @@ public class ItemService {
 	}
 	
 	@Transactional
-	public List<EvalItem> addNewItems(int queryId, List<ItemDTO> itemDTOs) {
+	public List<EvalItem> addNewItems(List<ItemDTO> itemDTOs) {
 		List<EvalItem> items = new ArrayList<>();
-		EvalQuery query = queryRepo.findOne(queryId);
 		for (ItemDTO dto : itemDTOs) {
 			EvalItem item = DtoConverter.convertItemDTO(dto);
-//			EvalItemAnnotation annotation = new EvalItemAnnotation(query, item);
-//			item.getItemAnnotations().add(annotation);
 			itemRepo.save(item);
 			items.add(item);
 		}
@@ -112,10 +109,8 @@ public class ItemService {
 	
 	public Set<String> getNonExistIds(Collection<String> ids) {
 		Set<String> nonExistIds = new HashSet<>(ids);
-		Iterable<EvalItem> items = itemRepo.findAll(nonExistIds);
-		for (EvalItem item : items) {
-			nonExistIds.remove(item.getId());
-		}
+		nonExistIds.removeAll(itemRepo.findExistsIds(ids));
+		
 		return nonExistIds;
 	}
 	
@@ -132,7 +127,7 @@ public class ItemService {
 		}
 	}
 	
-	public List<String> getNotAnnotatedIds(int queryId, List<String> ids) {
+	public List<String> getNotAnnotatedItemIds(int queryId, List<String> ids) {
 		List<String> notAnnotatedIds = new ArrayList<>(ids);
 		List<EvalItemAnnotation> annotations = annotationRepo.findByQueryId(queryId);
 		for (EvalItemAnnotation annotation : annotations) {

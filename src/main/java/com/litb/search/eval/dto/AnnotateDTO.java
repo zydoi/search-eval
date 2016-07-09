@@ -12,6 +12,8 @@ public class AnnotateDTO {
 
 	private Set<String> relevantPids;
 	
+	private Set<String> irrelevantPids;
+	
 	private Set<String> pids;
 	
 	public AnnotateDTO() {}
@@ -53,5 +55,13 @@ public class AnnotateDTO {
 
 	public void setRelevantPids(Set<String> relevantPids) {
 		this.relevantPids = relevantPids;
+	}
+
+	public Set<String> getIrrelevantPids() {
+		return irrelevantPids;
+	}
+
+	public void setIrrelevantPids(Set<String> irrelevantPids) {
+		this.irrelevantPids = irrelevantPids;
 	}
 }

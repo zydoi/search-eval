@@ -30,7 +30,7 @@ import com.litb.search.eval.service.ItemService;
 import com.litb.search.eval.service.LitbSearchService;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
-@SessionAttributes("items")
+@SessionAttributes({"items", "annotator"})
 @Controller
 public class AnnotateController {
 
@@ -60,26 +60,20 @@ public class AnnotateController {
 	}
 
 	@RequestMapping(value = { "/", "/select" }, method = RequestMethod.GET)
-	public String selectQuery(@RequestParam(required = false) String annotator, HttpSession session) {
-		if (annotator != null) {
-			session.setAttribute("annotator", annotator);
-		}
+	public String selectQuery() {
 		return "items";
 	}
 
 	@RequestMapping(value = "/itemlist", method = RequestMethod.GET)
 	public String selectQuery(@RequestParam int queryID, @RequestParam(defaultValue="false") boolean onlyNew, @RequestParam(required = false) String annotator, 
 			@RequestParam(defaultValue="false") boolean isOnline, Model model, HttpSession session) {
-		if (annotator != null) {
-			session.setAttribute("annotator", annotator);
-		}
 		EvalQuery query = queryRepo.findOne(queryID);
-		LOGGER.info(session.getAttribute("annotator") + " start to annotate items for query: " + query);
+		LOGGER.info(session.getAttribute("annotator") + " starts to annotate items for query: " + query);
 		ItemsResultDTO items = litbService.getItems(query.getName(), !isOnline);
 		
 		List<String> ids = items.getInfo().getProductsList();
 		
-		if(!isOnline) { // enrich item details
+		if(!isOnline) { // annotate evaluation library
 			items.getInfo().getItems().clear();
 			Set<String> relevantIds = annotationRepo.findRelevantItemIds(queryID);
 			for (String id : ids) {
@@ -100,8 +94,7 @@ public class AnnotateController {
 
 				items.getInfo().getItems().add(dto);
 			}
-		} else {
-			// mark new items
+		} else { // annotate online items
 			Set<String> nonExsitIDs = itemService.getNonExistIds(ids);
 			Set<String> relevantIds = annotationRepo.findRelevantItemIds(queryID);
 
@@ -128,7 +121,7 @@ public class AnnotateController {
 		// mark relevant items
 		model.addAttribute("query", query.getName());
 		model.addAttribute("items", items.getInfo().getItems());
-		model.addAttribute("name", annotator);
+		model.addAttribute("annotator", annotator);
 		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID, ids));
 		
 		return "items";
@@ -136,8 +129,10 @@ public class AnnotateController {
 	
 	@RequestMapping(value = "/annotate", method = RequestMethod.POST)
 	public String annotate(AnnotateDTO annotateDTO, @ModelAttribute("items") List<ItemDTO> items) {
-		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids(), annotateDTO.getRelevantPids(), items);
+		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids(), annotateDTO.getRelevantPids(), annotateDTO.getIrrelevantPids(), items);
 		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query " +  annotateDTO.getQueryID());
 		return "items";
 	}
+	
+	
 }

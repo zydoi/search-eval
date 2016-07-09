@@ -1,5 +1,6 @@
 package com.litb.search.eval.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,8 @@ import com.litb.search.eval.entity.EvalItemAnnotation;
 public interface AnnotationRepository extends CrudRepository<EvalItemAnnotation, Long>{
 
 	EvalItemAnnotation findByQueryIdAndItemId(int queryId, String itemId);
+
+	Set<EvalItemAnnotation> findByQueryIdAndItemIdIn(int queryId, Collection<String> itemIds);
 	
 	List<EvalItemAnnotation> findByQueryId(int queryId);
 	
