@@ -1,5 +1,6 @@
 package com.litb.search.eval.controller;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -69,20 +70,21 @@ public class AnnotateController {
 			@RequestParam(defaultValue="false") boolean isOnline, Model model, HttpSession session) {
 		EvalQuery query = queryRepo.findOne(queryID);
 		LOGGER.info(session.getAttribute("annotator") + " starts to annotate items for query: " + query);
-		ItemsResultDTO items = litbService.getItems(query.getName(), !isOnline);
 		
-		List<String> ids = items.getInfo().getProductsList();
 		
+		List<ItemDTO> items;
+		List<String> ids;
 		if(!isOnline) { // annotate evaluation library
-			items.getInfo().getItems().clear();
+			ids = litbService.search(query.getName(), !isOnline).getInfo().getItems();
 			Set<String> relevantIds = annotationRepo.findRelevantItemIds(queryID);
+			items = new ArrayList<>();
 			for (String id : ids) {
 				if (onlyNew && annotationRepo.findByQueryIdAndItemId(queryID, id) != null) {
 					continue;
 				}
 				
 				EvalItem item = itemRepo.findOne(id);
-				if(item == null) {
+				if (item == null) {
 					LOGGER.error("Item {} does not exist!", id);
 					continue;
 				}
@@ -92,14 +94,18 @@ public class AnnotateController {
 				}
 				
 
-				items.getInfo().getItems().add(dto);
+				items.add(dto);
 			}
 		} else { // annotate online items
+			ItemsResultDTO resultDto = litbService.getItems(query.getName(), !isOnline);
+			items = resultDto.getInfo().getItems();
+			ids = resultDto.getInfo().getProductsList();
+
 			Set<String> nonExsitIDs = itemService.getNonExistIds(ids);
 			Set<String> relevantIds = annotationRepo.findRelevantItemIds(queryID);
 
 			if (!nonExsitIDs.isEmpty()) {
-				Iterator<ItemDTO> iter = items.getInfo().getItems().iterator();
+				Iterator<ItemDTO> iter = resultDto.getInfo().getItems().iterator();
 				while (iter.hasNext()) {
 					ItemDTO item = iter.next();
 					
@@ -120,7 +126,7 @@ public class AnnotateController {
 		}
 		// mark relevant items
 		model.addAttribute("query", query.getName());
-		model.addAttribute("items", items.getInfo().getItems());
+		model.addAttribute("items", items);
 		model.addAttribute("annotator", annotator);
 		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID, ids));
 		

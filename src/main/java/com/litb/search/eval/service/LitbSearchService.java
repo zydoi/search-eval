@@ -2,6 +2,8 @@ package com.litb.search.eval.service;
 
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -17,6 +19,8 @@ import com.litb.search.eval.dto.litb.SearchResultDTO;
 
 @Service
 public class LitbSearchService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(LitbSearchService.class);
 	
 	@Autowired
 	@Qualifier("LitbTemplate")
@@ -42,6 +46,7 @@ public class LitbSearchService {
 	}
 	
 	public SearchResultDTO search(String keywords, int size, boolean isEval) {
+		LOGGER.info("Litb Search: {}", keywords);
 		String url = isEval ? environment.getProperty("litb.eval.api") : environment.getProperty("litb.api");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "keywordSearch")
 				.queryParam("app_key", "FIQ79MXR")
@@ -65,6 +70,7 @@ public class LitbSearchService {
 	}
 
 	public ItemsResultDTO getItems(String keywords, int size, boolean isEval) {
+		LOGGER.info("Litb Get items: {}", keywords);
 		String url = isEval ? environment.getProperty("litb.vela.eval.api") : environment.getProperty("litb.vela.api");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
 				.queryParam("client", "vela")

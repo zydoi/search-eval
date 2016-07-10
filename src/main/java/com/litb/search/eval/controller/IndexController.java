@@ -1,5 +1,6 @@
 package com.litb.search.eval.controller;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -51,27 +52,31 @@ public class IndexController {
 	private ItemService itemService;
 	
 	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
-	public String indexQuery(@RequestParam int queryId) {
+	public String indexQuery(@RequestParam int queryId, @RequestParam(defaultValue="true") boolean onlyNew) {
 		ItemsResultDTO result = litbService.getItems(queryService.getQueryById(queryId), false);
 		LOGGER.info("Start indexing items for query: " + queryService.getQueryById(queryId));
 
 		List<String> ids = result.getInfo().getProductsList();
-		Set<String> newIds = itemService.getNonExistIds(ids);
+		if (onlyNew) {
+			ids = new ArrayList<String>(itemService.getNonExistIds(ids));
+			
+		}
 		
-		List<SolrItemDTO> items = searchService.getItems(newIds);
+		List<SolrItemDTO> items = searchService.getItems(ids);
 		
 		indexService.addItems(items);
 		
-		Iterator<ItemDTO> iterator = result.getInfo().getItems().iterator();
-		while (iterator.hasNext()) {
-			ItemDTO dto = iterator.next();
-			if (!newIds.contains(dto.getItemId())) {
-				iterator.remove();
+		if (onlyNew) {
+			Iterator<ItemDTO> iterator = result.getInfo().getItems().iterator();
+			while (iterator.hasNext()) {
+				ItemDTO dto = iterator.next();
+				if (!ids.contains(dto.getItemId())) {
+					iterator.remove();
+				}
 			}
 		}
-		
 		itemService.addNewItems(result.getInfo().getItems());
-		LOGGER.info("Added {} new items.", newIds.size());
+		LOGGER.info("Indexed {} items.", ids.size());
 
 		
 		return searchService.query(ids, SolrCore.EVAL);
