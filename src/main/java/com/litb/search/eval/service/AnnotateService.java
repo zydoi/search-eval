@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.litb.search.eval.dto.litb.ItemDTO;
 import com.litb.search.eval.dto.solr.SolrItemDTO;
@@ -69,17 +70,19 @@ public class AnnotateService {
 		
 		// add annotations for the relevant items
 		if (relevantIDs != null && !relevantIDs.isEmpty()) {
+			annotateItems(queryID, relevantIDs, true);
 			evalService.annotateItems(queryID, relevantIDs);
 			StringBuilder sb = new StringBuilder("Annotator: ");
-			sb.append(annotator).append("add annotations of Query: ").append(query).append(", ids: ").append(SolrQueryUtils.concatIDs(relevantIDs));
+			sb.append(annotator).append(" add annotations of Query: ").append(query).append(", ids: ").append(SolrQueryUtils.concatIDs(relevantIDs));
 			ANNOTATE_LOGGER.info(sb.toString());
 		}
 		
 		// remove annotations for irrelevant items
 		if (irrelevantIDs != null && !irrelevantIDs.isEmpty()) {
+			unannotateItems(queryID, irrelevantIDs);
 			evalService.unannotateItems(queryID, irrelevantIDs);
 			StringBuilder sb = new StringBuilder("Annotator: ");
-			sb.append(annotator).append("remove annotations of Query: ").append(query).append(", ids: ").append(SolrQueryUtils.concatIDs(relevantIDs));
+			sb.append(annotator).append(" remove annotations of Query: ").append(query).append(", ids: ").append(SolrQueryUtils.concatIDs(irrelevantIDs));
 			ANNOTATE_LOGGER.info(sb.toString());
 		}
 	}
@@ -120,11 +123,13 @@ public class AnnotateService {
 			annotationRepo.save(annotation);
 		}
 	}
-
+	
+	@Transactional
 	public void unannotateItems(int queryId, Collection<String> itemIds) {
 		Set<EvalItemAnnotation> annotations = annotationRepo.findByQueryIdAndItemIdIn(queryId, itemIds);
-		for (EvalItemAnnotation evalItemAnnotation : annotations) {
-			evalItemAnnotation.resetAnnotationTimes();
+		for (EvalItemAnnotation annotation : annotations) {
+			annotation.resetAnnotationTimes();
+			annotationRepo.save(annotation);
 		}
 	}
 }

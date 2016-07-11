@@ -36,6 +36,9 @@ public class EvaluationService {
 
 	@Value("${quary.bad.eval}")
 	private String badQueryIDs;
+
+	@Value("${quary.mul.eval}")
+	private String mulQueryIDs;
 	
 	@Autowired
 	private QueryRepository queryRepo;
@@ -108,6 +111,9 @@ public class EvaluationService {
 			break;
 		case BAD:
 			qids = badQueryIDs.split(",");
+			break;
+		case MUL:
+			qids = mulQueryIDs.split(",");
 			break;
 		default:
 			qids = queryIDs.split(",");

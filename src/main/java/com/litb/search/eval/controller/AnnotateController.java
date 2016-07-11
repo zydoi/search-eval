@@ -124,10 +124,11 @@ public class AnnotateController {
 				}
 			}
 		}
-		// mark relevant items
+		if (annotator != null) {
+			model.addAttribute("annotator", annotator);
+		}
 		model.addAttribute("query", query.getName());
 		model.addAttribute("items", items);
-		model.addAttribute("annotator", annotator);
 		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID, ids));
 		
 		return "items";

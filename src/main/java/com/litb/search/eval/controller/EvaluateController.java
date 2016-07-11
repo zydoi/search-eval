@@ -30,6 +30,7 @@ public class EvaluateController {
 		types.add(QueryType.ALL);
 		types.add(QueryType.TOP);
 		types.add(QueryType.BAD);
+		types.add(QueryType.MUL);
 		
 		modelAndView.addObject("queryResults", result.getQueryEvalResults());
 		modelAndView.addObject("types", types);
