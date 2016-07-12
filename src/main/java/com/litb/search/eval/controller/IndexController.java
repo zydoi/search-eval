@@ -135,4 +135,10 @@ public class IndexController {
 		Set<EvalItem> items = itemService.syncDBAndSolr();
 		return "Sync " + items.size() + " new items";
 	}
+	
+	@RequestMapping(value = "syncSolr", method = RequestMethod.GET, produces = "application/json")
+	public String syncSolr(@RequestParam String field) {
+		indexService.getItemIdsWithEmptyField(field);
+		return null;
+	}
 }

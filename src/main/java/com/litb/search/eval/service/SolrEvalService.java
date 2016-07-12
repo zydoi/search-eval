@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -59,6 +60,42 @@ public class SolrEvalService {
 			LOGGER.error("Failed to get items by the query id.", e);
 		}
 		return new ArrayList<>();
+	}
+	
+	public List<SolrItemDTO> getItemIdsWithEmptyField(String fieldName) {
+		//TODO
+		SolrQuery query = new SolrQuery("-" + fieldName + ":*");
+		query.setRows(10000);
+		query.setFields("id");
+		
+		try {
+			return solrServer.query(query).getBeans(SolrItemDTO.class);
+		} catch (SolrServerException e) {
+			LOGGER.error("Failed to get items by the query id.", e);
+		}
+		return new ArrayList<>();
+	}
+	
+	public void updateField(String fieldName, Map<String, String> items) {
+		if (items != null) {
+			Set<SolrInputDocument> docs = new HashSet<>();
+			for (Entry<String, String> entry : items.entrySet()) {
+				Map<String, Object> queryReset = new HashMap<>();
+				queryReset.put("set", entry.getValue());
+				SolrInputDocument doc = new SolrInputDocument();
+
+				doc.addField("id", entry.getKey());
+				doc.addField(fieldName, queryReset);
+				docs.add(doc);
+			}
+			try {
+				solrServer.add(docs);
+				solrServer.commit();
+			} catch (SolrServerException | IOException e) {
+				LOGGER.error("Failed to update field " + fieldName + "!", e);
+				return;
+			}
+		}
 	}
 	
 	public List<SolrItemDTO> getItemsByQuery(int queryId) {

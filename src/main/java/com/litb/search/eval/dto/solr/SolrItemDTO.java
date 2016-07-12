@@ -26,8 +26,8 @@ public class SolrItemDTO {
 	@Field
 	private double price;
 
-	@Field
-	private List<String> category;
+	@Field("category_en")
+	private String category;
 	
 	@Field("fav_num")
 	private int favNum;
@@ -100,14 +100,6 @@ public class SolrItemDTO {
 		this.price = price;
 	}
 
-	public List<String> getCategory() {
-		return category;
-	}
-
-	public void setCategory(List<String> category) {
-		this.category = category;
-	}
-
 	public int getFavNum() {
 		return favNum;
 	}
@@ -122,5 +114,13 @@ public class SolrItemDTO {
 
 	public void setLastCategory(String lastCategory) {
 		this.lastCategory = lastCategory;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }
