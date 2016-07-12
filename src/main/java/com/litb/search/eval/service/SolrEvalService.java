@@ -62,18 +62,22 @@ public class SolrEvalService {
 		return new ArrayList<>();
 	}
 	
-	public List<SolrItemDTO> getItemIdsWithEmptyField(String fieldName) {
-		//TODO
+	public List<String> getItemIdsWithEmptyField(String fieldName) {
 		SolrQuery query = new SolrQuery("-" + fieldName + ":*");
 		query.setRows(10000);
 		query.setFields("id");
 		
+		List<String> ids = new ArrayList<>();
+		
 		try {
-			return solrServer.query(query).getBeans(SolrItemDTO.class);
+			SolrDocumentList results = solrServer.query(query).getResults();
+			for (SolrDocument doc : results) {
+				ids.add((String) doc.getFieldValue("id"));
+			}
 		} catch (SolrServerException e) {
 			LOGGER.error("Failed to get items by the query id.", e);
 		}
-		return new ArrayList<>();
+		return ids;
 	}
 	
 	public void updateField(String fieldName, Map<String, String> items) {
@@ -246,49 +250,43 @@ public class SolrEvalService {
 		return results;
 	}
 	
-	public void setItemNames() {
-		List<SolrItemDTO> items = new ArrayList<>();
+	public void setItemFieldValues(String field, List<String> ids) {
+		List<SolrDocument> items = new ArrayList<>();
 		int pageSize = 100;
 		try {
-			SolrQuery query = new SolrQuery("*:*");
-			query.setFields("id");
-			query.setRows(5000);
-			QueryResponse rsp = solrServer.query(query);
-			SolrDocumentList ids = rsp.getResults();
 			List<String> results = new ArrayList<>();
-
-			Iterator<SolrDocument> iterator = ids.iterator();
-
+			Iterator<String> iterator = ids.iterator();
+			
 			while (iterator.hasNext()) {
-				results.add((String) iterator.next().getFieldValue("id"));
+				results.add(iterator.next());
 				if (results.size() == pageSize) {
-					query = new SolrQuery(SolrQueryUtils.concatIDs(results));
+					SolrQuery query = new SolrQuery(SolrQueryUtils.concatIDs(results));
 					query.setRows(results.size());
-					query.setFields("id", "name_en");
-					items.addAll(prodServer.query(query, SolrRequest.METHOD.POST).getBeans(SolrItemDTO.class));
+					query.setFields("id", field);
+					items.addAll(prodServer.query(query, SolrRequest.METHOD.POST).getResults());
 					results.clear();
 				}
 			}
 			
 			if (!results.isEmpty()) {
-				query = new SolrQuery(SolrQueryUtils.concatIDs(results));
+				SolrQuery query = new SolrQuery(SolrQueryUtils.concatIDs(results));
 				query.setRows(results.size());
-				query.setFields("id", "name_en");
-				items.addAll(prodServer.query(query, SolrRequest.METHOD.POST).getBeans(SolrItemDTO.class));
+				query.setFields("id", field);
+				items.addAll(prodServer.query(query, SolrRequest.METHOD.POST).getResults());
 			}
 
 			Set<SolrInputDocument> docs = new HashSet<>();
 
-			for (SolrItemDTO item : items) {
+			for (SolrDocument item : items) {
 				Map<String, Object> queryUpdate = new HashMap<>();
-				queryUpdate.put("set", item.getName());
+				queryUpdate.put("set", item.getFieldValue(field));
 
 				SolrInputDocument doc = new SolrInputDocument();
 
-				doc.addField("id", item.getId());
-				doc.addField("name_en", queryUpdate);
+				doc.addField("id", item.getFieldValue("id"));
+				doc.addField(field, queryUpdate);
 				docs.add(doc);
-				LOGGER.info("Set name for item {}: {}", item.getId(), item.getName());
+				LOGGER.info("Set {} for item {}: {}", field, item.getFieldValue("id"), item.getFieldValue(field));
 			}
 			solrServer.add(docs);
 			solrServer.commit();

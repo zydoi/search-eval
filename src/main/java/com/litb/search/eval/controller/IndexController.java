@@ -138,7 +138,8 @@ public class IndexController {
 	
 	@RequestMapping(value = "syncSolr", method = RequestMethod.GET, produces = "application/json")
 	public String syncSolr(@RequestParam String field) {
-		indexService.getItemIdsWithEmptyField(field);
-		return null;
+		List<String> ids = indexService.getItemIdsWithEmptyField(field);
+		indexService.setItemFieldValues(field, ids);
+		return "Sync " + ids.size() + " items";
 	}
 }
