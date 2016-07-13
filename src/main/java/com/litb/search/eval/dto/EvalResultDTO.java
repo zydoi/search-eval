@@ -9,6 +9,8 @@ public class EvalResultDTO {
 	
 	private double map;
 	
+	private Map<Integer, Double> averagePn;
+	
 	private Map<Integer, QueryEvalResultDTO> queryEvalResults = new TreeMap<>();
 
 	public String getTitle() {
@@ -33,5 +35,13 @@ public class EvalResultDTO {
 
 	public void addQueryResult(QueryEvalResultDTO queryResult) {
 		this.queryEvalResults.put(Integer.valueOf(queryResult.getQueryID()), queryResult);
+	}
+	
+	public Map<Integer, Double> getAveragePn() {
+		return averagePn;
+	}
+
+	public void setAveragePn(Map<Integer, Double> averagePn) {
+		this.averagePn = averagePn;
 	}
 }

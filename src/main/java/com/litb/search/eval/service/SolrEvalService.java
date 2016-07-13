@@ -286,12 +286,12 @@ public class SolrEvalService {
 				doc.addField("id", item.getFieldValue("id"));
 				doc.addField(field, queryUpdate);
 				docs.add(doc);
-				LOGGER.info("Set {} for item {}: {}", field, item.getFieldValue("id"), item.getFieldValue(field));
+				LOGGER.info("Set {} for item {} to {}", field, item.getFieldValue("id"), item.getFieldValue(field));
 			}
 			solrServer.add(docs);
 			solrServer.commit();
 		} catch (SolrServerException | IOException e) {
-			LOGGER.error("Failed to clear query relevance.", e);
+			LOGGER.error("Failed to sync field value.", e);
 		}
 	}
 	
@@ -304,7 +304,6 @@ public class SolrEvalService {
 
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				System.out.println(line);
 				String id = line.substring(118);
 				id = id.split(":")[0];
 				ids.add(id);
@@ -313,7 +312,7 @@ public class SolrEvalService {
 			scanner.close();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Unable to parse file.", e);
 		}
 		
 		deleteItems(ids);

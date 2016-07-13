@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,6 +55,9 @@ public class AnnotateController {
 	
 	@Autowired
 	private ItemService itemService;
+	
+	@Value("${annotate.size}")
+	private int querySize;
 
 	@ModelAttribute("queries")
 	public List<EvalQuery> populateQueries() {
@@ -75,7 +79,7 @@ public class AnnotateController {
 		List<ItemDTO> items;
 		List<String> ids;
 		if(!isOnline) { // annotate evaluation library
-			ids = litbService.search(query.getName(), !isOnline).getInfo().getItems();
+			ids = litbService.search(query.getName(), querySize, !isOnline).getInfo().getItems();
 			Set<String> relevantIds = annotationRepo.findRelevantItemIds(queryID);
 			items = new ArrayList<>();
 			for (String id : ids) {
@@ -93,7 +97,6 @@ public class AnnotateController {
 					dto.setRelevant(true);
 				}
 				
-
 				items.add(dto);
 			}
 		} else { // annotate online items

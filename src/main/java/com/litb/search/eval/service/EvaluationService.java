@@ -1,6 +1,7 @@
 package com.litb.search.eval.service;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -127,5 +128,13 @@ public class EvaluationService {
 			return true;
 		}
 		return false;
+	}
+	
+	public double getAverageValue(Collection<Double> values) {
+		double result = 0;
+		for (Double value : values) {
+			result += value;
+		}
+		return result / values.size();
 	}
 }

@@ -1,6 +1,7 @@
 package com.litb.search.eval.service;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class SolrProdService {
 		} catch (SolrServerException e) {
 			LOGGER.error("Failed to search items.", e);
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	public SolrItemDTO getItem(String id) {
