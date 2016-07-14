@@ -43,13 +43,23 @@
 			</tr>
 		</tbody>
 		<tfoot>
+			<tr>
+			<th colspan="2" th:text="'Average:'" />
+			<th th:text="${#numbers.formatDecimal(p10, 1, 4)}" />
+			<th th:text="${#numbers.formatDecimal(p20, 1, 4)}" />
+			<th th:text="${#numbers.formatDecimal(p48, 1, 4)}" />
+			<th th:text="${#numbers.formatDecimal(map, 1, 4)}" />
+			</tr>
+	
+		<!-- 
 			<tr><th colspan="5" th:text="'Mean Average Precision:' + ${#numbers.formatDecimal(map, 1, 4)}" /></tr>
+		 -->
 		</tfoot>
 	</table>
 	
 	<div id="explain">
 		*TOP: choosen from the top keywords of LITB website. <br/>
-		*BAD: choosen from the online keywords which has a pool CTR.
+		*BAD: choosen from the online keywords which has a pool CTR.<br/>
 		*MUL: queries which composited with more than one words.
 	</div>
 </body>

@@ -2,7 +2,9 @@ package com.litb.search.eval.service;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +86,22 @@ public class EvaluationService {
 		}
 		map = map / qids.size();
 		result.setMap(map);
+		
+		Map<Integer, Double> aPn = new HashMap<>();
+		for (int num : nums) {
+			aPn.put(num, 0.0);
+		}
+		for ( QueryEvalResultDTO queryEval : result.getQueryEvalResults().values()) {
+			for (int num : nums) {
+				double value = aPn.get(num) + queryEval.getPrecisions().get(num);
+				aPn.put(num, value);
+			}
+		}
+		
+		for (int num : nums) {
+			result.getAveragePn().put(num, aPn.get(num) / qids.size());
+			LOGGER.info("Search Engine Average P@{}: {}", num, result.getAveragePn().get(num));
+		}
 		
 		LOGGER.info("Search Engine Mean Average Precision (MAP): " + map);
 		return result;
