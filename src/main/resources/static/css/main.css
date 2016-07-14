@@ -139,3 +139,11 @@ label {
 #onlyNew {
 	margin-right: 50px;
 }
+
+#ref-txt {
+	color: green;
+}
+
+#irref-txt {
+	color: red;
+}

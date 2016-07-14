@@ -61,12 +61,12 @@
 	                	<span class="category" th:text="${item.masterCategoryName}"/>
 	                </div>
 	                
-	               	<div class="reference">
-	               		<span class="ref-txt" th:text="'Relevant:'" />
+	               	<div class="reference" th:if="!${item.isRelevant}">
+	               		<span id="ref-txt" th:text="'Relevant:'" />
 						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{relevantPids}"/>
 	                </div>
 	               	<div class="reference" th:if="${item.isRelevant}">
-	               		<span class="ref-txt" th:text="'Irrelvant:'" />
+	               		<span id="irref-txt" th:text="'Irrelvant:'" />
 						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{irrelevantPids}"/>
 	                </div>
 	          	</div>

@@ -87,21 +87,7 @@ public class EvaluationService {
 		map = map / qids.size();
 		result.setMap(map);
 		
-		Map<Integer, Double> aPn = new HashMap<>();
-		for (int num : nums) {
-			aPn.put(num, 0.0);
-		}
-		for ( QueryEvalResultDTO queryEval : result.getQueryEvalResults().values()) {
-			for (int num : nums) {
-				double value = aPn.get(num) + queryEval.getPrecisions().get(num);
-				aPn.put(num, value);
-			}
-		}
-		
-		for (int num : nums) {
-			result.getAveragePn().put(num, aPn.get(num) / qids.size());
-			LOGGER.info("Search Engine Average P@{}: {}", num, result.getAveragePn().get(num));
-		}
+		calculateAveragePn(result);
 		
 		LOGGER.info("Search Engine Mean Average Precision (MAP): " + map);
 		return result;
@@ -154,5 +140,23 @@ public class EvaluationService {
 			result += value;
 		}
 		return result / values.size();
+	}
+	
+	private void calculateAveragePn(EvalResultDTO result) {
+		Map<Integer, Double> aPn = new HashMap<>();
+		for (int num : nums) {
+			aPn.put(num, 0.0);
+		}
+		for ( QueryEvalResultDTO queryEval : result.getQueryEvalResults().values()) {
+			for (int num : nums) {
+				double value = aPn.get(num) + queryEval.getPrecisions().get(num);
+				aPn.put(num, value);
+			}
+		}
+		
+		for (int num : nums) {
+			result.getAveragePn().put(num, aPn.get(num) / result.getQueryEvalResults().size());
+			LOGGER.info("Search Engine Average P@{}: {}", num, result.getAveragePn().get(num));
+		}
 	}
 }
