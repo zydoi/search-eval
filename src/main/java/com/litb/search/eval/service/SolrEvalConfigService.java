@@ -19,7 +19,7 @@ public class SolrEvalConfigService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SolrEvalConfigService.class);
 
 	private static final String SOLR_PROPERTIES = "solr.properties";
-
+	
 	@Value("${zeus.home}")
 	private String zeusHome;
 
@@ -29,7 +29,7 @@ public class SolrEvalConfigService {
 		return null;
 	}
 
-	public void updateSolrProps(Map<String, String> toUpdate) {
+	public boolean updateSolrProps(Map<String, String> toUpdate) {
 		if (props == null) {
 			props = loadSolrProps();
 		}
@@ -39,19 +39,21 @@ public class SolrEvalConfigService {
 				props.setProperty(prop.getKey(), prop.getValue());
 			}
 			props.store(out, null);
-			out.close();
+			return true;
 		} catch (FileNotFoundException e) {
 			LOGGER.error("Solr properties file cannot be found. ", e);
 		} catch (IOException e) {
 			LOGGER.error("Unable to load solr properties ", e);
 		}
+		return false;
 	}
 
-	private Properties loadSolrProps() {
+	public Properties loadSolrProps() {
 		props = new Properties();
-		try (FileInputStream in = new FileInputStream(zeusHome + "/etc/" + SOLR_PROPERTIES)) {
+		String fileName = zeusHome + "/etc/" + SOLR_PROPERTIES;
+		try (FileInputStream in = new FileInputStream(fileName)) {
 			props.load(in);
-			return props;
+			LOGGER.info("Load solr configurationg file: {}", fileName);
 		} catch (FileNotFoundException e) {
 			LOGGER.error("Solr properties file cannot be found. ", e);
 		} catch (IOException e) {

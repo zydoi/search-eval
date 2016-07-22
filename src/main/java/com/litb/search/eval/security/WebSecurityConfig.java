@@ -1,5 +1,6 @@
 package com.litb.search.eval.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,12 +13,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 				.antMatchers("/index").hasRole("ADMIN")
-				.anyRequest().authenticated()
 				.and()
-			.formLogin();
+				.formLogin();
 	}
 	
-	
+	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication()
+				.withUser("admin").password("32167").roles("ADMIN").and()
+				.withUser("user").password("123456").roles("USER");
 	}
 }

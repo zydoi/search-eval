@@ -14,6 +14,24 @@ tfoot th {
 	text-align: right;
 }
 
+#content {
+	position: relative;
+}
+
+#result {
+	float: left;
+	width: 550px;
+	margin-left: 50px;
+}
+
+#config {
+	margin-left: 700px;
+	max-width: 600px;
+	border:solid gray;
+	padding-bottom: 5px;
+}
+
+
 #id {
 	width: 20px;
 }
@@ -31,9 +49,19 @@ tfoot th {
 }
 
 #explain {
+	clear: both;
 	position:relative;
 	top:50px;
-	left:5px;
+	left:25px;
 	color: red;
 	font-size: 11px;
+}
+
+.prop-name {
+ 	font-weight:bold;
+}
+
+.prop-value {
+	min-width: 500px;
+	padding-left: 1em;
 }

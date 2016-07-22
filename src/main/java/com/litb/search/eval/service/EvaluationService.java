@@ -49,9 +49,15 @@ public class EvaluationService {
 	@Autowired
 	private AnnotationRepository annotationRepo;
 	
+	private Map<QueryType, EvalResultDTO> evalResuts = new HashMap<>();
+	
 	private List<Integer> nums = Arrays.asList(10, 20, 48);
 	
 	public EvalResultDTO generateEvaluationResult(QueryType type) {
+		if (evalResuts.containsKey(type)) {
+			return evalResuts.get(type);
+		}
+		
 		EvalResultDTO result = new EvalResultDTO();
 		double map = 0;
 		List<String> qids = getEvalQueryIDs(type);
@@ -90,6 +96,7 @@ public class EvaluationService {
 		calculateAveragePn(result);
 		
 		LOGGER.info("Search Engine Mean Average Precision (MAP): " + map);
+		evalResuts.put(type, result);
 		return result;
 	}
 	

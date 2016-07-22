@@ -28,7 +28,7 @@ import com.litb.search.eval.service.QueryService;
 import com.litb.search.eval.service.SolrEvalService;
 import com.litb.search.eval.service.SolrProdService;
 
-@RestController("index")
+@RestController("/index")
 public class IndexController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IndexController.class);
