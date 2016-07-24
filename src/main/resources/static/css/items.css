@@ -1,0 +1,133 @@
+.thumbnail {
+	width: 182px;
+	height: 370px;
+	display: inline;
+	float: left;
+	overflow: hidden;
+	padding: 5px;
+	margin-bottom: 5px;
+}
+
+.product-image {
+	position:relative;
+}
+
+.caption {
+	position:relative;
+	top:5px;
+}
+
+.item-img {
+	width: 180px;
+	height: 240px;
+}
+
+.new-img {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	top: 0px;
+	right: 0px;
+}
+
+.caption {
+	width: 182px;
+	height: 40px;
+}
+
+.hide {
+	display: none;
+}
+
+.item-line-wrap {
+	color: #666;
+}
+
+.item-name {
+	width: 182px;
+	height: 26px;
+	font-size: 11px;
+	line-height: 13px;
+	word-wrap: break-word;
+	overflow: hidden;
+}
+
+.product-price {
+	width: 182px;
+	height: 18px;
+}
+
+.price {
+	font-size: 14px;
+	color: #900;
+	line-height: 18px;
+	height: 18px;
+	display: inline-block;
+}
+
+.master-category {
+	margin-top: 5px;
+	font-size: 11px;
+	color: #666;
+}
+
+.reference {
+	margin-top: 5px;
+	font-size: 16px;
+	width: 182px;
+	height: 14px;
+}
+
+.stars-img {
+	width: 55px;
+	height: 13px;
+}
+
+.fav-img {
+	right: 30px;
+	width: 14px;
+	height: 13px;
+}
+
+
+.relevant-img {
+	margin-left: 55px;
+	width: 14px;
+	height: 14px;
+}
+
+.isRef {
+	margin-left: 50px;
+}
+
+#annotator {
+	margin: 10px;
+}
+
+#query {
+	margin: 10px;
+}
+
+#items {
+	margin-top: 10px;
+}
+
+#btn-done {
+	position: absolute;
+	width: 80px;
+	height: 30px;
+	top: 20px;
+	right: 20px;
+}
+
+#onlyNew {
+	margin-right: 50px;
+}
+
+#ref-txt {
+	color: green;
+}
+
+#irref-txt {
+	color: red;
+}

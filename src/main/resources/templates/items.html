@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="US-ASCII" />
+	<meta charset="UTF-8" />
 	<title>items annotator</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css"/>
-
+    <link rel="stylesheet" type="text/css" href="/css/items.css"/>
 </head>
 <body>
+	<div th:replace="fragments/header :: header" />
 	<h2 th:text="'Hello,' + ${annotator} + '!'" th:if="${annotator != null}" />
 	<div class="chooseQuery">
 		<form action="#" th:action="@{/itemlist}" method="get">

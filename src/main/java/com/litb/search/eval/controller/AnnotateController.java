@@ -64,7 +64,12 @@ public class AnnotateController {
 		return queryRepo.findByEffectiveTrue();
 	}
 
-	@RequestMapping(value = { "/", "/select" }, method = RequestMethod.GET)
+    @ModelAttribute("page")
+    public String module() {
+        return "anno";
+    }
+	
+	@RequestMapping(value ="/select", method = RequestMethod.GET)
 	public String selectQuery() {
 		return "items";
 	}
@@ -143,6 +148,5 @@ public class AnnotateController {
 		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query " +  annotateDTO.getQueryID());
 		return "items";
 	}
-	
 	
 }
