@@ -55,7 +55,7 @@ public class SolrEvalConfigService {
 			props.load(in);
 			LOGGER.info("Load solr configurationg file: {}", fileName);
 		} catch (FileNotFoundException e) {
-			LOGGER.info("Solr properties file does not exist. ", e);
+			LOGGER.info("Solr properties file does not exist. ");
 		} catch (IOException e) {
 			LOGGER.error("Unable to load solr properties ", e);
 		}
