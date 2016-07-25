@@ -14,7 +14,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -22,7 +23,7 @@ import org.xml.sax.SAXException;
 
 public final class ResponseConverter {
 
-	private static final Logger LOGGER = Logger.getLogger(ResponseConverter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ResponseConverter.class);
 
 	public static String convertToIndexRequest(String response) {
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();

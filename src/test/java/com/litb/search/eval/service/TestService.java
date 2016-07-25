@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,12 @@ public class TestService {
 	@Qualifier("SolrEvalServer")
 	private SolrServer solrServer;
 
-//	@Test
+	@Autowired
+	@Qualifier("SolrProdServer")
+	private SolrServer solrOnlineServer;
+
+	@Test
+	@Ignore
 	public void test() throws SolrServerException, IOException {
 
 		SolrInputDocument doc = new SolrInputDocument();
@@ -37,15 +43,16 @@ public class TestService {
 		doc2.addField("id", "SP2514N");
 		doc.addField("price", queryInc);
 		doc2.addField("price", queryInc);
-		
+
 		Set<SolrInputDocument> docs = new HashSet<>();
 		docs.add(doc2);
 		docs.add(doc);
 		solrServer.add(docs);
 		solrServer.commit();
 	}
-	
+
 	@Test
+	@Ignore
 	public void testIncDynamicField() throws SolrServerException, IOException {
 
 		SolrInputDocument doc = new SolrInputDocument();
@@ -53,7 +60,7 @@ public class TestService {
 		queryInc.put("inc", 1);
 		doc.addField("id", "3823505");
 		doc.addField("query_1", queryInc);
-		
+
 		Set<SolrInputDocument> docs = new HashSet<>();
 		docs.add(doc);
 		solrServer.add(docs);

@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="US-ASCII" />
+	<meta charset="UTF-8" />
 	<title>items annotator</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css"/>
-
+    <link rel="stylesheet" type="text/css" href="/css/items.css"/>
 </head>
 <body>
-	<h2 th:text="'Hello,' + ${session.annotator} + '!'" th:if="${session.annotator != null}" />
+	<div th:replace="fragments/header :: header" />
+	<div class="content">
+	<h1 sec:authorize="isAuthenticated()" th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
 	<div class="chooseQuery">
 		<form action="#" th:action="@{/itemlist}" method="get">
-			<div id="annotator" th:if="${session.annotator == null}">
-				<label th:text="'Please input your name: '" /> 
-				<input type="text"	th:value="${annotator}" name="annotator" />
-			</div>
 			<select id="query" name="queryID" >
 				<option th:each="q : ${queries}" 
-						th:value="${q.key}"
-						th:text="${q.key} + '.  '+ ${q.value} " 
-						th:selected="(${query} == ${q.value})" />
+						th:value="${q.id}"
+						th:text="${q.id} + '.  '+ ${q.name} " 
+						th:selected="(${query} == ${q.name})" />
 			</select>
 			Only annotate new items:
-			<input type="checkbox" name="onlyNew" th:value="'true'" />
+			<input id="onlyNew" type="checkbox" name="onlyNew" th:value="'true'" />
+			Annotate online items:
+			<input type="checkbox" name="isOnline" th:value="'true'" />
 			<button type="submit" th:text="ok" />
 		</form>
 	</div>
@@ -31,7 +31,8 @@
 			<input class="hide" type="text" th:value="${annotateDTO.queryID}" th:field="*{queryID}" />
 			<input class="hide" type="text" th:value="${annotateDTO.annotator}" th:field="*{annotator}" />
 			<input class="hide" type="text" th:value="${annotateDTO.pids}" th:field="*{pids}" />
-			<div class="thumbnail" th:each="item:${items.info.items}" >
+			
+			<div class="thumbnail" th:each="item:${items}" >
 	        	<div class="product-image">
 	            	<a th:href="${item.itemURL}">
 	            		<img class="item-img" th:src="${item.cateShowImgs.grid.rectangle}" alt="" />
@@ -51,20 +52,26 @@
 	              	</div>
 
 	               	<div class="product-price">
-	                	<span class="price" th:text="${item.currency} + '   $' + ${item.salePrice}" />
+	                	<span class="price" th:text="'USD' + '   $' + ${item.salePrice}" />
+	                	<img class="relevant-img" src="/images/tick.png" th:if="${item.isRelevant}"/>
 	                </div>
 	               	<div class="master-category">
 	                	<span class="category" th:text="${item.masterCategoryName}"/>
 	                </div>
 	                
-	               	<div class="reference">
-	               		<span class="ref-txt" th:text="'Relevant:'" />
+	               	<div class="reference" th:if="!${item.isRelevant}">
+	               		<span id="ref-txt" th:text="'Relevant:'" />
 						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{relevantPids}"/>
+	                </div>
+	               	<div class="reference" th:if="${item.isRelevant}">
+	               		<span id="irref-txt" th:text="'Irrelvant:'" />
+						<input class="isRef" type="checkbox" th:value="${item.itemId}" th:field="*{irrelevantPids}"/>
 	                </div>
 	          	</div>
 	      	</div>
 	      	<button id="btn-done" type="submit" th:text="Done" />
 		</form>
+	</div>
 	</div>
 </body>
 </html>

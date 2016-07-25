@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>Litb Search Engine Evaluation Model</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+</head>
+
+<body>
+	<div th:replace="fragments/header :: header" />
+	<div class="container">
+		<h1>Hello!</h1>
+		<p>
+			Welcome to Litb Search Engine Evaluation Model application
+		</p>
+		<p>
+          <a href="/signup" th:href="@{/login}" class="btn-sign">Sign in</a>
+        </p>
+		<div th:replace="fragments/footer :: footer" />
+	</div>
+	
+</body>
+</html>

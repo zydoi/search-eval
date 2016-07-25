@@ -1,15 +1,16 @@
-package com.litb.search.eval.dto;
+package com.litb.search.eval.dto.litb;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ItemsResultDTO {
+public class SearchResultDTO {
 
 	private String result;
-	
-	@JsonProperty("info")
-	private LitbInfoDTO info;
+
+	private SearchInfoDTO info;
+
+	public SearchResultDTO() {
+	}
 
 	public String getResult() {
 		return result;
@@ -19,11 +20,11 @@ public class ItemsResultDTO {
 		this.result = result;
 	}
 
-	public LitbInfoDTO getInfo() {
+	public SearchInfoDTO getInfo() {
 		return info;
 	}
 
-	public void setInfo(LitbInfoDTO info) {
+	public void setInfo(SearchInfoDTO info) {
 		this.info = info;
 	}
 }

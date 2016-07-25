@@ -7,13 +7,14 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.litb.search.eval.repository.QueryType;
 
 public class KeywordParser {
 
-	private static final Logger LOGGER = Logger.getLogger(KeywordParser.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(KeywordParser.class);
 
 	public static Map<Integer, String> parseAll() {
 		Map<Integer, String> queries = new TreeMap<>();

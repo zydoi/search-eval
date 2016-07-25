@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Navigation Bar</title>
+<link rel="stylesheet" type="text/css" href="/css/header.css" />
+</head>
+<body>
+	<div class="navbar-header" th:fragment="header">
+		<ul class="nav">
+			<li th:classappend="${page == 'home' ? 'active' : ''}"><a href="/">Home</a></li>
+			<li th:classappend="${page == 'anno' ? 'active' : ''}"><a href="/select">Annotation</a></li>
+			<li th:classappend="${page == 'eval' ? 'active' : ''}"><a href="/eval">Evaluation</a></li>
+			<li th:classappend="${page == 'search' ? 'active' : ''}"><a href="/search">Search</a></li>
+			<li th:classappend="${page == 'index' ? 'active' : ''}"><a href="/index">Index</a></li>
+			<li sec:authorize="!isAuthenticated()" class="li-right"><a href="/login">Login</a></li>
+			<li sec:authorize="isAuthenticated()" class="li-right"><a href="/login?logout">Logout</a></li>
+		</ul>
+	</div>
+</body>
+</html>

@@ -3,9 +3,9 @@ package com.litb.search.eval.service.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.litb.search.eval.dto.ItemDTO;
-import com.litb.search.eval.dto.ItemsResultDTO;
-import com.litb.search.eval.dto.LitbInfoDTO;
+import com.litb.search.eval.dto.litb.ItemDTO;
+import com.litb.search.eval.dto.litb.ItemsResultDTO;
+import com.litb.search.eval.dto.litb.LitbInfoDTO;
 
 public class MockItemGenerator {
 	
