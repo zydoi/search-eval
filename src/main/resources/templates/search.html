@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="US-ASCII" />
+	<title>items annotator</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/items.css"/>
+
+</head>
+<body>
+	<div th:replace="fragments/header :: header" />
+	<div class="content">
+	<div class="chooseQuery">
+		<form action="#" th:action="@{/search}" method="get">
+			<div id="annotator" th:if="${session.annotator == null}">
+				<label th:text="'Query: '" /> 
+				<input type="text"	th:value="${query}" name="query" />
+				<button type="submit" th:text="ok" />
+			</div>
+		</form>
+	</div>
+	
+	<div id="items" th:if="${query != null}">
+		<div class="thumbnail" th:each="item:${items.info.items}" >
+	        <div class="product-image">
+	            <a th:href="${item.itemURL}"><img class="item-img" th:src="${item.cateShowImgs.grid.rectangle}" alt="" /></a>
+	           </div>
+	        <div class="caption">
+	           	<div class="item-name"  th:text="${item.itemName}" />
+	            <div class="item-line-wrap">
+	                <span class="item-reviews">
+		            	<img class="stars-img" src="/images/stars.png"/>
+		            	<span class="review-count" th:text="'(' + ${item.reviewCount} + ')'" />
+		            	<img class="fav-img" src="/images/fav.ico"/>
+		            		
+	                    <span class="product-favorite" th:text="'(' + ${item.favoriteTimes} + ')'" />
+	         		</span>
+	          	</div>
+	            <div class="product-price">
+	            	<span class="price" th:text="${item.currency} + '   $' + ${item.salePrice}" />
+	           	</div>
+	            <div class="master-category">
+	            	<span class="category" th:text="${item.masterCategoryName}"/>
+	            </div>
+	       	</div>
+	   	</div>
+	</div>
+	</div>
+</body>
+</html>

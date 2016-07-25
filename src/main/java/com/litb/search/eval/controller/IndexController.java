@@ -9,6 +9,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,6 +51,11 @@ public class IndexController {
 	
 	@Autowired
 	private ItemService itemService;
+	
+    @ModelAttribute("page")
+    public String module() {
+        return "index";
+    }
 	
 	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
 	public String indexQuery(@RequestParam int queryId, @RequestParam(defaultValue="true") boolean onlyNew) {

@@ -1,11 +1,10 @@
 package com.litb.search.eval.controller;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ import com.litb.search.eval.service.ItemService;
 import com.litb.search.eval.service.LitbSearchService;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
-@SessionAttributes({"items", "annotator"})
+@SessionAttributes("items")
 @Controller
 public class AnnotateController {
 
@@ -64,16 +63,21 @@ public class AnnotateController {
 		return queryRepo.findByEffectiveTrue();
 	}
 
-	@RequestMapping(value = { "/", "/select" }, method = RequestMethod.GET)
+    @ModelAttribute("page")
+    public String module() {
+        return "anno";
+    }
+	
+	@RequestMapping(value ="/select", method = RequestMethod.GET)
 	public String selectQuery() {
 		return "items";
 	}
 
 	@RequestMapping(value = "/itemlist", method = RequestMethod.GET)
-	public String selectQuery(@RequestParam int queryID, @RequestParam(defaultValue="false") boolean onlyNew, @RequestParam(required = false) String annotator, 
-			@RequestParam(defaultValue="false") boolean isOnline, Model model, HttpSession session) {
+	public String selectQuery(@RequestParam int queryID, @RequestParam(defaultValue="false") boolean onlyNew, 
+			@RequestParam(defaultValue="false") boolean isOnline, Model model, Principal principal) {
 		EvalQuery query = queryRepo.findOne(queryID);
-		LOGGER.info(session.getAttribute("annotator") + " starts to annotate items for query: " + query);
+		LOGGER.info("{} starts to annotate items for query: {}", principal.getName(), query);
 		
 		
 		List<ItemDTO> items;
@@ -127,12 +131,9 @@ public class AnnotateController {
 				}
 			}
 		}
-		if (annotator != null) {
-			model.addAttribute("annotator", annotator);
-		}
 		model.addAttribute("query", query.getName());
 		model.addAttribute("items", items);
-		model.addAttribute("annotateDTO", new AnnotateDTO(annotator, queryID, ids));
+		model.addAttribute("annotateDTO", new AnnotateDTO(principal.getName(), queryID, ids));
 		
 		return "items";
 	}
@@ -143,6 +144,5 @@ public class AnnotateController {
 		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query " +  annotateDTO.getQueryID());
 		return "items";
 	}
-	
 	
 }

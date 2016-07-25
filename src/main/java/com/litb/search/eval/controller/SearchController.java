@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.litb.search.eval.dto.litb.ItemsResultDTO;
@@ -16,9 +17,14 @@ public class SearchController {
 	@Autowired
 	private LitbSearchService litbService;
 	
+    @ModelAttribute("page")
+    public String module() {
+        return "search";
+    }
+	
 	@RequestMapping("/search")
 	public String search() {
-		return "results";
+		return "search";
 	}
 	
 	@RequestMapping(value="/search", params={"query"})
@@ -28,6 +34,6 @@ public class SearchController {
 		
 		model.addAttribute("query", query);
 		model.addAttribute("items", items);
-		return "results";
+		return "search";
 	}
 }

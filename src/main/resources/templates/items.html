@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="US-ASCII" />
+	<meta charset="UTF-8" />
 	<title>items annotator</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css"/>
-
+    <link rel="stylesheet" type="text/css" href="/css/items.css"/>
 </head>
 <body>
-	<h2 th:text="'Hello,' + ${annotator} + '!'" th:if="${annotator != null}" />
+	<div th:replace="fragments/header :: header" />
+	<div class="content">
+	<h1 sec:authorize="isAuthenticated()" th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
 	<div class="chooseQuery">
 		<form action="#" th:action="@{/itemlist}" method="get">
-			<div id="annotator" th:if="${session.annotator == null}">
-				<label th:text="'Please input your name: '" /> 
-				<input type="text"	th:value="${annotator}" name="annotator" />
-			</div>
 			<select id="query" name="queryID" >
 				<option th:each="q : ${queries}" 
 						th:value="${q.id}"
@@ -73,6 +71,7 @@
 	      	</div>
 	      	<button id="btn-done" type="submit" th:text="Done" />
 		</form>
+	</div>
 	</div>
 </body>
 </html>
