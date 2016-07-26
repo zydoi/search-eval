@@ -1,5 +1,6 @@
 package com.litb.search.eval.service;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,9 @@ public class SolrProdServiceTest {
 	private SolrProdService service;
 	
 	@Test
+	@Ignore
 	public void test() {
-//		service.getItem("123");
+		service.getItem("123");
 	}
 	
 

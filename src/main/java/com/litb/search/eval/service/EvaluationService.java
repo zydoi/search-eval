@@ -1,39 +1,29 @@
 package com.litb.search.eval.service;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.solr.client.solrj.SolrServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.litb.search.eval.dto.EvalResultDTO;
 import com.litb.search.eval.dto.QueryEvalResultDTO;
-import com.litb.search.eval.dto.SolrItemDTO;
+import com.litb.search.eval.entity.EvalItemAnnotation;
+import com.litb.search.eval.entity.EvalQuery;
+import com.litb.search.eval.repository.AnnotationRepository;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.repository.QueryType;
-import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service
 public class EvaluationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EvaluationService.class); 
-	
-	@Autowired
-	@Qualifier("SolrEvalServer")
-	private SolrServer solrServer;
-	
-	@Autowired
-	private SolrEvalService evalService;
 	
 	@Autowired
 	private LitbSearchService litbService;
@@ -49,13 +39,25 @@ public class EvaluationService {
 
 	@Value("${quary.bad.eval}")
 	private String badQueryIDs;
+
+	@Value("${quary.mul.eval}")
+	private String mulQueryIDs;
 	
 	@Autowired
 	private QueryRepository queryRepo;
 	
+	@Autowired
+	private AnnotationRepository annotationRepo;
+	
+	private Map<QueryType, EvalResultDTO> evalResuts = new HashMap<>();
+	
 	private List<Integer> nums = Arrays.asList(10, 20, 48);
 	
 	public EvalResultDTO generateEvaluationResult(QueryType type) {
+		if (evalResuts.containsKey(type)) {
+			return evalResuts.get(type);
+		}
+		
 		EvalResultDTO result = new EvalResultDTO();
 		double map = 0;
 		List<String> qids = getEvalQueryIDs(type);
@@ -63,109 +65,54 @@ public class EvaluationService {
 			QueryEvalResultDTO queryResult = new QueryEvalResultDTO(qid);
 			double ap = 0; // average precision
 			double r = 0; // relevant items
-			String query = queryRepo.getQueryByID(qid);
-			queryResult.setQueryName(query);
+			EvalQuery query = queryRepo.findOne(Integer.valueOf(qid));
+			queryResult.setQueryName(query.getName());
 			
-			List<String> ids = litbService.search(query, maxSize, true).getInfo().getItems();
-			List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, maxSize);
-			int size =  Math.min(maxSize, items.size());
+			List<String> ids = litbService.search(query.getName(), maxSize, true).getInfo().getItems();
+			int size =  Math.min(maxSize, ids.size());
+			int n;
 			for (int i = 0; i < size; i++) {
-				int n = i + 1;
-				SolrItemDTO item = items.get(i);
-				int relevance = item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + qid);
-				if (relevance > 0) {
+				EvalItemAnnotation annotation = annotationRepo.findByQueryIdAndItemId(Integer.valueOf(qid), ids.get(i));
+				n = i + 1;
+				if (isRelevant(annotation)) {
 					r++;
 					ap += r/n;
-					// TODO break, if all relevant items are included
 				}
 				if(nums.contains(n)) {
 					double p = r/n;
 					queryResult.addPrecision(n, p);
 				}
 			}
-			ap = ap / r;
+
+			ap = (r == 0) ? 0 : ap / r;
 			queryResult.setAp(ap);
 			result.addQueryResult(queryResult);
-			LOGGER.info("Average Precision for the query(" + qid + ") '" + query + "' is: " + ap);
+			LOGGER.info("Average Precision for the query" + query + "' is: " + ap);
 			map += ap;
 		}
 		map = map / qids.size();
 		result.setMap(map);
 		
+		calculateAveragePn(result);
+		
 		LOGGER.info("Search Engine Mean Average Precision (MAP): " + map);
+		evalResuts.put(type, result);
 		return result;
 	}
 	
-	public Map<String, Double> map(QueryType type) {
-		Map<String, Double> scores = new HashMap<>();
-		double map = 0;
-		List<String> qids = getEvalQueryIDs(type);
-		for (String qid : qids) {
-			double ap = 0;
-			int n = 0; // total items 
-			double r = 0; // relevant items
-			String query = queryRepo.getQueryByID(qid);
-			List<String> ids = litbService.search(query, maxSize, true).getInfo().getItems();
-			List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, maxSize);
-			for (int i = 0; i < Math.min(maxSize, items.size()); i++) {
-				n++;
-				SolrItemDTO item = items.get(i);
-				int annotate = item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + qid);
-				if (annotate > 0) {
-					r++;
-					ap += r/n;
-					// TODO break, if all relevant items are included
-				}
-			}
-			scores.put(query, ap);
-			DecimalFormat formatter = new DecimalFormat("#0.000");
-			LOGGER.info("Average Precision for the query(" + qid + ") '" + query + "' is: " +  formatter.format(ap));
-			map += ap;
-		}
-		map = map / qids.size();
-		scores.put("map", map);
-		
-		LOGGER.info("Search Engine Mean Average Precision (MAP): " + map);
-		return scores;
-	}
-
-	public double pn(String queryID, int n) {
-		String query = queryRepo.getQueryByID(queryID);
-		List<String> ids = litbService.search(query, maxSize, true).getInfo().getItems();
-		List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, n);
+	public double pn(int queryId, int n) {
+		EvalQuery query = queryRepo.findOne(queryId);
+		List<String> ids = litbService.search(query.getName(), maxSize, true).getInfo().getItems();
 		double r = 0;
-		for (SolrItemDTO item : items) {
-			if (item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID) > 0) {
+		for (String id : ids) {
+			EvalItemAnnotation annotation = annotationRepo.findByQueryIdAndItemId(queryId, id);
+			if (isRelevant(annotation)) {
 				r++;
-			} 
+			}
 		}
 		
-		int total = Math.min(n, items.size());
+		int total = Math.min(n, ids.size());
 		return r / total;
-	}
-	
-	public Map<Integer, Double> getPrecisions(String queryID) {
-		Map<Integer, Double> results = new HashMap<>();
-		Set<Integer> nums = new HashSet<>();
-		nums.add(10);
-		nums.add(20);
-		nums.add(48);
-		String query = queryRepo.getQueryByID(queryID);
-		List<String> ids = litbService.search(query, maxSize, true).getInfo().getItems();
-		List<SolrItemDTO> items = evalService.getItemWithRelevance(ids, 48);
-		double r = 0;
-		int i = 0;
-		for (SolrItemDTO item : items) {
-			i++;
-			if (item.getQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryID) > 0) {
-				r++;
-			}
-			if (nums.contains(i)) {
-				results.put(i, r/i);
-			}
-		}
-		
-		return results;
 	}
 	
 	public List<String> getEvalQueryIDs(QueryType type) {
@@ -177,10 +124,46 @@ public class EvaluationService {
 		case BAD:
 			qids = badQueryIDs.split(",");
 			break;
+		case MUL:
+			qids = mulQueryIDs.split(",");
+			break;
 		default:
 			qids = queryIDs.split(",");
 			break;
 		} 
 		return Arrays.asList(qids);
+	}
+	
+	public boolean isRelevant(EvalItemAnnotation annotation) {
+		if (annotation != null && annotation.getAnnotatedTimes() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public double getAverageValue(Collection<Double> values) {
+		double result = 0;
+		for (Double value : values) {
+			result += value;
+		}
+		return result / values.size();
+	}
+	
+	private void calculateAveragePn(EvalResultDTO result) {
+		Map<Integer, Double> aPn = new HashMap<>();
+		for (int num : nums) {
+			aPn.put(num, 0.0);
+		}
+		for ( QueryEvalResultDTO queryEval : result.getQueryEvalResults().values()) {
+			for (int num : nums) {
+				double value = aPn.get(num) + queryEval.getPrecisions().get(num);
+				aPn.put(num, value);
+			}
+		}
+		
+		for (int num : nums) {
+			result.getAveragePn().put(num, aPn.get(num) / result.getQueryEvalResults().size());
+			LOGGER.info("Search Engine Average P@{}: {}", num, result.getAveragePn().get(num));
+		}
 	}
 }

@@ -1,19 +1,15 @@
 package com.litb.search.eval.controller;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.litb.search.eval.dto.ItemsResultDTO;
-import com.litb.search.eval.dto.SearchResultDTO;
 import com.litb.search.eval.dto.SolrCore;
-import com.litb.search.eval.dto.SolrItemDTO;
-import com.litb.search.eval.service.AnnotateService;
+import com.litb.search.eval.dto.litb.ItemsResultDTO;
+import com.litb.search.eval.dto.litb.SearchResultDTO;
+import com.litb.search.eval.dto.solr.SolrItemDTO;
 import com.litb.search.eval.service.LitbSearchService;
 import com.litb.search.eval.service.SolrEvalService;
 import com.litb.search.eval.service.SolrProdService;
@@ -30,9 +26,6 @@ public class TestController {
 	
 	@Autowired
 	private SolrEvalService indexService;
-	
-	@Autowired
-	private AnnotateService annotateService;
 	
 	@RequestMapping(value="testSearch", method=RequestMethod.GET, produces="application/json")
 	public SearchResultDTO search(@RequestParam String keywords) {
@@ -57,11 +50,4 @@ public class TestController {
 		return searchService.query(id, SolrCore.EVAL);
 	}
 	
-	@RequestMapping(value="testAnnotate", method=RequestMethod.GET)
-	public String annotate(@RequestParam String id) {
-		Set<String> ids = new HashSet<>();
-		ids.add(id);
-		annotateService.annotate("me", "dresses", ids, ids);
-		return "done";
-	}
 }

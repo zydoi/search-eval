@@ -12,7 +12,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.litb.search.eval.App;
-import com.litb.search.eval.dto.SolrItemDTO;
+import com.litb.search.eval.dto.solr.SolrItemDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(App.class)
@@ -27,10 +27,17 @@ public class SolrEvalServiceTest {
 		ids.add("4489703");
 		ids.add("123");
 		
-		assertEquals("4489703", service.getIDs(ids).get(0));
-		assertEquals("123", service.getNonExsitIDs(ids).get(0));
+		assertEquals("4489703", service.getIDsFromSolr(ids).get(0));
+		assertEquals("123", service.getNonExistIDs(ids).get(0));
 		List<SolrItemDTO> items = service.getItemWithRelevance(ids, 10);
 		System.out.println("Item name:" + items.get(0).getName());
 		System.out.println("Query relevance:" + items.get(0).getQuery("query_1"));
 	}
+	
+	@Test
+	public void testGetAllItems() {
+		List<SolrItemDTO> items = service.getAllItems();
+		System.out.println("### Total " + items.size() + " items.");
+	}
+	
 }

@@ -1,0 +1,85 @@
+@CHARSET "UTF-8";
+
+thead  th {
+	text-align: left;
+	padding: 5px;
+}
+
+tbody  td {
+	text-align: left;
+	padding:1px 5px 1px 5px;
+}
+
+tfoot th {
+	text-align: right;
+	padding-right: 10px;
+}
+
+#chooseQuery {
+	margin-top: 20px;
+	margin-left: 10px;
+}
+
+#result {
+	float: left;
+	width: 550px;
+	margin-left: 50px;
+}
+
+#config {
+	margin-left: 700px;
+	max-width: 650px;
+	border:solid gray;
+	padding-bottom: 5px;
+	overflow:hidden;
+}
+
+
+#id {
+	width: 20px;
+}
+
+#p10 {
+	width: 50px;
+}
+
+#p48 {
+	width: 50px;
+}
+
+#ap {
+	width: 50px;
+}
+
+#explain {
+	clear: both;
+	position:relative;
+	top:50px;
+	left:25px;
+	color: red;
+	font-size: 11px;
+}
+
+#map {
+	color: red;
+}
+
+#btn-update {
+	float: right;
+	margin: 5px 20px 5px 0px;
+}
+
+#update-result {
+	margin: 5px 0px 5px 20px;
+	color: green;
+}
+
+.prop-name {
+	min-width: 120px;
+ 	font-weight:bold;
+}
+
+.prop-value {
+	min-width: 500px;
+	padding-left: 1em;
+}

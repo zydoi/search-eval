@@ -2,6 +2,8 @@ package com.litb.search.eval.service;
 
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -12,11 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.litb.search.eval.dto.ItemsResultDTO;
-import com.litb.search.eval.dto.SearchResultDTO;
+import com.litb.search.eval.dto.litb.ItemsResultDTO;
+import com.litb.search.eval.dto.litb.SearchResultDTO;
 
 @Service
 public class LitbSearchService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(LitbSearchService.class);
 	
 	@Autowired
 	@Qualifier("LitbTemplate")
@@ -28,13 +32,22 @@ public class LitbSearchService {
 	public SearchResultDTO search(String keywords, int size) {
 		return search(keywords, size, false);
 	}
+
+	public SearchResultDTO search(String keywords, boolean isEval) {
+		return search(keywords, Integer.valueOf(environment.getProperty("search.size")), isEval);
+	}
 	
 	public ItemsResultDTO getItems(String keywords) {
-		return getItems(keywords, false);
+		return getItems(keywords, Integer.valueOf(environment.getProperty("search.size")), false);
+	}
+	
+	public ItemsResultDTO getItems(String keywords, boolean isEval) {
+		return getItems(keywords, Integer.valueOf(environment.getProperty("search.size")), isEval);
 	}
 	
 	public SearchResultDTO search(String keywords, int size, boolean isEval) {
-		String url = isEval ? environment.getProperty("litb.eval.api") : environment.getProperty("litb.eval.api");
+		LOGGER.info("Litb Search: {}", keywords);
+		String url = isEval ? environment.getProperty("litb.eval.api") : environment.getProperty("litb.api");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "keywordSearch")
 				.queryParam("app_key", "FIQ79MXR")
 				.queryParam("app_secret", "606caa95b19bc709syqx9cpl72kmmnzy")
@@ -56,7 +69,8 @@ public class LitbSearchService {
 		return restTemplate.getForObject(uri, SearchResultDTO.class);
 	}
 
-	public ItemsResultDTO getItems(String keywords, boolean isEval) {
+	public ItemsResultDTO getItems(String keywords, int size, boolean isEval) {
+		LOGGER.info("Litb Get items: {}", keywords);
 		String url = isEval ? environment.getProperty("litb.vela.eval.api") : environment.getProperty("litb.vela.api");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
 				.queryParam("client", "vela")
@@ -70,7 +84,7 @@ public class LitbSearchService {
 				.queryParam("sid", "eval_123")
 				.queryParam("sort_by", "2d")
 				.queryParam("page_no", "1")
-				.queryParam("page_size", environment.getProperty("search.size"))
+				.queryParam("page_size", size)
 				.queryParam("is_hd", "false")
 				.queryParam("country", "USA")
 				.queryParam("timestamp", "2016-06-12+00:00:00")

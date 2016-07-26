@@ -8,3 +8,7 @@
 5008	ball gowns
 5009	adult sex toys
 5010	mirrors
+5011	bathroom sinks
+5012	red dress
+5013	gold shoes
+5014	ladies shoes

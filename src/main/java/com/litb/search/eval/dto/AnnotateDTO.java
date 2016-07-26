@@ -8,15 +8,17 @@ public class AnnotateDTO {
 
 	private String annotator;
 	
-	private String queryID;
+	private int queryID;
 
 	private Set<String> relevantPids;
 	
+	private Set<String> irrelevantPids;
+	
 	private Set<String> pids;
-
+	
 	public AnnotateDTO() {}
 	
-	public AnnotateDTO(String annotator, String queryID, Collection<String> pids) {
+	public AnnotateDTO(String annotator, int queryID, Collection<String> pids) {
 		this.annotator = annotator;
 		this.queryID = queryID;
 		this.pids = new TreeSet<>();
@@ -39,11 +41,11 @@ public class AnnotateDTO {
 		this.pids = pids;
 	}
 	
-	public String getQueryID() {
+	public int getQueryID() {
 		return queryID;
 	}
 
-	public void setQueryID(String queryID) {
+	public void setQueryID(int queryID) {
 		this.queryID = queryID;
 	}
 
@@ -53,5 +55,13 @@ public class AnnotateDTO {
 
 	public void setRelevantPids(Set<String> relevantPids) {
 		this.relevantPids = relevantPids;
+	}
+
+	public Set<String> getIrrelevantPids() {
+		return irrelevantPids;
+	}
+
+	public void setIrrelevantPids(Set<String> irrelevantPids) {
+		this.irrelevantPids = irrelevantPids;
 	}
 }

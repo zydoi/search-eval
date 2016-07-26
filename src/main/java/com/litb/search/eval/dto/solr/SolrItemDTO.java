@@ -1,4 +1,4 @@
-package com.litb.search.eval.dto;
+package com.litb.search.eval.dto.solr;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +11,7 @@ public class SolrItemDTO {
 	@Field
 	private String id;
 	
-	@Field
+	@Field("name_en")
 	private String name;
 
 	@Field("in_stock")
@@ -25,9 +25,9 @@ public class SolrItemDTO {
 	
 	@Field
 	private double price;
-	
-	@Field
-	private List<String> category;
+
+	@Field("category_en")
+	private String category;
 	
 	@Field("fav_num")
 	private int favNum;
@@ -45,13 +45,13 @@ public class SolrItemDTO {
 	private int saleAmount;
 	
 	@Field("sku_en")
-	private String skuEn;
+	private String sku;
 	
 	@Field("description_en")
-	private String descriptionEn;
+	private String description;
 
 	@Field("last_category_en")
-	private String lastCategoryEn;
+	private String lastCategory;
 	
 	@Field("add_at")
 	private Date addAt;
@@ -79,6 +79,10 @@ public class SolrItemDTO {
 		int result = queries.get(qid) == null? 0: queries.get(qid);
 		return result;
 	}
+	
+	public Map<String, Integer> getQueries() {
+		return queries;
+	}
 
 	public String getId() {
 		return id;
@@ -88,4 +92,35 @@ public class SolrItemDTO {
 		this.id = id;
 	}
 	
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public int getFavNum() {
+		return favNum;
+	}
+
+	public void setFavNum(int favNum) {
+		this.favNum = favNum;
+	}
+
+	public String getLastCategory() {
+		return lastCategory;
+	}
+
+	public void setLastCategory(String lastCategory) {
+		this.lastCategory = lastCategory;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
 }

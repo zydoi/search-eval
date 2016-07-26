@@ -1,5 +1,6 @@
 package com.litb.search.eval.dto;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -8,6 +9,8 @@ public class EvalResultDTO {
 	private String title;
 	
 	private double map;
+	
+	private Map<Integer, Double> averagePn = new HashMap<>();
 	
 	private Map<Integer, QueryEvalResultDTO> queryEvalResults = new TreeMap<>();
 
@@ -33,5 +36,13 @@ public class EvalResultDTO {
 
 	public void addQueryResult(QueryEvalResultDTO queryResult) {
 		this.queryEvalResults.put(Integer.valueOf(queryResult.getQueryID()), queryResult);
+	}
+	
+	public Map<Integer, Double> getAveragePn() {
+		return averagePn;
+	}
+
+	public void setAveragePn(Map<Integer, Double> averagePn) {
+		this.averagePn = averagePn;
 	}
 }

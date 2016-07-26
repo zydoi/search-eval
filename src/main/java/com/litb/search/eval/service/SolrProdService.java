@@ -1,14 +1,16 @@
 package com.litb.search.eval.service;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -18,13 +20,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.litb.search.eval.dto.SolrCore;
-import com.litb.search.eval.dto.SolrItemDTO;
+import com.litb.search.eval.dto.solr.SolrItemDTO;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service
 public class SolrProdService {
 
-	private static final Logger LOGGER = Logger.getLogger(SolrProdService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SolrProdService.class);
 
 	@Autowired
 	@Qualifier("SolrTemplate")
@@ -67,7 +69,7 @@ public class SolrProdService {
 		} catch (SolrServerException e) {
 			LOGGER.error("Failed to search items.", e);
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	public SolrItemDTO getItem(String id) {
