@@ -1,12 +1,12 @@
 package com.litb.search.eval.dto;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 public class PropertyFormDTO {
 
-	private Map<String, String> properties = new HashMap<>();
+	private Map<String, String> properties = new TreeMap<>();
 	
 	public PropertyFormDTO() {}
 

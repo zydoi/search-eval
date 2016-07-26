@@ -64,8 +64,7 @@ public class IndexController {
 
 		List<String> ids = result.getInfo().getProductsList();
 		if (onlyNew) {
-			ids = new ArrayList<String>(itemService.getNonExistIds(ids));
-			
+			ids = new ArrayList<>(itemService.getNonExistIds(ids));
 		}
 		
 		List<SolrItemDTO> items = searchService.getItems(ids);

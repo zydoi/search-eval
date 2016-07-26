@@ -2,6 +2,7 @@ package com.litb.search.eval.service;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class EvaluationService {
 	@Autowired
 	private AnnotationRepository annotationRepo;
 	
-	private Map<QueryType, EvalResultDTO> evalResuts = new HashMap<>();
+	private Map<QueryType, EvalResultDTO> evalResuts = new EnumMap<>(QueryType.class);
 	
 	private List<Integer> nums = Arrays.asList(10, 20, 48);
 	
@@ -153,17 +154,20 @@ public class EvaluationService {
 		Map<Integer, Double> aPn = new HashMap<>();
 		for (int num : nums) {
 			aPn.put(num, 0.0);
-		}
-		for ( QueryEvalResultDTO queryEval : result.getQueryEvalResults().values()) {
-			for (int num : nums) {
-				double value = aPn.get(num) + queryEval.getPrecisions().get(num);
-				aPn.put(num, value);
+			int count = 0;
+			for ( QueryEvalResultDTO queryEval : result.getQueryEvalResults().values()) {
+				if (queryEval.getPrecisions().containsKey(num)) {
+					double value = aPn.get(num) + queryEval.getPrecisions().get(num);
+					aPn.put(num, value);
+					count++;
+				}
 			}
-		}
-		
-		for (int num : nums) {
-			result.getAveragePn().put(num, aPn.get(num) / result.getQueryEvalResults().size());
+			result.getAveragePn().put(num, aPn.get(num) / count);
 			LOGGER.info("Search Engine Average P@{}: {}", num, result.getAveragePn().get(num));
 		}
+	}
+	
+	public void invalidateResults() {
+		evalResuts.clear();
 	}
 }

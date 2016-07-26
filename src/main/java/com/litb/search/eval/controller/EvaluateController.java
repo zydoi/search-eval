@@ -53,11 +53,8 @@ public class EvaluateController {
 		modelAndView.addObject("props", props);
 		modelAndView.addObject("propertyForm", form);
 
-
-
 		if (queryType != null) {
 			EvalResultDTO result = evalService.generateEvaluationResult(queryType);
-			
 			
 			modelAndView.addObject("queryResults", result.getQueryEvalResults());
 			modelAndView.addObject("map", result.getMap());
@@ -73,12 +70,11 @@ public class EvaluateController {
 	public ModelAndView updateSolrProperties(PropertyFormDTO propertyForm, ModelAndView modelAndView) {
 		modelAndView.setViewName("eval");
 		solrConfigService.updateSolrProps(propertyForm.getProperties());
-		
+		evalService.invalidateResults();
 		Properties props = solrConfigService.loadSolrProps();
 		modelAndView.addObject("props", props);
 		modelAndView.addObject("propertyForm", new PropertyFormDTO(props));
 
 		return modelAndView;
 	}
-
 }
