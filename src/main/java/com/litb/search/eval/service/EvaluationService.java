@@ -32,17 +32,20 @@ public class EvaluationService {
 	@Value("${search.size}")
 	private int maxSize;
 	
-	@Value("${quary.eval}")
+	@Value("${query.eval}")
 	private String queryIDs;
 	
-	@Value("${quary.top.eval}")
+	@Value("${query.top.eval}")
 	private String topQueryIDs;
 
-	@Value("${quary.bad.eval}")
+	@Value("${query.bad.eval}")
 	private String badQueryIDs;
 
-	@Value("${quary.mul.eval}")
+	@Value("${query.mul.eval}")
 	private String mulQueryIDs;
+	
+	@Value("${query.synm.eval}")
+	private String synmQueryIDs;
 	
 	@Autowired
 	private QueryRepository queryRepo;
@@ -127,6 +130,9 @@ public class EvaluationService {
 			break;
 		case MUL:
 			qids = mulQueryIDs.split(",");
+			break;
+		case SYNM:
+			qids = synmQueryIDs.split(",");
 			break;
 		default:
 			qids = queryIDs.split(",");

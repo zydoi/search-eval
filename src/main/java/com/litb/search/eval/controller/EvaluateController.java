@@ -42,6 +42,7 @@ public class EvaluateController {
 		types.add(QueryType.TOP);
 		types.add(QueryType.BAD);
 		types.add(QueryType.MUL);
+		types.add(QueryType.SYNM);
 		return types;
     }
 	
