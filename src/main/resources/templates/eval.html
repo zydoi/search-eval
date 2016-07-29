@@ -69,9 +69,9 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="prop: ${props}">
-								<td class="prop-name" th:text="${prop.key}" th:field=""/>
-								<td><input class="prop-value" type="text" th:value="${prop.value}" th:field="*{properties[__${prop.key}__]}" /></td>
+							<tr th:each="key: ${props.orderedKeys()}">
+								<td class="prop-name" th:text="${key}" th:field=""/>
+								<td><input class="prop-value" type="text" th:value="${props.get(key)}" th:field="*{properties[__${key}__]}" /></td>
 							</tr>
 						</tbody>
 					</table>

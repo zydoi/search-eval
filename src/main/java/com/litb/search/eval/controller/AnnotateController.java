@@ -27,6 +27,7 @@ import com.litb.search.eval.repository.AnnotationRepository;
 import com.litb.search.eval.repository.ItemRepository;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.AnnotateService;
+import com.litb.search.eval.service.EvaluationService;
 import com.litb.search.eval.service.ItemService;
 import com.litb.search.eval.service.LitbSearchService;
 import com.litb.search.eval.service.util.SolrQueryUtils;
@@ -45,6 +46,9 @@ public class AnnotateController {
 	
 	@Autowired
 	private AnnotateService annotateService;
+	
+	@Autowired
+	private EvaluationService evalService;
 	
 	@Autowired
 	private ItemRepository itemRepo;
@@ -141,6 +145,7 @@ public class AnnotateController {
 	@RequestMapping(value = "/annotate", method = RequestMethod.POST)
 	public String annotate(AnnotateDTO annotateDTO, @ModelAttribute("items") List<ItemDTO> items) {
 		annotateService.annotate(annotateDTO.getAnnotator(), annotateDTO.getQueryID(), annotateDTO.getPids(), annotateDTO.getRelevantPids(), annotateDTO.getIrrelevantPids(), items);
+		evalService.invalidateResults();
 		LOGGER.info(annotateDTO.getAnnotator() + " finished annotating query " +  annotateDTO.getQueryID());
 		return "items";
 	}

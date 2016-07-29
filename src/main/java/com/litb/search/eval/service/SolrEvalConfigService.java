@@ -6,12 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.litb.search.eval.service.util.SolrProperties;
 
 @Service
 public class SolrEvalConfigService {
@@ -23,7 +24,7 @@ public class SolrEvalConfigService {
 	@Value("${zeus.home}")
 	private String zeusHome;
 
-	private Properties props;
+	private SolrProperties props;
 
 	public Map<String, String> loadSolrProperties() {
 		return null;
@@ -48,8 +49,8 @@ public class SolrEvalConfigService {
 		return false;
 	}
 
-	public Properties loadSolrProps() {
-		props = new Properties();
+	public SolrProperties loadSolrProps() {
+		props = new SolrProperties();
 		String fileName = zeusHome + "/etc/" + SOLR_PROPERTIES;
 		try (FileInputStream in = new FileInputStream(fileName)) {
 			props.load(in);
