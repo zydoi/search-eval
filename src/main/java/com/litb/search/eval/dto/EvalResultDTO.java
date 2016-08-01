@@ -10,6 +10,8 @@ public class EvalResultDTO {
 	
 	private double map;
 	
+	private String mapDiff;
+	
 	private Map<Integer, Double> averagePn = new HashMap<>();
 	
 	private Map<Integer, QueryEvalResultDTO> queryEvalResults = new TreeMap<>();
@@ -44,5 +46,13 @@ public class EvalResultDTO {
 
 	public void setAveragePn(Map<Integer, Double> averagePn) {
 		this.averagePn = averagePn;
+	}
+
+	public String getMapDiff() {
+		return mapDiff;
+	}
+
+	public void setMapDiff(String mapDiff) {
+		this.mapDiff = mapDiff;
 	}
 }

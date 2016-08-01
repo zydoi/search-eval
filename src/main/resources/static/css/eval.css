@@ -39,16 +39,8 @@ tfoot th {
 	width: 20px;
 }
 
-#p10 {
-	width: 50px;
-}
-
-#p48 {
-	width: 50px;
-}
-
-#ap {
-	width: 50px;
+.percent {
+	width: 48px;
 }
 
 #explain {
@@ -82,4 +74,14 @@ tfoot th {
 .prop-value {
 	min-width: 500px;
 	padding-left: 1em;
+}
+
+.diff-pos {
+	font-weight: normal;
+	color: green;
+}
+
+.diff-neg {
+	font-weight: normal;
+	color: red;
 }

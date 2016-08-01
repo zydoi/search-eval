@@ -10,6 +10,8 @@ public class QueryEvalResultDTO {
 	private String queryName;
 	
 	private double ap;
+	
+	private String diff;
 
 	private Map<Integer, Double> precisions = new TreeMap<>();
 	
@@ -47,5 +49,13 @@ public class QueryEvalResultDTO {
 
 	public void setQueryID(String queryID) {
 		this.queryID = queryID;
+	}
+
+	public String getDiff() {
+		return diff;
+	}
+
+	public void setDiff(String diff) {
+		this.diff = diff;
 	}
 }

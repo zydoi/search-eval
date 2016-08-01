@@ -29,10 +29,11 @@
 					<tr>
 						<th id="id">ID</th>
 						<th id="name">Query</th>
-						<th id="p10">P@10</th>
-						<th id="p10">P@20</th>
-						<th id="p48">P@48</th>
-						<th id="ap">AP</th>
+						<th class="percent">P@10</th>
+						<th class="percent">P@20</th>
+						<th class="percent">P@48</th>
+						<th class="percent">AP</th>
+						<th class="percent" th:if="${diff != null}">Diff</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -43,6 +44,7 @@
 						<td class="num" th:text="${queryResult.value.precisions[20] != null} ? ${#numbers.formatDecimal(queryResult.value.precisions[20], 1, 1)}" />
 						<td class="num" th:text="${queryResult.value.precisions[48] != null} ? ${#numbers.formatDecimal(queryResult.value.precisions[48], 1, 3)}" />
 						<td class="num" th:text="${#numbers.formatDecimal(queryResult.value.ap, 1, 3)}" />
+						<td class="num" th:if="${diff != null}" th:classappend="${diff.startsWith('+')} ? diff-pos : diff-neg" th:text="${queryResult.value.diff}" />
 					</tr>
 				</tbody>
 				<tfoot>
@@ -52,6 +54,7 @@
 					<th th:text="${#numbers.formatDecimal(p20, 1, 4)}" />
 					<th th:text="${#numbers.formatDecimal(p48, 1, 4)}" />
 					<th id="map" th:text="${#numbers.formatDecimal(map, 1, 4)}" />
+					<th th:if="${diff != null}" th:classappend="${diff.startsWith('+')} ? diff-pos : diff-neg" th:text="${diff}" />
 					</tr>
 			
 				<!-- 
@@ -81,9 +84,10 @@
 			</div>
 		
 			<div id="explain">
-				*TOP: choosen from the top keywords of LITB website. <br />
-				*BAD: choosen from the online keywords which has a pool CTR.<br />
-				*MUL: queries which composited with more than one words.
+				*TOP: choosen from the top keywords of LITB website. <br/>
+				*BAD: choosen from the online keywords which has a pool CTR.<br/>
+				*MUL: queries which composited with more than one words.<br/>
+				*SYNM: queries which need to be handled by synonyms.
 			</div>
 		</div>
 	</div>

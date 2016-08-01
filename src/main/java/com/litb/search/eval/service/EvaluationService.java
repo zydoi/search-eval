@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +54,15 @@ public class EvaluationService {
 	@Autowired
 	private AnnotationRepository annotationRepo;
 	
-	private Map<QueryType, EvalResultDTO> evalResuts = new EnumMap<>(QueryType.class);
+	private Map<QueryType, EvalResultDTO> evalResults = new EnumMap<>(QueryType.class);
+
+	private Map<QueryType, EvalResultDTO> prevResults = new EnumMap<>(QueryType.class);
 	
 	private List<Integer> nums = Arrays.asList(10, 20, 48);
 	
 	public EvalResultDTO generateEvaluationResult(QueryType type) {
-		if (evalResuts.containsKey(type)) {
-			return evalResuts.get(type);
+		if (evalResults.containsKey(type)) {
+			return evalResults.get(type);
 		}
 		
 		EvalResultDTO result = new EvalResultDTO();
@@ -91,16 +94,17 @@ public class EvaluationService {
 			ap = (r == 0) ? 0 : ap / r;
 			queryResult.setAp(ap);
 			result.addQueryResult(queryResult);
-			LOGGER.info("Average Precision for the query" + query + "' is: " + ap);
+			LOGGER.info("Average Precision for the query" + query + "' is: " + String.format("%.3f",ap));
 			map += ap;
 		}
 		map = map / qids.size();
 		result.setMap(map);
 		
 		calculateAveragePn(result);
-		
-		LOGGER.info("Search Engine Mean Average Precision (MAP): " + map);
-		evalResuts.put(type, result);
+		String diff = diffPreviousResult(type, result);
+		LOGGER.info("Search Engine Mean Average Precision (MAP): {}, diff: {}", String.format("%.3f", map), diff);
+
+		evalResults.put(type, result);
 		return result;
 	}
 	
@@ -156,6 +160,11 @@ public class EvaluationService {
 		return result / values.size();
 	}
 	
+	public void invalidateResults() {
+		backupPreviousResult();
+		evalResults.clear();
+	}
+	
 	private void calculateAveragePn(EvalResultDTO result) {
 		Map<Integer, Double> aPn = new HashMap<>();
 		for (int num : nums) {
@@ -173,7 +182,30 @@ public class EvaluationService {
 		}
 	}
 	
-	public void invalidateResults() {
-		evalResuts.clear();
+	private void backupPreviousResult() {
+		prevResults = new EnumMap<>(evalResults);
+	}
+	
+	private String diffPreviousResult(QueryType queryType, EvalResultDTO result) {
+		EvalResultDTO prevResult = prevResults.get(queryType);
+		if (prevResult != null) {
+			for (Entry<Integer, QueryEvalResultDTO> entry: result.getQueryEvalResults().entrySet()) {
+				QueryEvalResultDTO pQER = prevResult.getQueryEvalResults().get(entry.getKey());
+				entry.getValue().setDiff(convertDiff(entry.getValue().getAp() - pQER.getAp()));
+			}
+			
+			String mapDiff = convertDiff(result.getMap() - prevResult.getMap());
+			result.setMapDiff(mapDiff);
+			return mapDiff;
+		} 
+		return "0" ;
+	}
+	
+	private String convertDiff(double d) {
+		if (d >= 0) {
+			return "+" + String.format("%.2f", d);
+		} else {
+			return String.format("%.2f", d);
+		}
 	}
 }

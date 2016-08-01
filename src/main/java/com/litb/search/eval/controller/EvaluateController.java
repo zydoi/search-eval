@@ -59,6 +59,7 @@ public class EvaluateController {
 			
 			modelAndView.addObject("queryResults", result.getQueryEvalResults());
 			modelAndView.addObject("map", result.getMap());
+			modelAndView.addObject("diff", result.getMapDiff());
 			modelAndView.addObject("queryType", queryType);
 			modelAndView.addObject("p10", result.getAveragePn().get(10));
 			modelAndView.addObject("p20", result.getAveragePn().get(20));
