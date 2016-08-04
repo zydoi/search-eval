@@ -120,12 +120,14 @@ public class IndexController {
 
 	@RequestMapping(value = "reindex", method = RequestMethod.GET, produces = "application/json")
 	public String reindex() {
-		LOGGER.info("Start to re-index items.");
+		LOGGER.info("Start to re-index all existing items.");
 		Set<String> ids = itemService.getAllExistIds();
 		LOGGER.info("Found {} items in the database.", ids.size());
 
 		List<SolrItemDTO> items = searchService.getItems(ids);
 		LOGGER.info("Found {} items in solr.", items.size());
+		
+		indexService.addItems(items);
 
 		return "done";
 	}

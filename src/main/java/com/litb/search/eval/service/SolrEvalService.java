@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.litb.search.eval.dto.solr.SolrItemDTO;
+import com.litb.search.eval.service.util.SolrConstants;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service
@@ -252,14 +253,13 @@ public class SolrEvalService {
 	
 	public void setItemFieldValues(String field, List<String> ids) {
 		List<SolrDocument> items = new ArrayList<>();
-		int pageSize = 100;
 		try {
 			List<String> results = new ArrayList<>();
 			Iterator<String> iterator = ids.iterator();
 			
 			while (iterator.hasNext()) {
 				results.add(iterator.next());
-				if (results.size() == pageSize) {
+				if (results.size() == SolrConstants.MAX_ID_SIZE) {
 					SolrQuery query = new SolrQuery(SolrQueryUtils.concatIDs(results));
 					query.setRows(results.size());
 					query.setFields("id", field);

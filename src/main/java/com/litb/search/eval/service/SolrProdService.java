@@ -17,12 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.litb.search.eval.dto.SolrCore;
 import com.litb.search.eval.dto.solr.SolrItemDTO;
+import com.litb.search.eval.service.util.SolrConstants;
 import com.litb.search.eval.service.util.SolrQueryUtils;
 
 @Service
@@ -59,13 +59,43 @@ public class SolrProdService {
 	}
 
 	public List<SolrItemDTO> getItems(Collection<String> ids) {
-		LOGGER.info("Start to searching products: " + StringUtils.collectionToCommaDelimitedString(ids));
+		List<SolrItemDTO> items = new ArrayList<>();
+		
+		Iterator<String> iterator = ids.iterator();
+		StringBuilder sb = new StringBuilder("id:(");
+		int count = 0;
+		while (iterator.hasNext()) {
+			String id = iterator.next();
+			sb.append(id).append(" ");
+			count++;
+			if (count == SolrConstants.MAX_ID_SIZE) {
+				sb.append(")");
+				items.addAll(getItems(sb.toString()));
+				
+				sb.setLength(0);
+				sb.append("id:(");
+				count = 0;
+			}
+		}
+		
+		if (sb.length() > 4) {
+			sb.append(")");
+			items.addAll(getItems(sb.toString()));
+		}
+		
+		LOGGER.info("Finished retrieving {} items.", items.size());
+		
+		return items;
+	}
+	
+	private List<SolrItemDTO> getItems(String queryStr) {
+		LOGGER.info("Start to searching products: {}", queryStr);
+
 		SolrQuery query = new SolrQuery();
-		query.setQuery(SolrQueryUtils.concatIDs(ids));
+		query.setQuery(queryStr);
 		query.setRows(Integer.valueOf(environment.getProperty("search.size", "100")));
 		try {
 			QueryResponse rsp = solrServer.query(query, METHOD.POST);
-			LOGGER.info("Finished searching " + ids.size() + " items.");
 			return rsp.getBeans(SolrItemDTO.class);
 		} catch (SolrServerException e) {
 			LOGGER.error("Failed to search items.", e);
