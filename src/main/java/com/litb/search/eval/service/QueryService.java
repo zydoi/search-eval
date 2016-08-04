@@ -1,5 +1,6 @@
 package com.litb.search.eval.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -59,5 +60,9 @@ public class QueryService {
 	
 	public String getQueryById(int id) {
 		return queryMap.get(id);
+	}
+	
+	public List<EvalQuery> findEffectiveQueries() {
+		return repo.findByEffectiveTrue();
 	}
 }

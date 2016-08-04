@@ -22,7 +22,6 @@ import com.litb.search.eval.dto.litb.SearchResultDTO;
 import com.litb.search.eval.dto.solr.SolrItemDTO;
 import com.litb.search.eval.entity.EvalItem;
 import com.litb.search.eval.entity.EvalQuery;
-import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.service.ItemService;
 import com.litb.search.eval.service.LitbSearchService;
 import com.litb.search.eval.service.QueryService;
@@ -41,9 +40,6 @@ public class IndexController {
 	private SolrProdService searchService;
 
 	@Autowired
-	private QueryRepository queryRepo;
-	
-	@Autowired
 	private QueryService queryService;
 	
 	@Autowired
@@ -59,7 +55,7 @@ public class IndexController {
 	
 	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
 	public String indexQuery(@RequestParam int queryId, @RequestParam(defaultValue="true") boolean onlyNew) {
-		ItemsResultDTO result = litbService.getItems(queryService.getQueryById(queryId), false);
+		ItemsResultDTO result = litbService.getItems(queryService.getQueryById(queryId));
 		LOGGER.info("Start indexing items for query: " + queryService.getQueryById(queryId));
 
 		List<String> ids = result.getInfo().getProductsList();
@@ -92,7 +88,7 @@ public class IndexController {
 		LOGGER.info("Start indexing items for the evaluation model.");
 		long start = System.currentTimeMillis();
 		int num = 0;
-		List<EvalQuery> queries = queryRepo.findByEffectiveTrue();
+		List<EvalQuery> queries = queryService.findEffectiveQueries();
 		for (EvalQuery query : queries) {
 			LOGGER.info("Start indexing query: " + query);
 			SearchResultDTO result = litbService.search(query.getName(), false);
@@ -110,24 +106,35 @@ public class IndexController {
 
 	@RequestMapping(value = "index", method = RequestMethod.GET, produces = "application/json")
 	public String index(@RequestParam String id) {
+		LOGGER.info("Start to index item {}.", id);
 		SolrItemDTO item = searchService.getItem(id);
-		if (item != null) {
+		ItemsResultDTO result = litbService.getItems(id);
+
+		if (item != null && result.getInfo().getItems() != null && result.getInfo().getItems().size() == 1) {
 			indexService.addItem(item);
+			itemService.addNewItem(result.getInfo().getItems().get(0));
 		}
 
 		return searchService.query(id, SolrCore.EVAL);
 	}
 
+	@RequestMapping(value = "reindex", method = RequestMethod.GET, produces = "application/json")
+	public String reindex() {
+		LOGGER.info("Start to re-index items.");
+		Set<String> ids = itemService.getAllExistIds();
+		LOGGER.info("Found {} items in the database.", ids.size());
+
+		List<SolrItemDTO> items = searchService.getItems(ids);
+		LOGGER.info("Found {} items in solr.", items.size());
+
+		return "done";
+	}
+	
 	@RequestMapping(value = "delete", method = RequestMethod.GET, produces = "application/json")
 	public UpdateResponse delete(@RequestParam String id) {
 		return indexService.deleteItem(id);
 	}
 
-	@RequestMapping(value = "deleteAll", method = RequestMethod.GET, produces = "application/json")
-	public UpdateResponse delete() {
-		return indexService.deleteAll();
-	}
-	
 	@RequestMapping(value = "clearAnnotations", method = RequestMethod.GET, produces = "application/json")
 	public String clear(@RequestParam String queryID) {
 		indexService.clearRelevance(queryID);

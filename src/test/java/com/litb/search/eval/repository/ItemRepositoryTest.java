@@ -41,6 +41,7 @@ public class ItemRepositoryTest {
 		
 		assertEquals(2, repo.findByItemURLIsNull().size());
 		assertEquals("123", repo.findExistsIds(ids).iterator().next());
+		assertEquals(2, repo.findAllIds().size());
 	}
 	
 	@After

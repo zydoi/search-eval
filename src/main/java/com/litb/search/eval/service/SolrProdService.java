@@ -3,9 +3,11 @@ package com.litb.search.eval.service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -58,12 +60,11 @@ public class SolrProdService {
 
 	public List<SolrItemDTO> getItems(Collection<String> ids) {
 		LOGGER.info("Start to searching products: " + StringUtils.collectionToCommaDelimitedString(ids));
-
 		SolrQuery query = new SolrQuery();
 		query.setQuery(SolrQueryUtils.concatIDs(ids));
 		query.setRows(Integer.valueOf(environment.getProperty("search.size", "100")));
 		try {
-			QueryResponse rsp = solrServer.query(query);
+			QueryResponse rsp = solrServer.query(query, METHOD.POST);
 			LOGGER.info("Finished searching " + ids.size() + " items.");
 			return rsp.getBeans(SolrItemDTO.class);
 		} catch (SolrServerException e) {

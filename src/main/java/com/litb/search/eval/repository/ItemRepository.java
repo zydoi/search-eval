@@ -16,4 +16,6 @@ public interface ItemRepository extends CrudRepository<EvalItem, String>{
 	@Query("select i.id from item i where i.id in ?1")
 	Set<String> findExistsIds(Collection<String> ids);
 	
+	@Query("select id from item")
+	Set<String> findAllIds();
 }

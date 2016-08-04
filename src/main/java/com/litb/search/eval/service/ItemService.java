@@ -80,6 +80,13 @@ public class ItemService {
 	}
 	
 	@Transactional
+	public EvalItem addNewItem(ItemDTO dto) {
+		EvalItem item = DtoConverter.convertItemDTO(dto);
+		itemRepo.save(item);
+		return item;
+	}
+	
+	@Transactional
 	public void addItemDetails() {
 		List<SolrItemDTO> itemDTOs = solrService.getAllItems();
 		List<String> pids = new ArrayList<>();
@@ -140,5 +147,9 @@ public class ItemService {
 	public void clearAnnotation(int queryId) {
 		List<EvalItemAnnotation> annotations = annotationRepo.findByQueryId(queryId);
 		annotationRepo.delete(annotations);
+	}
+	
+	public Set<String> getAllExistIds() {
+		return itemRepo.findAllIds();
 	}
 }
