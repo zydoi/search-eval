@@ -5,20 +5,21 @@
 	<title>items annotator</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css"/>
     <link rel="stylesheet" type="text/css" href="/css/items.css"/>
-
+	<script type="text/javascript" src="/scripts/suggest.js"/>
 </head>
-<body>
+<body onload="process()">
 	<div th:replace="fragments/header :: header" />
 	<div class="content">
 	<div class="chooseQuery">
 		<form action="#" th:action="@{/search}" method="get">
 			<div id="annotator" th:if="${session.annotator == null}">
 				<label th:text="'Query: '" /> 
-				<input type="text"	th:value="${query}" name="query" />
+				<input id="query-input" type="text"	th:value="${query}" name="query" />
 				<button type="submit" th:text="ok" />
 			</div>
 		</form>
 	</div>
+	<div id="test" />
 	
 	<div id="items" th:if="${query != null}">
 		<div class="thumbnail" th:each="item:${items.info.items}" >

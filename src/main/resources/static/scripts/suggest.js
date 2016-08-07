@@ -26,11 +26,25 @@ function  createXmlHttpRequestObject() {
 
 function process() {
 	if(xmlHttp.readyState == 4 || xmlHttp.readyState == 0) {
-		input = encodeURIComponent(document.getElementById("userInput").value);
-		xmlHttp.open("POST", "/");
+		query = encodeURIComponent(document.getElementById("query-input").value);
+		xmlHttp.open("GET", "http://localhost:8090/suggest?query=" + query, true);
 		xmlHttp.onreadystatechange = handleServerResponse;
 		xmlHttp.send(null);
 	} else {
 		setTimeout('process()', 1000);
 	}
+}
+
+function handleServerResponse() {
+	if(xmlHttp.readyState == 4) {
+		if(xmlHttp.status == 200) {
+			suggest = xmlHttp.responseText;
+			document.getElementById("test").innerHTML = '<span style="color:blue">' + suggest + '</span>';
+			setTimeout('process()', 1000);
+
+		} else {
+			alert("Something went wrong!");
+		}
+	}
+	
 }
