@@ -73,7 +73,7 @@ public class AnnotateService {
 			annotateItems(queryID, relevantIDs, true);
 			evalService.annotateItems(queryID, relevantIDs);
 			StringBuilder sb = new StringBuilder("Annotator: ");
-			sb.append(annotator).append(" add annotations of Query: ").append(query).append(", ids: ").append(SolrQueryUtils.concatIDs(relevantIDs));
+			sb.append(annotator).append(" add annotations for Query: ").append(query).append(", ").append(SolrQueryUtils.concatIDs(relevantIDs));
 			ANNOTATE_LOGGER.info(sb.toString());
 		}
 		
@@ -82,7 +82,7 @@ public class AnnotateService {
 			unannotateItems(queryID, irrelevantIDs);
 			evalService.unannotateItems(queryID, irrelevantIDs);
 			StringBuilder sb = new StringBuilder("Annotator: ");
-			sb.append(annotator).append(" remove annotations of Query: ").append(query).append(", ids: ").append(SolrQueryUtils.concatIDs(irrelevantIDs));
+			sb.append(annotator).append(" remove annotations for Query: ").append(query).append(", ").append(SolrQueryUtils.concatIDs(irrelevantIDs));
 			ANNOTATE_LOGGER.info(sb.toString());
 		}
 	}

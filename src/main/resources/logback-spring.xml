@@ -7,7 +7,7 @@
 
 	<appender name="ANNOTATION"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${user.home}/solr-eval.log</file>
+		<file>${user.home}/logs/solr-eval.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>
 				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
