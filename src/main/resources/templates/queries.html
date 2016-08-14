@@ -20,7 +20,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="query ${queries}">
+				<tr th:each="query : ${queries}">
 					<td class="prop-name" th:text="${query.id}"  />
 					<td class="prop-name" th:text="${query.name}" />
 					<td class="prop-name" th:text="${query.types[0]}" />

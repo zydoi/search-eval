@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.QueryRepository;
@@ -73,6 +74,8 @@ public class QueryService {
 	}
 	
 	public List<EvalQuery> findQueriesByType(QueryType type) {
+		if (type.equals(QueryType.ALL)) {
+		}
 		return repo.findByQueryType(type);
 	}
 }

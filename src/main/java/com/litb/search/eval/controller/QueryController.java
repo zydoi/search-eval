@@ -26,7 +26,7 @@ public class QueryController {
 	private QueryService queryService;
 	
 	@RequestMapping(value = "/list",  method = RequestMethod.GET)
-	public String listAllQueries(@RequestParam QueryType queryType, Model model) {
+	public String listAllQueries(@RequestParam(defaultValue="ALL") QueryType queryType, Model model) {
 		List<EvalQuery> queries = queryService.findQueriesByType(queryType);
 		model.addAttribute("queries", queries);
 		return "queries";
