@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>items annotator</title>
+<link rel="stylesheet" type="text/css" href="/css/main.css" />
+<link rel="stylesheet" type="text/css" href="/css/items.css" />
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&amp;subset=Latin" />
+</head>
+<body>
+	<div th:replace="fragments/header :: header" />
+	<div class="content">
+		<table id="queries">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Query</th>
+					<th>Types</th>
+					<th>Active</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="query ${queries}">
+					<td class="prop-name" th:text="${query.id}"  />
+					<td class="prop-name" th:text="${query.name}" />
+					<td class="prop-name" th:text="${query.types[0]}" />
+					<td class="prop-name" th:text="${query.effective}" />
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

@@ -32,6 +32,8 @@ public class QueryService {
 		invalidQueries();
 		loadQueries(QueryType.TOP);
 		loadQueries(QueryType.BAD);
+//		loadQueries(QueryType.SYNM);
+//		loadQueries(QueryType.MISSPELL);
 	}
 	
 	private void loadQueries(QueryType type) {
@@ -64,5 +66,13 @@ public class QueryService {
 	
 	public List<EvalQuery> findEffectiveQueries() {
 		return repo.findByEffectiveTrue();
+	}
+	
+	public EvalQuery addQuery(EvalQuery query) {
+		return repo.save(query);
+	}
+	
+	public List<EvalQuery> findQueriesByType(QueryType type) {
+		return repo.findByQueryType(type);
 	}
 }

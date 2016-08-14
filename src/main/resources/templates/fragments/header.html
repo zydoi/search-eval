@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>Navigation Bar</title>
-<link rel="stylesheet" type="text/css" href="/css/header.css" />
+<link rel="stylesheet" type="text/css" href="/css/main.css" />
 </head>
 <body>
 	<div class="navbar-header" th:fragment="header">
@@ -13,6 +13,13 @@
 			<li th:classappend="${page == 'eval' ? 'active' : ''}"><a href="/eval">Evaluation</a></li>
 			<li th:classappend="${page == 'search' ? 'active' : ''}"><a href="/search">Search</a></li>
 			<li th:classappend="${page == 'index' ? 'active' : ''}"><a href="/index">Index</a></li>
+			<li class="dropdown" th:classappend="${page == 'manage' ? 'active' : ''}">
+				<a class="dropdown-btn" href="/">Manage</a>
+				<ul class="dropdown-content">
+					<li><a href="/query">Query</a></li>
+					<li><a href="#">test</a></li>
+				</ul>
+			</li>
 			<li sec:authorize="!isAuthenticated()" class="li-right"><a href="/login">Login</a></li>
 			<li sec:authorize="isAuthenticated()" class="li-right"><a href="/login?logout">Logout</a></li>
 		</ul>
