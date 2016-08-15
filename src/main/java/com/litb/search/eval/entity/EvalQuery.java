@@ -1,13 +1,17 @@
 package com.litb.search.eval.entity;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PreUpdate;
@@ -23,10 +27,12 @@ public class EvalQuery {
 	@Column(nullable = false)
 	private String name;
 	
-	@Column
+	@ElementCollection(targetClass=QueryType.class, fetch=FetchType.EAGER)
+	@CollectionTable(name = "query_type")
 	@Enumerated(EnumType.STRING)
-	private QueryType queryType;
-	
+	@Column(name="type")
+	private Set<QueryType> queryTypes = new HashSet<>();
+
 	@Column(nullable = false)
 	private boolean effective;
 	
@@ -46,7 +52,7 @@ public class EvalQuery {
 		super();
 		this.id = id;
 		this.name = name;
-		this.queryType = queryType;
+		this.queryTypes.add(queryType);
 	}
 
 	public int getId() {
@@ -63,14 +69,6 @@ public class EvalQuery {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public QueryType getQueryType() {
-		return queryType;
-	}
-
-	public void setQueryType(QueryType queryType) {
-		this.queryType = queryType;
 	}
 
 	public boolean isEffective() {
@@ -104,6 +102,18 @@ public class EvalQuery {
 
 	public void setItemAnnotation(Set<EvalItemAnnotation> itemAnnotation) {
 		this.itemAnnotation = itemAnnotation;
+	}
+	
+	public Set<QueryType> getQueryTypes() {
+		return queryTypes;
+	}
+
+	public void setQueryTypes(Set<QueryType> queryTypes) {
+		this.queryTypes = queryTypes;
+	}
+	
+	public void addQueryType(QueryType queryType) {
+		this.queryTypes.add(queryType);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.litb.search.eval.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.QueryRepository;
@@ -29,12 +30,17 @@ public class QueryService {
 	private Map<Integer, String> queryMap = new TreeMap<>();
 	
 	@PostConstruct
+	@Transactional
 	public void loadAllQueries() {
-		invalidQueries();
-		loadQueries(QueryType.TOP);
-		loadQueries(QueryType.BAD);
+//		invalidQueries();
+//		loadQueries(QueryType.TOP);
+//		loadQueries(QueryType.BAD);
 //		loadQueries(QueryType.SYNM);
 //		loadQueries(QueryType.MISSPELL);
+		List<EvalQuery> queries = findQueriesByType(QueryType.ALL);
+		for (EvalQuery query : queries) {
+			queryMap.put(query.getId(), query.getName());
+		}
 	}
 	
 	private void loadQueries(QueryType type) {
@@ -48,7 +54,7 @@ public class QueryService {
 				LOGGER.info("Add new query: {}", e.getValue());
 			}
 			query.setEffective(true);
-			query.setQueryType(type);
+			query.addQueryType(type);
 			repo.save(query);
 		} 
 	}
@@ -75,7 +81,13 @@ public class QueryService {
 	
 	public List<EvalQuery> findQueriesByType(QueryType type) {
 		if (type.equals(QueryType.ALL)) {
+			Iterable<EvalQuery> iter = repo.findAll();
+			List<EvalQuery> queries = new ArrayList<>();
+			for (EvalQuery query : iter) {
+				queries.add(query);
+			}
+			return queries;
 		}
-		return repo.findByQueryType(type);
+		return repo.findByQueryTypes(type);
 	}
 }

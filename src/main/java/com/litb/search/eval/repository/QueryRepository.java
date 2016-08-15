@@ -8,7 +8,7 @@ import com.litb.search.eval.entity.EvalQuery;
 
 public interface QueryRepository extends CrudRepository<EvalQuery, Integer> {
 
-	List<EvalQuery> findByQueryType(QueryType queryType);
+	List<EvalQuery> findByQueryTypes(QueryType queryType);
 	
 	List<EvalQuery> findByEffectiveTrue();
 	

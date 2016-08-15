@@ -1,24 +1,34 @@
 package com.litb.search.eval.dto;
 
-import java.util.List;
+import java.util.Set;
 
+import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.QueryType;
 
 public class QueryDTO {
 
-	private String id;
+	private int id;
 	
 	private String name;
 	
-	private List<QueryType> types;
+	private Set<QueryType> types;
 	
 	private boolean effective;
 	
-	public String getId() {
+	public QueryDTO() {}
+	
+	public QueryDTO(EvalQuery query) {
+		this.id = query.getId();
+		this.name = query.getName();
+		this.types = query.getQueryTypes();
+		this.effective = query.isEffective();
+	}
+	
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -30,11 +40,11 @@ public class QueryDTO {
 		this.name = name;
 	}
 
-	public List<QueryType> getTypes() {
+	public Set<QueryType> getTypes() {
 		return types;
 	}
 
-	public void setTypes(List<QueryType> types) {
+	public void setTypes(Set<QueryType> types) {
 		this.types = types;
 	}
 

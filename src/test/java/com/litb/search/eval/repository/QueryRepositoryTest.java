@@ -19,6 +19,6 @@ public class QueryRepositoryTest {
 	
 	@Test
 	public void test() {
-		assertEquals("dresses", repo.findByQueryType(QueryType.TOP).get(0).getName());
+		assertEquals("dresses", repo.findByQueryTypes(QueryType.TOP).get(0).getName());
 	}
 }

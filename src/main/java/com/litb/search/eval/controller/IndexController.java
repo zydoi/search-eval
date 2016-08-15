@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,8 @@ import com.litb.search.eval.service.QueryService;
 import com.litb.search.eval.service.SolrEvalService;
 import com.litb.search.eval.service.SolrProdService;
 
-@RestController("/index")
+@RestController
+@RequestMapping("/index")
 public class IndexController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IndexController.class);
@@ -53,7 +53,7 @@ public class IndexController {
         return "index";
     }
 	
-	@RequestMapping(value = "indexQuery", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/indexQuery", method = RequestMethod.GET, produces = "application/json")
 	public String indexQuery(@RequestParam int queryId, @RequestParam(defaultValue="true") boolean onlyNew) {
 		ItemsResultDTO result = litbService.getItems(queryService.getQueryById(queryId));
 		LOGGER.info("Start indexing items for query: " + queryService.getQueryById(queryId));
@@ -78,12 +78,11 @@ public class IndexController {
 		}
 		itemService.addNewItems(result.getInfo().getItems());
 		LOGGER.info("Indexed {} items.", ids.size());
-
 		
 		return searchService.query(ids, SolrCore.EVAL);
 	}
 
-	@RequestMapping(value = "indexAll", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/indexAll", method = RequestMethod.GET, produces = "application/json")
 	public String indexAll() {
 		LOGGER.info("Start indexing items for the evaluation model.");
 		long start = System.currentTimeMillis();
@@ -104,7 +103,7 @@ public class IndexController {
 		return message;
 	}
 
-	@RequestMapping(value = "index", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/index", method = RequestMethod.GET, produces = "application/json")
 	public String index(@RequestParam String id) {
 		LOGGER.info("Start to index item {}.", id);
 		SolrItemDTO item = searchService.getItem(id);
@@ -118,7 +117,7 @@ public class IndexController {
 		return searchService.query(id, SolrCore.EVAL);
 	}
 
-	@RequestMapping(value = "reindex", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/reindex", method = RequestMethod.GET, produces = "application/json")
 	public String reindex() {
 		LOGGER.info("Start to re-index all existing items.");
 		Set<String> ids = itemService.getAllExistIds();
@@ -132,25 +131,28 @@ public class IndexController {
 		return "done";
 	}
 	
-	@RequestMapping(value = "delete", method = RequestMethod.GET, produces = "application/json")
-	public UpdateResponse delete(@RequestParam String id) {
-		return indexService.deleteItem(id);
+	@RequestMapping(value = "/delete", method = RequestMethod.GET, produces = "application/json")
+	public String delete(@RequestParam String id) {
+		itemService.deleteItem(id);
+		indexService.deleteItem(id);
+		LOGGER.info("Deleted item {}", id);
+		return "done";
 	}
 
-	@RequestMapping(value = "clearAnnotations", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/clearAnnotations", method = RequestMethod.GET, produces = "application/json")
 	public String clear(@RequestParam String queryID) {
 		indexService.clearRelevance(queryID);
 		itemService.clearAnnotation(Integer.valueOf(queryID));
 		return "done";
 	}
 	
-	@RequestMapping(value = "syncDB", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/syncDB", method = RequestMethod.GET, produces = "application/json")
 	public String syncDB() {
 		Set<EvalItem> items = itemService.syncDBAndSolr();
 		return "Sync " + items.size() + " new items";
 	}
 	
-	@RequestMapping(value = "syncSolr", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/syncSolr", method = RequestMethod.GET, produces = "application/json")
 	public String syncSolr(@RequestParam String field) {
 		List<String> ids = indexService.getItemIdsWithEmptyField(field);
 		indexService.setItemFieldValues(field, ids);

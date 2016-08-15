@@ -114,6 +114,11 @@ public class ItemService {
 		}
 	}
 	
+	@Transactional
+	public void deleteItem(String id) {
+		itemRepo.delete(id);
+	}
+	
 	public Set<String> getNonExistIds(Collection<String> ids) {
 		Set<String> nonExistIds = new HashSet<>(ids);
 		nonExistIds.removeAll(itemRepo.findExistsIds(ids));
