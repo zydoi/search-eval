@@ -32,15 +32,15 @@ public class QueryService {
 	@PostConstruct
 	@Transactional
 	public void loadAllQueries() {
-//		invalidQueries();
-//		loadQueries(QueryType.TOP);
-//		loadQueries(QueryType.BAD);
+		invalidQueries();
+		loadQueries(QueryType.TOP);
+		loadQueries(QueryType.BAD);
 //		loadQueries(QueryType.SYNM);
 //		loadQueries(QueryType.MISSPELL);
-		List<EvalQuery> queries = findQueriesByType(QueryType.ALL);
-		for (EvalQuery query : queries) {
-			queryMap.put(query.getId(), query.getName());
-		}
+//		List<EvalQuery> queries = findQueriesByType(QueryType.ALL);
+//		for (EvalQuery query : queries) {
+//			queryMap.put(query.getId(), query.getName());
+//		}
 	}
 	
 	private void loadQueries(QueryType type) {

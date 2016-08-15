@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8" />
-<title>items annotator</title>
-<link rel="stylesheet" type="text/css" href="/css/main.css" />
-<link rel="stylesheet" type="text/css" href="/css/items.css" />
-<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&amp;subset=Latin" />
+	<meta charset="UTF-8" />
+	<title>Manage Queries</title>
+	<link rel="stylesheet" type="text/css" href="/css/main.css" />
+	<link rel="stylesheet" type="text/css" href="/css/query.css" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&amp;subset=Latin" />
 </head>
 <body>
 	<div th:replace="fragments/header :: header" />
 	<div class="content">
-		<table id="queries">
+		<div id="chooseQueryType">
+			<form action="#" th:action="@{/query/list}" method="get">
+				<label th:text="'Query Type: '"/>
+				<select id="queryType" name="queryType" >
+					<option th:each="type : ${types}" 
+							th:value="${type}"
+							th:text="${type}"
+							th:selected="(${type} == ${queryType})"/>
+				</select>
+				<button type="submit" th:text="ok" />
+			</form>
+		</div>
+		
+		
+		<table id="queries" th:if="${queryType != null}" >
 			<thead>
 				<tr>
 					<th>ID</th>
@@ -21,10 +35,10 @@
 			</thead>
 			<tbody>
 				<tr th:each="query : ${queries}">
-					<td class="prop-name" th:text="${query.id}"  />
-					<td class="prop-name" th:text="${query.name}" />
-					<td class="prop-name" th:text="${query.types[0]}" />
-					<td class="prop-name" th:text="${query.effective}" />
+					<td th:text="${query.id}"  />
+					<td th:text="${query.name}" />
+					<td th:text="${query.name}" />
+					<td><input type="checkbox" th:checked="${query.effective}"/></td>
 				</tr>
 			</tbody>
 		</table>
