@@ -11,13 +11,18 @@
 			<li th:classappend="${page == 'home' ? 'active' : ''}"><a href="/">Home</a></li>
 			<li th:classappend="${page == 'anno' ? 'active' : ''}"><a href="/select">Annotation</a></li>
 			<li th:classappend="${page == 'eval' ? 'active' : ''}"><a href="/eval">Evaluation</a></li>
-			<li th:classappend="${page == 'search' ? 'active' : ''}"><a href="/search">Search</a></li>
-			<li th:classappend="${page == 'index' ? 'active' : ''}"><a href="/index">Index</a></li>
+			<li class="dropdown" th:classappend="${page == 'search' ? 'active' : ''}">
+				<a class="dropdown-btn" href="/">Search<img class="dropdown-img" alt="" src="/images/dropdown.png" /></a>
+				<ul class="dropdown-content">
+					<li><a href="/search?solr=online">Online</a></li>
+					<li><a href="/search?solr=eval">Evaluation Model</a></li>
+				</ul>
+			</li>
 			<li class="dropdown" th:classappend="${page == 'manage' ? 'active' : ''}">
-				<a class="dropdown-btn" href="/">Manage</a>
+				<a class="dropdown-btn" href="/">Manage<img class="dropdown-img" alt="" src="/images/dropdown.png" /></a>
 				<ul class="dropdown-content">
 					<li><a href="/query/list">Query</a></li>
-					<li><a href="#">test</a></li>
+					<li><a href="/index">Index</a></li>
 				</ul>
 			</li>
 			<li sec:authorize="!isAuthenticated()" class="li-right"><a href="/login">Login</a></li>
