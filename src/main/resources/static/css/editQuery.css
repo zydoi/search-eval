@@ -1,6 +1,23 @@
 ul {
     list-style-type: none;
+	margin: 0; 
+	padding: 0;    
 }
 
 ul li {
+	margin: 0; 
+	padding: 0;
+}
+
+li label {
+	margin-right: 10px;
+}
+
+li input {
+}
+
+#update-btn {
+	position: fixed;
+	left:150px;
+	top:200px;
 }

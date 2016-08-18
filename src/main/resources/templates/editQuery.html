@@ -7,15 +7,19 @@
 	<link rel="stylesheet" type="text/css" href="/css/editQuery.css" />
 </head>
 <body>
+	<form th:action="@{/query/update}" th:object="${queryDTO}" method="post">
 	<ul>
 		<li>
-			<label>Name:</label><input type="text" th:value="${query.get(key)}" />
+			<label>Name:</label><input type="text" th:value="${query.name}" th:field="*{name}"/>
 		</li>
 		<li>
 			<label>Types:</label>
 		</li>
-		<li>test</li>
-		<li>123</li>
+		<li>
+			<label>Active:</label><input type="checkbox" th:checked="${query.effective}"/>
+		</li>
 	</ul>
+	<button id="update-btn" type="submit" th:text="update" />
+	</form>
 </body>
 </html>

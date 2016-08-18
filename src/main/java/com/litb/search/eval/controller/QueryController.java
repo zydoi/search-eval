@@ -60,7 +60,7 @@ public class QueryController {
 		return "queries";
 	}
 	
-	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	@RequestMapping(value = "/update", method = RequestMethod.GET)
 	public String editQuery(QueryDTO queryDTO) {
 		queryService.updateQuery(queryDTO);
 		return "";
@@ -69,6 +69,7 @@ public class QueryController {
 	@RequestMapping(value = "/popupEdit", method = RequestMethod.GET)
 	public String popupEditPage(int queryId, Model model) {
 		model.addAttribute("query", queryService.findById(queryId));
+		model.addAttribute("queryDTO", new QueryDTO());
 		return "editQuery";
 	}
 }
