@@ -55,8 +55,20 @@ public class QueryController {
 	}
 	
 	@RequestMapping(value = "/delete",  method = RequestMethod.GET)
-	public String deleteQuery(int queryID) {
-		LOGGER.info("Deleted Query {}", queryID);
+	public String deleteQuery(int queryId) {
+		LOGGER.info("Deleted Query {}", queryId);
 		return "queries";
+	}
+	
+	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	public String editQuery(QueryDTO queryDTO) {
+		queryService.updateQuery(queryDTO);
+		return "";
+	}
+	
+	@RequestMapping(value = "/popupEdit", method = RequestMethod.GET)
+	public String popupEditPage(int queryId, Model model) {
+		model.addAttribute("query", queryService.findById(queryId));
+		return "editQuery";
 	}
 }

@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Manage Queries</title>
+	<script type="text/javascript" src="/scripts/query.js"></script>
 	<link rel="stylesheet" type="text/css" href="/css/main.css" />
 	<link rel="stylesheet" type="text/css" href="/css/query.css" />
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&amp;subset=Latin" />
@@ -23,7 +24,6 @@
 			</form>
 		</div>
 		
-		
 		<table id="queries" th:if="${queryType != null}" >
 			<thead>
 				<tr>
@@ -31,14 +31,16 @@
 					<th>Query</th>
 					<th>Types</th>
 					<th>Active</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="query : ${queries}">
 					<td th:text="${query.id}"  />
 					<td th:text="${query.name}" />
-					<td th:text="${query.name}" />
+					<td th:text="${#strings.listJoin(query.queryTypes, ',')}"></td>
 					<td><input type="checkbox" th:checked="${query.effective}"/></td>
+					<td><button th:onclick="'popup(\'/query/popupEdit?queryId=' + ${query.id} +'\')'" type="submit" th:text="edit" /></td>
 				</tr>
 			</tbody>
 		</table>

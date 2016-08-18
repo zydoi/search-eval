@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.litb.search.eval.dto.QueryDTO;
 import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.repository.QueryType;
@@ -89,5 +90,17 @@ public class QueryService {
 			return queries;
 		}
 		return repo.findByQueryTypes(type);
+	}
+	
+	public EvalQuery updateQuery(QueryDTO dto) {
+		EvalQuery query = repo.findOne(dto.getId());
+		query.setEffective(dto.isEffective());
+		query.setName(dto.getName());
+		query.setQueryTypes(dto.getTypes());
+		return query;
+	}
+	
+	public EvalQuery findById(int id) {
+		return repo.findOne(id);
 	}
 }
