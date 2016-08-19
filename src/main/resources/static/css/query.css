@@ -11,6 +11,20 @@ tbody td {
 	margin: 2px;
 }
 
+
+tfoot td {
+	text-align:right;
+}
+
+.add-btn {
+	background-color: #d50000;
+    padding-top: 6px;
+    padding-right: 12px;
+    padding-bottom: 6px;
+    padding-left: 12px;
+    margin-top: 2px;
+}
+
 #chooseQueryType {
 	margin-top: 20px;
 	margin-left: 10px;

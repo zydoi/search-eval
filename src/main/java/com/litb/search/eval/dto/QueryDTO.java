@@ -1,5 +1,6 @@
 package com.litb.search.eval.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.litb.search.eval.entity.EvalQuery;
@@ -11,7 +12,7 @@ public class QueryDTO {
 	
 	private String name;
 	
-	private Set<QueryType> types;
+	private Set<QueryType> types = new HashSet<>();
 	
 	private boolean effective;
 	
@@ -48,6 +49,10 @@ public class QueryDTO {
 		this.types = types;
 	}
 
+	public void addType(QueryType type) {
+		this.getTypes().add(type);
+	}
+	
 	public boolean isEffective() {
 		return effective;
 	}

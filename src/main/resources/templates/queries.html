@@ -11,7 +11,7 @@
 <body>
 	<div th:replace="fragments/header :: header" />
 	<div class="content">
-		<div id="chooseQueryType">
+		<div id="chooseQueryType" >
 			<form action="#" th:action="@{/query/list}" method="get">
 				<label th:text="'Query Type: '"/>
 				<select id="queryType" name="queryType" >
@@ -23,15 +23,15 @@
 				<button type="submit" th:text="ok" />
 			</form>
 		</div>
-		
-		<table id="queries" th:if="${queryType != null}" >
+		<div th:if="${queryType != null}">
+		<table id="queries">
 			<thead>
 				<tr>
 					<th>ID</th>
 					<th>Query</th>
 					<th>Types</th>
 					<th>Active</th>
-					<th></th>
+					<th><button class="add-btn" type="Add" th:text="add" th:onclick="'popup(\'/query/popupCreate\')'"/></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -39,11 +39,12 @@
 					<td th:text="${query.id}"  />
 					<td th:text="${query.name}" />
 					<td th:text="${#strings.listJoin(query.queryTypes, ',')}"></td>
-					<td><input type="checkbox" th:checked="${query.effective}"/></td>
+					<td><input type="checkbox" disabled="disabled" th:checked="${query.effective}"/></td>
 					<td><button th:onclick="'popup(\'/query/popupEdit?queryId=' + ${query.id} +'\')'" type="submit" th:text="edit" /></td>
 				</tr>
 			</tbody>
 		</table>
+		</div>
 	</div>
 </body>
 </html>

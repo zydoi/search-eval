@@ -3,23 +3,52 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Edit Query</title>
-	<link rel="stylesheet" type="text/css" href="/css/main.css" />
 	<link rel="stylesheet" type="text/css" href="/css/editQuery.css" />
+	<link rel="stylesheet" type="text/css" href="/css/main.css" />
 </head>
 <body>
-	<form th:action="@{/query/update}" th:object="${queryDTO}" method="post">
-	<ul>
-		<li>
-			<label>Name:</label><input type="text" th:value="${query.name}" th:field="*{name}"/>
-		</li>
-		<li>
-			<label>Types:</label>
-		</li>
-		<li>
-			<label>Active:</label><input type="checkbox" th:checked="${query.effective}"/>
-		</li>
-	</ul>
-	<button id="update-btn" type="submit" th:text="update" />
+	<form th:if="${operation == 'edit'}" th:action="@{/query/update}" th:object="${queryDTO}" method="post">
+		<ul>
+			<li>
+				<label>ID:</label>
+				<span id="queryId" th:text="${query.id}"></span>
+			</li>
+		
+			<li>
+				<label>Name:</label><input class="name-input" type="text" th:value="${query.name}" th:field="*{name}"/>
+			</li>
+			<li>
+				<label>Types:</label>
+				<span class="type" th:each="type : ${query.queryTypes}" th:text="${type}"></span>
+				<img id="add-img" src="/images/add.ico" alt="" />
+			</li>
+			<li>
+				<label>Active:</label><input type="checkbox" th:checked="${query.effective}"/>
+			</li>
+		</ul>
+		<button id="update-btn" type="submit" th:text="update" />
+	</form>
+	
+	<form th:if="${operation == 'add'}" th:action="@{/query/create}" th:object="${queryDTO}" method="post">
+		<ul>
+			<li>
+				<label>ID:</label>
+				<input class="id-input" type="text" th:field="*{id}"/>
+			</li>
+		
+			<li>
+				<label>Name:</label><input class="name-input" type="text" th:field="*{name}"/>
+			</li>
+			<li>
+				<label>Types:</label>
+				<span class="type" th:each="type : *{types}" th:text="${type}"></span>
+				<img id="add-img" src="/images/add.ico" alt="" />
+			</li>
+			<li>
+				<label>Active:</label><input type="checkbox" th:field="*{effective}"/>
+			</li>
+		</ul>
+		<button id="update-btn" type="submit" th:text="create" />
 	</form>
 </body>
 </html>

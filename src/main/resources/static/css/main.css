@@ -17,6 +17,10 @@ body {
 	font-family: Ubuntu, sans-serif;
 }
 
+input[type="text"] {
+	font-family: Ubuntu, sans-serif;
+}
+
 a {
 	text-decoration: none;
 }

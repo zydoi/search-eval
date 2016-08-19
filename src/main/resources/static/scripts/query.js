@@ -50,9 +50,9 @@ function handleServerResponse() {
 }
 
 function popup(url) {
-	newwindow=window.open(url,'name','height=250,width=250,top=200,left=400');
+	newwindow=window.open(url,'name','height=200,width=300,top=200,left=400');
 	if (window.focus) {
 		newwindow.focus()
 	}
-//	return false;
+	return false;
 }

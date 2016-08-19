@@ -18,6 +18,7 @@ import com.litb.search.eval.dto.QueryDTO;
 import com.litb.search.eval.entity.EvalQuery;
 import com.litb.search.eval.repository.QueryRepository;
 import com.litb.search.eval.repository.QueryType;
+import com.litb.search.eval.service.util.DtoConverter;
 import com.litb.search.eval.service.util.KeywordParser;
 
 @Service
@@ -76,7 +77,7 @@ public class QueryService {
 		return repo.findByEffectiveTrue();
 	}
 	
-	public EvalQuery addQuery(EvalQuery query) {
+	public EvalQuery createQuery(EvalQuery query) {
 		return repo.save(query);
 	}
 	
@@ -92,15 +93,34 @@ public class QueryService {
 		return repo.findByQueryTypes(type);
 	}
 	
+	@Transactional
 	public EvalQuery updateQuery(QueryDTO dto) {
 		EvalQuery query = repo.findOne(dto.getId());
-		query.setEffective(dto.isEffective());
-		query.setName(dto.getName());
-		query.setQueryTypes(dto.getTypes());
+		if (query != null) {
+			query.setEffective(dto.isEffective());
+			query.setName(dto.getName());
+			query.setQueryTypes(dto.getTypes());
+		} else {
+			LOGGER.error("Query with ID  {} does not exit.", dto.getId());
+		}
 		return query;
+	}
+	
+	public EvalQuery createQuery(QueryDTO dto) {
+		if(repo.findOne(dto.getId()) == null) {
+			EvalQuery query = DtoConverter.convertQueryDTO(dto);
+			repo.save(query);
+			return query;
+		}
+		LOGGER.error("Failed to add new query. Cause query ID {} has already exist.", dto.getId());
+		return null;
 	}
 	
 	public EvalQuery findById(int id) {
 		return repo.findOne(id);
+	}
+	
+	public void deleteById(int id) {
+		repo.delete(id);
 	}
 }
