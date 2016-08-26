@@ -203,9 +203,9 @@ public class EvaluationService {
 	
 	private String convertDiff(double d) {
 		if (d >= 0) {
-			return "+" + String.format("%.2f", d);
+			return "+" + String.format("%.3f", d);
 		} else {
-			return String.format("%.2f", d);
+			return String.format("%.3f", d);
 		}
 	}
 }

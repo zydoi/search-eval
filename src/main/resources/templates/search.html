@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="US-ASCII" />
-	<title>items annotator</title>
+	<meta charset="UTF-8" />
+	<title>Keywords Search</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css"/>
     <link rel="stylesheet" type="text/css" href="/css/items.css"/>
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&amp;subset=Latin" />
@@ -27,7 +27,7 @@
 	            <a th:href="${item.itemURL}"><img class="item-img" th:src="${item.cateShowImgs.grid.rectangle}" alt="" /></a>
 	           </div>
 	        <div class="caption">
-	           	<div class="item-name"  th:text="${item.itemName}" />
+	           	<div class="item-name"  th:utext="${item.itemName}" />
 	            <div class="item-line-wrap">
 	                <span class="item-reviews">
 		            	<img class="stars-img" src="/images/stars.png"/>
