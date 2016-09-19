@@ -104,7 +104,6 @@ public class SolrEvalService {
 	}
 	
 	public List<SolrItemDTO> getItemsByQuery(int queryId) {
-		
 		SolrQuery query = new SolrQuery(SolrQueryUtils.QUERY_RELEVANCE_PRIFIX + queryId + ":*");
 		query.setFields("id");
 		query.setFields("name");
@@ -254,6 +253,7 @@ public class SolrEvalService {
 	public void setItemFieldValues(String field, List<String> ids) {
 		List<SolrDocument> items = new ArrayList<>();
 		try {
+			// get field value from product solr server
 			List<String> results = new ArrayList<>();
 			Iterator<String> iterator = ids.iterator();
 			
@@ -275,6 +275,7 @@ public class SolrEvalService {
 				items.addAll(prodServer.query(query, SolrRequest.METHOD.POST).getResults());
 			}
 
+			// set field value for evaluation server
 			Set<SolrInputDocument> docs = new HashSet<>();
 
 			for (SolrDocument item : items) {

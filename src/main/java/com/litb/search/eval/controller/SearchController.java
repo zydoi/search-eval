@@ -35,6 +35,9 @@ public class SearchController {
 	public String search(HttpServletRequest req, Model model) {
 		String query = req.getParameter("query");
 		ItemsResultDTO items;
+		if (req.getSession().getAttribute("solr") == null) {
+			model.addAttribute("solr", "online");
+		}
 		if (req.getSession().getAttribute("solr").equals("eval")) {
 			items = litbService.getItems(query, true);
 		} else {

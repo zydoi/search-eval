@@ -36,6 +36,11 @@ public class SpringRootConfig {
 		return new HttpSolrServer(env.getProperty("solr.eval.url"));
 	}
 	
+	@Bean(name="SolrSuggestServer")
+	public SolrServer getSolrSuggestServer() {
+		return new HttpSolrServer(env.getProperty("solr.suggest.url"));
+	}
+	
 	@Bean
 	public ServletRegistrationBean h2servletRegistration() {
 	    ServletRegistrationBean registration = new ServletRegistrationBean(new WebServlet());

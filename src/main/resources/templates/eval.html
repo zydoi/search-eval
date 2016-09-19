@@ -45,7 +45,7 @@
 						<td class="num" th:text="${queryResult.value.precisions[20] != null} ? ${#numbers.formatDecimal(queryResult.value.precisions[20], 1, 1)}" />
 						<td class="num" th:text="${queryResult.value.precisions[48] != null} ? ${#numbers.formatDecimal(queryResult.value.precisions[48], 1, 3)}" />
 						<td class="num" th:text="${#numbers.formatDecimal(queryResult.value.ap, 1, 3)}" />
-						<td class="num" th:if="${diff != null}" th:classappend="${diff.startsWith('+')} ? diff-pos : diff-neg" th:text="${queryResult.value.diff}" />
+						<td class="num" th:if="${diff != null}" th:classappend="${#strings.startsWith(queryResult.value.diff, '+')} ? diff-pos : diff-neg" th:text="${queryResult.value.diff}" />
 					</tr>
 				</tbody>
 				<tfoot>
